@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DataService, Message } from '../services/data.service';
+import { DataService, Images } from '../services/data.service';
 
 @Component({
   selector: 'app-home',
@@ -15,8 +15,8 @@ export class HomePage {
     }, 3000);
   }
 
-  getMessages(): Message[] {
-    return this.data.getMessages();
+  getImages(): Images[] {
+    return this.data.getImages();
   }
 
 }

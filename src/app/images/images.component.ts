@@ -1,13 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Message } from '../services/data.service';
+import { Images } from '../services/data.service';
 
 @Component({
   selector: 'app-message',
-  templateUrl: './message.component.html',
-  styleUrls: ['./message.component.scss'],
+  templateUrl: './images.component.html',
+  styleUrls: ['./images.component.scss'],
 })
-export class MessageComponent implements OnInit {
-  @Input() message: Message;
+export class ImagesComponent implements OnInit {
+  @Input() images: Images;
 
   constructor() { }
 
