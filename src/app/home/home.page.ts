@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 import { DataService, Images } from '../services/data.service';
+import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 
 @Component({
   selector: 'app-home',
@@ -7,7 +9,20 @@ import { DataService, Images } from '../services/data.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  constructor(private data: DataService) {}
+  constructor(private data: DataService,public toastCtrl: ToastController, private onlineStatusService: OnlineStatusService) {
+    
+    this.onlineStatusService.status.subscribe(async (status:OnlineStatusType) => {
+      if (status === OnlineStatusType.OFFLINE) {
+        const toast = this.toastCtrl.create({
+          message: "You are offline. Please connect to the internet.",
+          duration: 5000,
+          position: 'bottom',
+          color: 'danger'
+        });
+         await (await toast).present();
+      }
+    })
+  }
 
   refresh(ev) {
     setTimeout(() => {
@@ -18,5 +33,6 @@ export class HomePage {
   getImages(): Images[] {
     return this.data.getImages();
   }
+  
 
 }
