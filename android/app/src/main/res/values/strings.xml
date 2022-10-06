@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Devvscape | CodeHumor</string>
+    <string name="title_activity_main">Devvscape | CodeHumor</string>
+    <string name="package_name">com.silkwebhq.devvscape</string>
+    <string name="custom_url_scheme">com.silkwebhq.devvscape</string>
+</resources>
