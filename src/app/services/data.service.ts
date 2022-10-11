@@ -1,83 +1,180 @@
 import { Injectable } from '@angular/core';
 
-export interface Message {
-  fromName: string;
-  subject: string;
-  date: string;
+export interface Images {
+  userId: number;
   id: number;
-  read: boolean;
+  imageUrl: string;
+  imageSize: number;
+  imageHeight: number;
+  imageWidth: number;
+  sponsored: boolean;
+  sponsoredLevel: number;
+  views: number;
+  downloads: number;
+  likes: number;
+  comments: number;
+  color: string;
+  createdAt: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-  public messages: Message[] = [
+  public images: Images[] = [
     {
-      fromName: 'Matt Chorsey',
-      subject: 'New event: Trip to Vegas',
-      date: '9:32 AM',
+      userId: 1,
       id: 0,
-      read: false
+      imageUrl: 'https://via.placeholder.com/600/92c952',
+      imageSize: 84535,
+      imageHeight: 880,
+      imageWidth: 720,
+      sponsored: false,
+      sponsoredLevel: 0,
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      comments: 0,
+      color: '#000000',
+      createdAt: '2022-10-01 04:34:33'
     },
     {
-      fromName: 'Lauren Ruthford',
-      subject: 'Long time no chat',
-      date: '6:12 AM',
+      userId: 1,
       id: 1,
-      read: false
+      imageUrl: 'https://via.placeholder.com/600/771796',
+      imageSize: 84535,
+      imageHeight: 880,
+      imageWidth: 720,
+      sponsored: false,
+      sponsoredLevel: 0,
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      comments: 0,
+      color: '#000000',
+      createdAt: '2021-10-01 04:34:33'
     },
     {
-      fromName: 'Jordan Firth',
-      subject: 'Report Results',
-      date: '4:55 AM',
+      userId: 1,
       id: 2,
-      read: false
+      imageUrl: 'https://via.placeholder.com/600/24f355',
+      imageSize: 84535,
+      imageHeight: 880,
+      imageWidth: 720,
+      sponsored: false,
+      sponsoredLevel: 0,
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      comments: 0,
+      color: '#000000',
+      createdAt: '2020-10-01 04:34:33'
     },
     {
-      fromName: 'Bill Thomas',
-      subject: 'The situation',
-      date: 'Yesterday',
+      userId: 1,
       id: 3,
-      read: false
+      imageUrl: 'https://via.placeholder.com/600/92c952',
+      imageSize: 84535,
+      imageHeight: 880,
+      imageWidth: 720,
+      sponsored: false,
+      sponsoredLevel: 0,
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      comments: 0,
+      color: '#000000',
+      createdAt: '2022-10-01 04:34:33'
     },
     {
-      fromName: 'Joanne Pollan',
-      subject: 'Updated invitation: Swim lessons',
-      date: 'Yesterday',
+      userId: 1,
       id: 4,
-      read: false
+      imageUrl: 'https://via.placeholder.com/600/771796',
+      imageSize: 84535,
+      imageHeight: 880,
+      imageWidth: 720,
+      sponsored: false,
+      sponsoredLevel: 0,
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      comments: 0,
+      color: '#000000',
+      createdAt: '2021-10-01 04:34:33'
     },
     {
-      fromName: 'Andrea Cornerston',
-      subject: 'Last minute ask',
-      date: 'Yesterday',
+      userId: 1,
       id: 5,
-      read: false
+      imageUrl: 'https://via.placeholder.com/600/24f355',
+      imageSize: 84535,
+      imageHeight: 880,
+      imageWidth: 720,
+      sponsored: false,
+      sponsoredLevel: 0,
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      comments: 0,
+      color: '#000000',
+      createdAt: '2020-10-01 04:34:33'
     },
     {
-      fromName: 'Moe Chamont',
-      subject: 'Family Calendar - Version 1',
-      date: 'Last Week',
+      userId: 1,
       id: 6,
-      read: false
+      imageUrl: 'https://via.placeholder.com/600/92c952',
+      imageSize: 84535,
+      imageHeight: 880,
+      imageWidth: 720,
+      sponsored: false,
+      sponsoredLevel: 0,
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      comments: 0,
+      color: '#000000',
+      createdAt: '2022-10-01 04:34:33'
     },
     {
-      fromName: 'Kelly Richardson',
-      subject: 'Placeholder Headhots',
-      date: 'Last Week',
+      userId: 1,
       id: 7,
-      read: false
+      imageUrl: 'https://via.placeholder.com/600/771796',
+      imageSize: 84535,
+      imageHeight: 880,
+      imageWidth: 720,
+      sponsored: false,
+      sponsoredLevel: 0,
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      comments: 0,
+      color: '#000000',
+      createdAt: '2021-10-01 04:34:33'
+    },
+    {
+      userId: 1,
+      id: 8,
+      imageUrl: 'https://via.placeholder.com/600/24f355',
+      imageSize: 84535,
+      imageHeight: 880,
+      imageWidth: 720,
+      sponsored: false,
+      sponsoredLevel: 0,
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      comments: 0,
+      color: '#000000',
+      createdAt: '2020-10-01 04:34:33'
     }
   ];
 
   constructor() { }
 
-  public getMessages(): Message[] {
-    return this.messages;
+  public getImages(): Images[] {
+    return this.images;
   }
 
-  public getMessageById(id: number): Message {
-    return this.messages[id];
+  public getImageById(id: number): Images {
+    return this.images[id];
   }
 }

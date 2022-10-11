@@ -1,0 +1,26 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button [text]="getBackButtonText()" defaultHref="/"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" *ngIf="images">
+  <ion-item>
+    <ion-icon name="person-circle" color="primary"></ion-icon>
+    <ion-label class="ion-text-wrap">
+      <h2>
+        {{ images.userId }}
+        <span class="date">
+          <ion-note>{{ images.createdAt }}</ion-note>
+          <!-- <ion-note>{{ message.downloads }}</ion-note> -->
+        </span>
+      </h2>
+    </ion-label>
+  </ion-item>
+  
+  <div class="ion-padding">
+    <img src="{{ images.imageUrl }}" alt="">
+  </div>
+</ion-content>
