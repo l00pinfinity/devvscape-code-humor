@@ -1,0 +1,78 @@
+ion-title {
+    text-align: center;
+  }
+  
+  ion-card img {
+    text-align: center;
+    width: 100%;
+  }
+  
+  ion-card div p {
+    text-align: center;
+  }
+  
+  ion-card div a {
+    margin-left: 2em;
+  }
+  
+  .memeCard{
+    box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+  }
+  
+  ion-item{
+    background-color: aliceblue;
+  }
+  ion-button {
+    display: none;
+    position: fixed;
+    bottom: 35px;
+    right: 20px;
+    z-index: 99;
+  }
+  
+  .dot {
+    display: block;
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    align-self: start;
+    margin: 16px 10px 16px 16px;
+  }
+  
+  .dot-unread {
+    background: var(--ion-color-primary);
+  }
+  
+  #showMe {
+    opacity: 0;
+    -moz-animation: cssAnimation 0.5s;
+    -webkit-animation: cssAnimation 0.5s;
+    -o-animation: cssAnimation 0.5s;
+    animation: cssAnimation 0.5s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+  }
+  
+  .endScroll{
+    text-align: center;
+  }
+  
+  @keyframes cssAnimation {
+    0% {
+      opacity: 0;
+    }
+  
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  @-webkit-keyframes cssAnimation {
+    0% {
+      opacity: 0;
+    }
+  
+    100% {
+      opacity: 1;
+    }
+  }

@@ -7,14 +7,15 @@ const routes: Routes = [
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   },
   {
-    path: 'image/:id',
+    path: 'images/:id',
     loadChildren: () => import('./view-images/view-images.module').then( m => m.ViewImagesPageModule)
   },
   {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
-  },
+  }
+
 ];
 
 @NgModule({
