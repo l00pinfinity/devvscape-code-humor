@@ -49,7 +49,7 @@ export class HomePage implements OnInit{
           //save the id
         }
         this.page++;
-      },async (error:ErrorHandler) =>{
+      },async (error:Error | HttpErrorResponse) =>{
         const toast = this.toastCtrl.create({
           message: `${error}`,
           duration: 10000,

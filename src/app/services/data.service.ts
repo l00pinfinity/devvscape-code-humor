@@ -54,9 +54,36 @@ export class DataService {
   public handleError(error: HttpErrorResponse){
     let errorMessage:string;
     if(error.error instanceof ErrorEvent){
+      //Client side error
       errorMessage = `Error: ${error.error.message}`;
     }else{
-      errorMessage = `Error Code: ${error.status}\n Message: ${error.message}`;
+      //Server side error
+      switch (error.status) {
+        case 400:
+          errorMessage = `Error Code: ${error.status} Bad request,something went wrong`;
+          break;
+        case 401:
+          errorMessage = `Error Code: ${error.status} Unauthorized, something went wrong`;
+          break;
+        case 402:
+          errorMessage = `Error Code: ${error.status} Payment required, something went wrong`;
+          break;
+        case 403:
+          errorMessage = `Error Code: ${error.status} Forbidden, something went wrong`;
+          break;
+        case 404:
+          errorMessage = `Error Code: ${error.status} Not found, something went wrong`;
+          break;
+        case 405:
+          errorMessage = `Error Code: ${error.status} Method not allowed, something went wrong`;
+          break;
+        case 406:
+          errorMessage = `Error Code: ${error.status} Not acceptable, something went wrong`;
+          break;
+      
+        default:
+          break;
+      }
     }
     return throwError(errorMessage);
   }
