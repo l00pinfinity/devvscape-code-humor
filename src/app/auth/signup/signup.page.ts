@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { PasswordValidators } from 'src/app/core/validators/password-validators';
 
 @Component({
   selector: 'app-signup',
@@ -21,7 +22,7 @@ export class SignupPage implements OnInit {
       password:new FormControl('',[Validators.required,Validators.minLength(6)]),
       confirmpassword:new FormControl('',[Validators.required,Validators.minLength(6)]),
       bio:new FormControl('',Validators.required)
-    })
+    },PasswordValidators.MatchValidator('password','confirmpassword'))
   }
 
   ngOnInit() {
@@ -50,6 +51,10 @@ export class SignupPage implements OnInit {
 
   get bio(){
     return this.signupForm.get('bio');
+  }
+
+  get passwordMatchError(){
+    return (this.signupForm.getError('mismatch') && this.signupForm.get('confirmpassword')?.touched)
   }
 
 }
