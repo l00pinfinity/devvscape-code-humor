@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 
 export class TokenInterceptor implements HttpInterceptor{
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const accessToken = sessionStorage.getItem('accessToken');
+        const accessToken = localStorage.getItem('devvsapeAccessToken');
 
         if(accessToken){
             const cloned = req.clone({

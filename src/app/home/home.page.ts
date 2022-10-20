@@ -27,6 +27,9 @@ export class HomePage implements OnInit{
           color: 'danger'
         });
          await (await toast).present();
+         setTimeout(async () =>{
+          (await toast).dismiss();
+        },3000);
       }
     })
   }
@@ -35,11 +38,10 @@ export class HomePage implements OnInit{
     this.getPaginatedImages(false, "");
     setTimeout(() => {
       event.detail.complete();
-    }, 3000);
+    }, 2000);
   }
   
   getImages(){
-
   }
 
   getImageById(id:number){
@@ -94,15 +96,15 @@ export class HomePage implements OnInit{
   }
 
   ngOnInit(){
-    if(sessionStorage.getItem('devvscapeFirstAppLoad')){
+    if(localStorage.getItem('devvscapeFirstAppLoad')){
       //already been loaded
-      if(sessionStorage.getItem('accessToken') && sessionStorage.getItem('expiresIn')){
+      if(localStorage.getItem('devvsapeAccessToken') && localStorage.getItem('expiresIn')){
         this.getPaginatedImages(false,"");
       }else{
         this.router.navigateByUrl('/login');
       }
     }else{
-      sessionStorage.setItem('devvscapeFirstAppLoad','yes');
+      localStorage.setItem('devvscapeFirstAppLoad','yes');
       this.router.navigateByUrl('/signup')
     }
   }
