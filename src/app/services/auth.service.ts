@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
@@ -16,7 +15,13 @@ export class AuthService {
   login(usernameOrEmail:string,password:string):Observable<any>{
     return this.http.post(environment.apiUrl + 'api/v1/auth/signin',{
       usernameOrEmail,password
-    })
+    });
+  }
+
+  signup(email:string,username:string,password:string,bio:string):Observable<any>{
+    return this.http.post(environment.apiUrl + 'api/v1/auth/signup',{
+      email,username,password,bio
+    });
   }
 
   setSession(response: { expiresIn: moment.DurationInputArg1; accessToken: string; }): any {
