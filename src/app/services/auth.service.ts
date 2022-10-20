@@ -27,13 +27,13 @@ export class AuthService {
   setSession(response: { expiresIn: moment.DurationInputArg1; accessToken: string; }): any {
     const expiresAt = moment().add(response.expiresIn,'second');
 
-    sessionStorage.setItem('accessToken',response.accessToken);
-    sessionStorage.setItem('expiresIn',JSON.stringify(expiresAt.valueOf()));
+    localStorage.setItem('devvsapeAccessToken',response.accessToken);
+    localStorage.setItem('devvscapEexpiresIn',JSON.stringify(expiresAt.valueOf()));
   }
 
   logout(){
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('expiresIn');
+    localStorage.removeItem('devvsapeAccessToken');
+    localStorage.removeItem('devvscapEexpiresIn');
   }
 
   public isLoggedIn(){
@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   getExpiration(): moment.MomentInput {
-    const expiration = sessionStorage.getItem('expiresIn');
+    const expiration = localStorage.getItem('devvscapEexpiresIn');
     const expiresAt = JSON.parse(expiration);
     return moment(expiresAt);
   }

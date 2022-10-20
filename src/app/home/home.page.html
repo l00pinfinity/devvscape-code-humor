@@ -25,12 +25,10 @@
       <!--(click)="presentActionSheet()"-->
       <ion-img src="{{image.imageUrl || loadingAsset}}" alt="{{image.id}}" loading="lazy"></ion-img>
       <ion-card-content>
-        <ion-item>
-          <ion-text color="secondary">Posted on {{image.createdAt | date}}</ion-text>
+          <ion-text>Posted on {{image.createdAt | date}}</ion-text>
           <!-- <ion-icon name="happy-outline" slot="end" (click)="like(image)">{{image.likes}}</ion-icon> -->
           <!-- <ion-icon name="share" slot="end" (click)="share(image)">{{image.views}}</ion-icon> -->
           <!-- <ion-icon name="eye-outline" slot="end" (click)="download(image)"></ion-icon> -->
-        </ion-item>
       </ion-card-content>
     </ion-card>
     <br>

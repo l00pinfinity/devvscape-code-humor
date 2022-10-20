@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content>
-  <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+  <div class="container col-xl-10 col-xxl-8 px-4 py-5 bg-white">
     <div class="col-md-10 mx-auto col-lg-5">
       <form [formGroup]="loginForm" class="p-4 p-md-5" (ngSubmit)="onLogin()">
         <div class="form-floating mb-3">
@@ -24,7 +24,10 @@
           </label>
         </div>
         <button [disabled]="!loginForm.valid" class="w-100 btn btn-lg btn-primary" type="submit">Log In</button>
-        <hr class="my-4">
+        <br><br>
+        <div class="text-center">&#8211;&#8211; or &#8211;&#8211;</div>
+        <br>
+        <a href="/signup" class="w-100 btn btn-lg btn-primary">Sign Up</a>
       </form>
     </div>
   </div>
