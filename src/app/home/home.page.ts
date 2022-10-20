@@ -4,6 +4,7 @@ import { DataService } from '../services/data.service';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 import { Images } from '../core/interface/images';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,7 @@ export class HomePage implements OnInit{
   images$: any;
   page = 0;
 
-  constructor(private data: DataService, private onlineStatusService: OnlineStatusService, private alertController: AlertController, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
+  constructor(private data: DataService, private router:Router,private onlineStatusService: OnlineStatusService, private alertController: AlertController, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
     
     this.onlineStatusService.status.subscribe(async (status:OnlineStatusType) => {
       if (status === OnlineStatusType.OFFLINE) {
@@ -93,7 +94,17 @@ export class HomePage implements OnInit{
   }
 
   ngOnInit(){
-    this.getPaginatedImages(false,"");
+    if(sessionStorage.getItem('devvscapeFirstAppLoad')){
+      //already been loaded
+      if(sessionStorage.getItem('accessToken') && sessionStorage.getItem('expiresIn')){
+        this.getPaginatedImages(false,"");
+      }else{
+        this.router.navigateByUrl('/login');
+      }
+    }else{
+      sessionStorage.setItem('devvscapeFirstAppLoad','yes');
+      this.router.navigateByUrl('/signup')
+    }
   }
 
   toggle(event){
