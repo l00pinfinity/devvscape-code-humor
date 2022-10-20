@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Create account - Devvscape</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+    <div class="col-md-10 mx-auto col-lg-5">
+      <form [formGroup]="signupForm" class="p-4 p-md-5" (ngSubmit)="onSignUp()">
+        <div class="form-floating mb-3">
+          <input type="email" class="form-control" formControlName="email" id="email" placeholder="name@example.com">
+          <label for="email">Email address</label>
+          <span class="error" *ngIf="email && email.invalid && email.touched">Email address is required</span>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="email" class="form-control" formControlName="username" id="username" placeholder="username">
+          <label for="username">Username</label>
+          <span class="error" *ngIf="username && username.invalid && username.touched">Username is required</span>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" formControlName="password" id="password" placeholder="Password">
+          <label for="password">Password</label>
+          <span class="error" *ngIf="password && password.invalid && password.touched">Password is required</span>
+        </div>
+        <div class="form-floating mb-3">
+          <input formControlName="confirmpassword" appConfirmEqualValidator="password" type="password"
+            class="form-control" id="confirmpassword" placeholder="Password">
+          <label for="confirmpassword">Confirm Password</label>
+          <span class="error" *ngIf="passwordMatchError">Password do not match</span>
+          <span class="error" *ngIf="confirmpassword && confirmpassword.invalid && confirmpassword.touched">Confirm password is required</span>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" formControlName="bio" id="bio" placeholder="bio">
+          <label for="bio">Bio</label>
+          <span class="error" *ngIf="bio && bio.invalid && bio.touched">Bio is required</span>
+        </div>
+        <button [disabled]="!signupForm.valid" class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
+        <hr class="my-4">
+        <small class="text-muted">By clicking Sign up, you agree to the <a href="https://www.silkwebhq.com/terms" target="_blank">terms</a> of use.</small>
+      </form>
+    </div>
+  </div>
+
+</ion-content>

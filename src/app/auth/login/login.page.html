@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Login - Devvscape</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+    <div class="col-md-10 mx-auto col-lg-5">
+      <form [formGroup]="loginForm" class="p-4 p-md-5" (ngSubmit)="onLogin()">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" formControlName="usernameOrEmail" id="usernameOrEmail" placeholder="name@example.com">
+          <label for="usernameOrEmail">Username or Email</label>
+          <span class="error" *ngIf="usernameOrEmail && usernameOrEmail.invalid && usernameOrEmail.touched">*Username or Email is required</span>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" formControlName="password" id="password" placeholder="Password">
+          <label for="password">Password</label>
+          <span class="error" *ngIf="password && password.invalid && password.touched">*Password is required</span>
+        </div>
+        <div class="checkbox mb-3">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <button [disabled]="!loginForm.valid" class="w-100 btn btn-lg btn-primary" type="submit">Log In</button>
+        <hr class="my-4">
+      </form>
+    </div>
+  </div>
+</ion-content>
