@@ -45,7 +45,7 @@ export class HomePage implements OnInit{
     this.data.getImageById(id).subscribe(
       (response:any) =>{
         if(response){
-          console.log(response);
+          // console.log(response);
           //save the id
         }
         this.page++;
@@ -67,7 +67,7 @@ export class HomePage implements OnInit{
         this.data.getPaginatedImages(this.page).subscribe(
           (response:any) =>{
             if(response){
-              console.log(response);
+              // console.log(response);
               this.images$ = response;
             }
             if(isFirstLoad){
