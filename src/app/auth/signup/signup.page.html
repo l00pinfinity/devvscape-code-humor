@@ -36,7 +36,9 @@
           <span class="error" *ngIf="bio && bio.invalid && bio.touched">Bio is required</span>
         </div>
         <button [disabled]="!signupForm.valid" class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
-        <hr class="my-4">
+        <hr>
+        <span class="error" *ngIf="errorMessage">{{errorMessage}}</span>
+        <br>
         <small class="text-muted">By clicking Sign up, you agree to the <a href="https://www.silkwebhq.com/terms" target="_blank">terms</a> of use.</small>
       </form>
     </div>
