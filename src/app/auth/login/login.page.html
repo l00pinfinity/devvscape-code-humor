@@ -8,14 +8,14 @@
   <div class="container col-xl-10 col-xxl-8 px-4 py-5 bg-white">
     <div class="col-md-10 mx-auto col-lg-5">
       <form [formGroup]="loginForm" class="p-4 p-md-5" (ngSubmit)="onLogin()">
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control" formControlName="usernameOrEmail" id="usernameOrEmail" placeholder="name@example.com">
+        <div class="form-group">
           <label for="usernameOrEmail">Username or Email</label>
+          <input type="text" class="form-control" formControlName="usernameOrEmail" id="usernameOrEmail" placeholder="Username or Email">
           <span class="error" *ngIf="usernameOrEmail && usernameOrEmail.invalid && usernameOrEmail.touched">*Username or Email is required</span>
         </div>
-        <div class="form-floating mb-3">
-          <input type="password" class="form-control" formControlName="password" id="password" placeholder="Password">
+        <div class="form-group">
           <label for="password">Password</label>
+          <input type="password" class="form-control" formControlName="password" id="password" placeholder="Password">
           <span class="error" *ngIf="password && password.invalid && password.touched">*Password is required</span>
         </div>
         <div class="checkbox mb-3">
