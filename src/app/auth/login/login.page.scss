@@ -20,7 +20,7 @@ input.ng-valid{
     line-height: normal;
     margin: 0;
     min-height: 60px;
-    min-width: 0;
+    min-width: 100%;
     outline: none;
     padding: 16px 24px;
     text-align: center;
@@ -47,4 +47,11 @@ input.ng-valid{
 .btn:active {
     box-shadow: none;
     transform: translateY(0);
+}
+
+.row{
+    background-color: #fff;
+    border-radius: 30px;
+    height: 100%;
+    width: 100%;
 }
