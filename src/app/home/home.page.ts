@@ -5,6 +5,8 @@ import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 import { Images } from '../core/interface/images';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Observable, interval, Subscription } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +18,7 @@ export class HomePage implements OnInit{
   images$: any;
   page = 0;
 
-  constructor(private data: DataService, private router:Router,private onlineStatusService: OnlineStatusService, private alertController: AlertController, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
+  constructor(private data: DataService,private authService:AuthService, private router:Router,private onlineStatusService: OnlineStatusService, private alertController: AlertController, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
     
     this.onlineStatusService.status.subscribe(async (status:OnlineStatusType) => {
       if (status === OnlineStatusType.OFFLINE) {
@@ -34,7 +36,7 @@ export class HomePage implements OnInit{
     })
   }
 
-  doRefresh(event) {
+  doRefresh(event: { detail: { complete: () => void; }; }) {
     this.getPaginatedImages(false, "");
     setTimeout(() => {
       event.detail.complete();
@@ -96,12 +98,23 @@ export class HomePage implements OnInit{
   }
 
   ngOnInit(){
+    this.isAccessTokenPresent();
+    this.authService.refresh();
+  }
+
+  ionViewWillLeave(){
+    this.isAccessTokenPresent(); 
+    this.authService.refresh();   
+  }
+
+  isAccessTokenPresent(){
     if(localStorage.getItem('devvscapeFirstAppLoad')){
       //already been loaded
       if(localStorage.getItem('devvsapeAccessToken') && localStorage.getItem('expiresIn')){
         this.getPaginatedImages(false,"");
       }else{
         this.router.navigateByUrl('/login');
+        this.isAccessTokenPresent();
       }
     }else{
       localStorage.setItem('devvscapeFirstAppLoad','yes');
