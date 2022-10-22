@@ -25,10 +25,10 @@
       <!--(click)="presentActionSheet()"-->
       <ion-img src="{{image.imageUrl || loadingAsset}}" alt="{{image.id}}" loading="lazy"></ion-img>
       <ion-card-content>
-          <ion-text>Posted on {{image.createdAt | date}}</ion-text>
-          <!-- <ion-icon name="happy-outline" slot="end" (click)="like(image)">{{image.likes}}</ion-icon> -->
-          <!-- <ion-icon name="share" slot="end" (click)="share(image)">{{image.views}}</ion-icon> -->
-          <!-- <ion-icon name="eye-outline" slot="end" (click)="download(image)"></ion-icon> -->
+        <ion-text>Posted on {{image.createdAt | date}}</ion-text>
+        <!-- <ion-icon name="happy-outline" slot="end" (click)="like(image)">{{image.likes}}</ion-icon> -->
+        <!-- <ion-icon name="share" slot="end" (click)="share(image)">{{image.views}}</ion-icon> -->
+        <!-- <ion-icon name="eye-outline" slot="end" (click)="download(image)"></ion-icon> -->
       </ion-card-content>
     </ion-card>
     <br>
@@ -36,26 +36,28 @@
 
   <!-- Skeleton -->
   <ion-list *ngIf="!images$">
+    <br>
     <ion-card>
       <ion-skeleton-text animated style="height: 50vh"></ion-skeleton-text>
       <div class="card-body">
         <ion-skeleton-text animated style="height: 5vh"></ion-skeleton-text>
       </div>
     </ion-card>
-
+    <br>
     <ion-card>
       <ion-skeleton-text animated style="height: 50vh"></ion-skeleton-text>
       <div class="card-body">
         <ion-skeleton-text animated style="height: 5vh"></ion-skeleton-text>
       </div>
     </ion-card>
-
+    <br>
     <ion-card>
       <ion-skeleton-text animated style="height: 50vh"></ion-skeleton-text>
       <div class="card-body">
         <ion-skeleton-text animated style="height: 5vh"></ion-skeleton-text>
       </div>
     </ion-card>
+    <br>
   </ion-list>
 
   <ion-card class="endScroll" *ngIf="images$">

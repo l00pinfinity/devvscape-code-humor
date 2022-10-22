@@ -33,9 +33,9 @@ export class LoginPage implements OnInit {
     if (this.usernameOrEmail && this.password) {
       this.authService.login(this.usernameOrEmail.value,this.password.value).subscribe((response:any)=>{
         if(response){
-          console.log(response);
+          // console.log(response);
           this.authService.setSession(response);
-          console.log("User is logged in");
+          // console.log("User is logged in");
           this.router.navigateByUrl('/');
         }
       },async (error:Error | HttpErrorResponse) =>{
@@ -43,7 +43,8 @@ export class LoginPage implements OnInit {
           message: `${error.name}:Incorrect credentials, try again`,
           duration: 10000,
           position:'bottom',
-          color: 'danger'
+          color: 'danger',
+          icon: 'globe'
         });
         (await toast).present();
         setTimeout(async () =>{

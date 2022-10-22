@@ -10,43 +10,47 @@ import { Observable } from 'rxjs';
 
 export class AuthService {
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-  login(usernameOrEmail:string,password:string):Observable<any>{
-    return this.http.post(environment.apiUrl + 'api/v1/auth/signin',{
-      usernameOrEmail,password
+  login(usernameOrEmail: string, password: string): Observable<any> {
+    return this.http.post(environment.apiUrl + 'api/v1/auth/signin', {
+      usernameOrEmail, password
     });
   }
 
-  signup(email:string,username:string,password:string,bio:string):Observable<any>{
-    return this.http.post(environment.apiUrl + 'api/v1/auth/signup',{
-      email,username,password,bio
+  signup(email: string, username: string, password: string, bio: string): Observable<any> {
+    return this.http.post(environment.apiUrl + 'api/v1/auth/signup', {
+      email, username, password, bio
     });
   }
 
   setSession(response: { expiresIn: moment.DurationInputArg1; accessToken: string; }): any {
-    const expiresAt = moment().add(response.expiresIn,'second');
+    const expiresAt = moment().add(response.expiresIn, 'second');
 
-    localStorage.setItem('devvsapeAccessToken',response.accessToken);
-    localStorage.setItem('devvscapEexpiresIn',JSON.stringify(expiresAt.valueOf()));
+    sessionStorage.setItem('devvsapeAccessToken', response.accessToken);
+    sessionStorage.setItem('devvscapEexpiresIn', JSON.stringify(expiresAt.valueOf()));
   }
 
-  logout(){
-    localStorage.removeItem('devvsapeAccessToken');
-    localStorage.removeItem('devvscapEexpiresIn');
+  logout() {
+    sessionStorage.removeItem('devvsapeAccessToken');
+    sessionStorage.removeItem('devvscapEexpiresIn');
   }
 
-  public isLoggedIn(){
+  public isLoggedIn() {
     return moment().isBefore(this.getExpiration());
   }
-  
-  isLoggedOut(){
+
+  isLoggedOut() {
     return !this.isLoggedIn();
   }
 
   getExpiration(): moment.MomentInput {
-    const expiration = localStorage.getItem('devvscapEexpiresIn');
+    const expiration = sessionStorage.getItem('devvscapEexpiresIn');
     const expiresAt = JSON.parse(expiration);
     return moment(expiresAt);
+  }
+
+  refresh(): void {
+    window.location.reload();
   }
 }
