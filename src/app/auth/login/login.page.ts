@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
   selector: 'app-login',
@@ -13,8 +14,12 @@ import { AuthService } from 'src/app/services/auth.service';
 export class LoginPage implements OnInit {
 
   loginForm:FormGroup;
+  loginStatus: any;
+  errorMessage:string;
+  isLoggedIn = false;
+  isLoginFailed = false;
 
-  constructor(private router:Router,private authService:AuthService,public toastCtrl: ToastController) {
+  constructor(private router:Router,private authService:AuthService, private tokenStorage:TokenStorageService,public toastCtrl: ToastController) {
     this.loginForm = this.createFormGroup();
    }
 
@@ -25,18 +30,26 @@ export class LoginPage implements OnInit {
     })
   }
 
-  ngOnInit() {
-    
+  ngOnInit():void {
+    if(this.tokenStorage.getAccessToken()){
+      this.isLoggedIn = true;
+    }
   }
 
   onLogin(){  
     if (this.usernameOrEmail && this.password) {
       this.authService.login(this.usernameOrEmail.value,this.password.value).subscribe((response:any)=>{
         if(response){
-          // console.log(response);
-          this.authService.setSession(response);
-          // console.log("User is logged in");
-          this.router.navigateByUrl('/');
+          console.log(response);
+          this.tokenStorage.setSession(response);
+          console.log("User is logged in");
+          this.isLoggedIn = true;
+          this.isLoginFailed = false;
+          this.router.navigateByUrl('/home');
+        }else{
+          this.loginStatus = response;
+          this.errorMessage = this.loginStatus.message;
+          this.isLoginFailed = true;
         }
       },async (error:Error | HttpErrorResponse) =>{
         const toast = this.toastCtrl.create({
@@ -52,6 +65,10 @@ export class LoginPage implements OnInit {
         },3000);
       })
     }
+  }
+
+  reloadPage():void {
+    window.location.reload();
   }
 
   //getters

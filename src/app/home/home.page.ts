@@ -1,12 +1,12 @@
-import { Component, ErrorHandler, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActionSheetController, AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { DataService } from '../services/data.service';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 import { Images } from '../core/interface/images';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, interval, Subscription } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { TokenStorageService } from '../services/token-storage.service';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +18,7 @@ export class HomePage implements OnInit{
   images$: any;
   page = 0;
 
-  constructor(private data: DataService,private authService:AuthService, private router:Router,private onlineStatusService: OnlineStatusService, private alertController: AlertController, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
+  constructor(private data: DataService,private authService:AuthService,private tokenStorage:TokenStorageService, private router:Router,private onlineStatusService: OnlineStatusService, private alertController: AlertController, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
     
     this.onlineStatusService.status.subscribe(async (status:OnlineStatusType) => {
       if (status === OnlineStatusType.OFFLINE) {
@@ -90,6 +90,9 @@ export class HomePage implements OnInit{
             setTimeout(async () =>{
               (await toast).dismiss();
             },1000);
+
+            //redirect to login to update token
+            this.router.navigateByUrl('/login')
           })
   }
 
@@ -99,7 +102,6 @@ export class HomePage implements OnInit{
 
   ngOnInit(){
     this.isAccessTokenPresent();
-    this.authService.refresh();
   }
 
   ionViewWillLeave(){
@@ -110,7 +112,7 @@ export class HomePage implements OnInit{
   isAccessTokenPresent(){
     if(localStorage.getItem('devvscapeFirstAppLoad')){
       //already been loaded
-      if(localStorage.getItem('devvsapeAccessToken') && localStorage.getItem('expiresIn')){
+      if(this.tokenStorage.getAccessToken()){
         this.getPaginatedImages(false,"");
       }else{
         this.router.navigateByUrl('/login');
