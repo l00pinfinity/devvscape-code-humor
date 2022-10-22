@@ -1,34 +1,43 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Login - Devvscape</ion-title>
+    <ion-title>Devvscape - Login</ion-title>
   </ion-toolbar>
 </ion-header>
 
+
 <ion-content>
-  <div class="container col-xl-10 col-xxl-8 px-4 py-5 bg-white">
-    <div class="col-md-10 mx-auto col-lg-5">
-      <form [formGroup]="loginForm" class="p-4 p-md-5" (ngSubmit)="onLogin()">
-        <div class="form-group">
-          <label for="usernameOrEmail">Username or Email</label>
-          <input type="text" class="form-control" formControlName="usernameOrEmail" id="usernameOrEmail" placeholder="Username or Email">
-          <span class="error" *ngIf="usernameOrEmail && usernameOrEmail.invalid && usernameOrEmail.touched">*Username or Email is required</span>
+  <section class="form my-4">
+    <div class="container-fluid text-center ">
+      <div class="row no-gutters">
+        <div class="col-lg-12">
+          <h1 class="font-weight-bold py-3 mx-5">Sign into your account</h1>
+          <form [formGroup]="loginForm" class="p-4 p-md-5" (ngSubmit)="onLogin()">
+            <div class="form-row">
+              <div class="col-lg-7">
+                <input type="text" class="form-control my-3 p-3" formControlName="usernameOrEmail"
+                  placeholder="Username or Email">
+                <span class="error"
+                  *ngIf="usernameOrEmail && usernameOrEmail.invalid && usernameOrEmail.touched">*Username or Email is
+                  required</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-lg-7">
+                <input type="password" class="form-control my-3 p-3" formControlName="password" placeholder="*******">
+                <span class="error" *ngIf="password && password.invalid && password.touched">*Password is
+                  required</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-lg-7">
+                <button [disabled]="!loginForm.valid" class="btn mt-3 mb-5">Login</button>
+              </div>
+            </div>
+            <!-- <a href="">Forgot password</a> -->
+            <p>Don't have an account? <a href="/signup">Sign up</a></p>
+          </form>
         </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" class="form-control" formControlName="password" id="password" placeholder="Password">
-          <span class="error" *ngIf="password && password.invalid && password.touched">*Password is required</span>
-        </div>
-        <div class="checkbox mb-3">
-          <label>
-            <input type="checkbox" value="remember-me"> Remember me
-          </label>
-        </div>
-        <button [disabled]="!loginForm.valid" class="w-100 btn btn-lg btn-primary" type="submit">Log In</button>
-        <br><br>
-        <div class="text-center">&#8211;&#8211; or &#8211;&#8211;</div>
-        <br>
-        <a href="/signup" class="w-100 btn btn-lg btn-primary">Sign Up</a>
-      </form>
+      </div>
     </div>
-  </div>
+  </section>
 </ion-content>

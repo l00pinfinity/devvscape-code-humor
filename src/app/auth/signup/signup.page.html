@@ -1,52 +1,63 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Create account - Devvscape</ion-title>
+    <ion-title>Devvscape - Sign Up</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="container col-xl-10 col-xxl-8 px-4 py-5 bg-white">
-    <div class="col-md-10 mx-auto col-lg-5">
-      <div class="text-center">
-        <span class="error" *ngIf="errorMessage">{{errorMessage}}</span>
+  <section class="form my-4">
+    <div class="container-fluid text-center ">
+      <div class="row no-gutters">
+        <div class="col-lg-12">
+          <h1 class="font-weight-bold py-3 mx-5">Create account</h1>
+          <form [formGroup]="signupForm" class="p-4 p-md-5" (ngSubmit)="onSignUp()">
+            <div class="form-row">
+              <div class="col-lg-7">
+                <input type="email" class="form-control my-3 p-3" formControlName="email" placeholder="Email address">
+                <span class="error" *ngIf="email && email.invalid && email.touched">*Email address is required</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-lg-7">
+                <input type="text" class="form-control my-3 p-3" formControlName="username" placeholder="Username">
+                <span class="error" *ngIf="username && username.invalid && username.touched">*Username is
+                  required</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-lg-7">
+                <input type="password" class="form-control my-3 p-3" formControlName="password" placeholder="Password">
+                <span class="error" *ngIf="password && password.invalid && password.touched">*Password is
+                  required</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-lg-7">
+                <input type="password" class="form-control my-3 p-3" formControlName="confirmpassword"
+                  appConfirmEqualValidator="password" placeholder="Confirm password">
+                <span class="error" *ngIf="passwordMatchError">Password do not match</span>
+                <span class="error"
+                  *ngIf="confirmpassword && confirmpassword.invalid && confirmpassword.touched">*Confirm password is
+                  required</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-lg-7">
+                <textarea type="text" class="form-control my-3 p-3" formControlName="bio"
+                  placeholder="About you"></textarea>
+                <span class="error" *ngIf="bio && bio.invalid && bio.touched">*Bio is required</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-lg-7">
+                <button [disabled]="!signupForm.valid" class="btn mt-3 mb-5">Sign up</button>
+              </div>
+            </div>
+            <!-- <a href="">Forgot password</a> -->
+            <p>Already have an account? <a href="/login">Login</a></p>
+          </form>
+        </div>
       </div>
-      <form [formGroup]="signupForm" class="p-4 p-md-5" (ngSubmit)="onSignUp()">
-        <div class="form-group">
-          <label for="email">Email address</label>
-          <input type="email" class="form-control" formControlName="email" id="email" aria-describedby="emailHelp" placeholder="Enter email">
-          <span class="error" *ngIf="email && email.invalid && email.touched">Email address is required</span>          
-        </div>
-
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" class="form-control" formControlName="username" id="username" placeholder="username">
-          <span class="error" *ngIf="username && username.invalid && username.touched">Username is required</span>
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" class="form-control" formControlName="password" id="password" placeholder="Password">
-          <span class="error" *ngIf="password && password.invalid && password.touched">Password is required</span>
-        </div>
-        <div class="form-group">
-          <label for="confirmpassword">Confirm Password</label>
-          <input formControlName="confirmpassword" appConfirmEqualValidator="password" type="password"
-            class="form-control" id="confirmpassword" placeholder="Password">
-          <span class="error" *ngIf="passwordMatchError">Password do not match</span>
-          <span class="error" *ngIf="confirmpassword && confirmpassword.invalid && confirmpassword.touched">Confirm password is required</span>
-        </div>
-        <div class="form-group">
-          <label for="bio">Bio</label>
-          <input type="text" class="form-control" formControlName="bio" id="bio" placeholder="Bio">
-          <span class="error" *ngIf="bio && bio.invalid && bio.touched">Bio is required</span>
-        </div>
-        <br>
-        <button [disabled]="!signupForm.valid" class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
-        <br><br>
-        <div class="text-center">&#8211;&#8211; or &#8211;&#8211;</div>
-        <br>
-        <a href="/login" class="w-100 btn btn-lg btn-primary">Login</a>
-      </form>
     </div>
-  </div>
-
+  </section>
 </ion-content>
