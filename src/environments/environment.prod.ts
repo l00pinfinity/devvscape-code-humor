@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: "http://devvscape.com/"
+  apiUrl: "https://devvscape.com/"
 };
