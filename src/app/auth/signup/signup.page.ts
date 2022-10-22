@@ -16,6 +16,8 @@ export class SignupPage implements OnInit {
   signupForm: FormGroup;
   signupStatus: any;
   errorMessage:string;
+  isSuccessul = false;
+  isSignUpFailed = false;
 
   constructor(private router: Router, private authService: AuthService, private toastCtrl: ToastController) {
     this.signupForm = this.createFormGroup();
@@ -34,16 +36,20 @@ export class SignupPage implements OnInit {
   ngOnInit() {
   }
 
-  onSignUp() {
+  onSignUp():void {
     if (this.email && this.username, this.password, this.bio) {
       this.authService.signup(this.email.value, this.username.value, this.password.value, this.bio.value).subscribe((response: any) => {
         if (response.success == true) {
+          console.log(response);        
+          this.isSuccessul = true;  
           this.router.navigateByUrl('/login');
         }else{
           this.signupStatus = response;
           this.errorMessage = this.signupStatus.message;
+          this.isSignUpFailed = true;
         }
       }, async (error: Error | HttpErrorResponse) => {
+        this.isSignUpFailed = true;
         const toast = this.toastCtrl.create({
           message: `${error.message}`,
           duration: 10000,

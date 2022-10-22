@@ -31,6 +31,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('devvsapeAccessToken');
     localStorage.removeItem('devvscapEexpiresIn');
+    window.location.reload()
   }
 
   public isLoggedIn() {

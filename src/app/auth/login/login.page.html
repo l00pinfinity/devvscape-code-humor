@@ -11,6 +11,7 @@
       <div class="row no-gutters">
         <div class="col-lg-12">
           <h1 class="font-weight-bold py-3 mx-5">Sign into your account</h1>
+          <h5 class="error">{{errorMessage}}</h5>
           <form [formGroup]="loginForm" class="p-4 p-md-5" (ngSubmit)="onLogin()">
             <div class="form-row">
               <div class="col-lg-7">
