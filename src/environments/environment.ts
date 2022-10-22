@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: "http://devvscape.com/"
+  apiUrl: "https://devvscape.com/"
 };
 
 /*

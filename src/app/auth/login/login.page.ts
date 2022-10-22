@@ -31,8 +31,15 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit():void {
+    this.isAccessTokenPresent();
+  }
+
+  isAccessTokenPresent() {
     if(this.tokenStorage.getAccessToken()){
-      this.isLoggedIn = true;
+      this.router.navigateByUrl('/home');
+    }else{
+      this.router.navigateByUrl('/login');
+      this.isAccessTokenPresent();
     }
   }
 
