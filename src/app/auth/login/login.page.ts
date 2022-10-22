@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ export class LoginPage implements OnInit {
 
   loginForm:FormGroup;
 
-  constructor(private router:Router,private authService:AuthService,public toastCtrl: ToastController) {
+  constructor(private router:Router,private authService:AuthService, private tokenStorage:TokenStorageService,public toastCtrl: ToastController) {
     this.loginForm = this.createFormGroup();
    }
 
@@ -34,7 +35,7 @@ export class LoginPage implements OnInit {
       this.authService.login(this.usernameOrEmail.value,this.password.value).subscribe((response:any)=>{
         if(response){
           // console.log(response);
-          this.authService.setSession(response);
+          this.tokenStorage.setSession(response);
           // console.log("User is logged in");
           this.router.navigateByUrl('/');
         }

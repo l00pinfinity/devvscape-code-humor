@@ -1,8 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
+
+const httpOptions = {
+  headers: new HttpHeaders({'Content-Type':'application/json'})
+};
 
 @Injectable({
   providedIn: 'root'
@@ -15,25 +19,18 @@ export class AuthService {
   login(usernameOrEmail: string, password: string): Observable<any> {
     return this.http.post(environment.apiUrl + 'api/v1/auth/signin', {
       usernameOrEmail, password
-    });
+    },httpOptions);
   }
 
   signup(email: string, username: string, password: string, bio: string): Observable<any> {
     return this.http.post(environment.apiUrl + 'api/v1/auth/signup', {
       email, username, password, bio
-    });
-  }
-
-  setSession(response: { expiresIn: moment.DurationInputArg1; accessToken: string; }): any {
-    const expiresAt = moment().add(response.expiresIn, 'second');
-
-    sessionStorage.setItem('devvsapeAccessToken', response.accessToken);
-    sessionStorage.setItem('devvscapEexpiresIn', JSON.stringify(expiresAt.valueOf()));
+    },httpOptions);
   }
 
   logout() {
-    sessionStorage.removeItem('devvsapeAccessToken');
-    sessionStorage.removeItem('devvscapEexpiresIn');
+    localStorage.removeItem('devvsapeAccessToken');
+    localStorage.removeItem('devvscapEexpiresIn');
   }
 
   public isLoggedIn() {
@@ -45,7 +42,7 @@ export class AuthService {
   }
 
   getExpiration(): moment.MomentInput {
-    const expiration = sessionStorage.getItem('devvscapEexpiresIn');
+    const expiration = localStorage.getItem('devvscapEexpiresIn');
     const expiresAt = JSON.parse(expiration);
     return moment(expiresAt);
   }
