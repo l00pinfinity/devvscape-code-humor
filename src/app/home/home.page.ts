@@ -13,15 +13,17 @@ import { TokenStorageService } from '../services/token-storage.service';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit{
+export class HomePage implements OnInit {
 
   images$: any;
   page = 0;
+  likedImage?: Images;
+  downloaded?: Images;
   loadingAsset = "../../assets/loading.gif";
 
-  constructor(private data: DataService,private authService:AuthService,private tokenStorage:TokenStorageService, private router:Router,private onlineStatusService: OnlineStatusService, private alertController: AlertController, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
-    
-    this.onlineStatusService.status.subscribe(async (status:OnlineStatusType) => {
+  constructor(private data: DataService, private authService: AuthService, private tokenStorage: TokenStorageService, private router: Router, private onlineStatusService: OnlineStatusService, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
+
+    this.onlineStatusService.status.subscribe(async (status: OnlineStatusType) => {
       if (status === OnlineStatusType.OFFLINE) {
         const toast = this.toastCtrl.create({
           message: "You are offline. Please connect to the internet.",
@@ -30,10 +32,10 @@ export class HomePage implements OnInit{
           color: 'danger',
           icon: 'wifi'
         });
-         await (await toast).present();
-         setTimeout(async () =>{
+        await (await toast).present();
+        setTimeout(async () => {
           (await toast).dismiss();
-        },3000);
+        }, 3000);
       }
     })
   }
@@ -44,109 +46,109 @@ export class HomePage implements OnInit{
       event.detail.complete();
     }, 2000);
   }
-  
-  getImages(){
-    this.data.getImages().subscribe((response:any) =>{
-      if(response){
+
+  getImages() {
+    this.data.getImages().subscribe((response: any) => {
+      if (response) {
 
       }
-    },async (error:Error | HttpErrorResponse) =>{
+    }, async (error: Error | HttpErrorResponse) => {
       const toast = this.toastCtrl.create({
         message: `${error}`,
         duration: 10000,
-        position:'bottom',
+        position: 'bottom',
         color: 'danger'
       });
       (await toast).present();
-        setTimeout(async () =>{
-          (await toast).dismiss();
-        },1000);
+      setTimeout(async () => {
+        (await toast).dismiss();
+      }, 1000);
     })
   }
 
-  getImageById(id:number){
+  getImageById(id: number) {
     this.data.getImageById(id).subscribe(
-      (response:any) =>{
-        if(response){
+      (response: any) => {
+        if (response) {
           // console.log(response);
           //save the id
         }
-      },async (error:Error | HttpErrorResponse) =>{
+      }, async (error: Error | HttpErrorResponse) => {
         const toast = this.toastCtrl.create({
           message: `${error}`,
           duration: 10000,
-          position:'bottom',
+          position: 'bottom',
           color: 'danger'
         });
         (await toast).present();
-        setTimeout(async () =>{
+        setTimeout(async () => {
           (await toast).dismiss();
-        },1000);
+        }, 1000);
       })
   }
 
-  public getPaginatedImages(isFirstLoad,event){
-        this.data.getPaginatedImages(this.page).subscribe(
-          (response:any) =>{
-            if(response){
-              // console.log(response);
-              this.images$ = response;
-            }
-            if(isFirstLoad){
-              event.target.complete();
-            }
-            this.page++;
-          },async (error:Error | HttpErrorResponse) =>{
-            const toast = this.toastCtrl.create({
-              message: `${error.message}`,
-              duration: 10000,
-              position:'bottom',
-              color: 'danger',
-              icon: 'sad'
-            });
-            (await toast).present();
-            setTimeout(async () =>{
-              (await toast).dismiss();
-            },1000);
+  public getPaginatedImages(isFirstLoad, event) {
+    this.data.getPaginatedImages(this.page).subscribe(
+      (response: any) => {
+        if (response) {
+          // console.log(response);
+          this.images$ = response;
+        }
+        if (isFirstLoad) {
+          event.target.complete();
+        }
+        this.page++;
+      }, async (error: Error | HttpErrorResponse) => {
+        const toast = this.toastCtrl.create({
+          message: `${error.message}`,
+          duration: 10000,
+          position: 'bottom',
+          color: 'danger',
+          icon: 'sad'
+        });
+        (await toast).present();
+        setTimeout(async () => {
+          (await toast).dismiss();
+        }, 1000);
 
-            //redirect to login to update token
-            this.router.navigateByUrl('/login')
-          })
+        //redirect to login to update token
+        this.router.navigateByUrl('/login')
+      })
   }
 
-  onSelect(image:Images){
-    // console.log(image);
+  onSelect(image: Images) {
+    // console.log(image.id + ' selected');
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.isAccessTokenPresent();
   }
 
-  ionViewWillLeave(){
-    this.isAccessTokenPresent(); 
-    this.authService.refresh();   
+  ionViewWillLeave() {
+    this.isAccessTokenPresent();
+    this.authService.refresh();
   }
 
-  isAccessTokenPresent(){
-    if(localStorage.getItem('devvscapeFirstAppLoad')){
+  isAccessTokenPresent() {
+    if (localStorage.getItem('devvscapeFirstAppLoad')) {
       //already been loaded
-      if(this.tokenStorage.getAccessToken()){
-        this.getPaginatedImages(false,"");
-      }else{
+      if (this.tokenStorage.getAccessToken()) {
+        this.getPaginatedImages(false, "");
+      } else {
         this.router.navigateByUrl('/login');
         this.isAccessTokenPresent();
       }
-    }else{
-      localStorage.setItem('devvscapeFirstAppLoad','yes');
+    } else {
+      localStorage.setItem('devvscapeFirstAppLoad', 'yes');
       this.router.navigateByUrl('/signup')
     }
   }
 
-  toggle(event){
+  toggle(event) {
     console.log(event);
   }
 
-  logout(){
+  logout() {
     this.authService.logout();
     this.router.navigateByUrl('/login');
   }
