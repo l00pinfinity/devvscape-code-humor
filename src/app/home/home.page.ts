@@ -17,6 +17,7 @@ export class HomePage implements OnInit{
 
   images$: any;
   page = 0;
+  loadingAsset = "../../assets/loading.gif";
 
   constructor(private data: DataService,private authService:AuthService,private tokenStorage:TokenStorageService, private router:Router,private onlineStatusService: OnlineStatusService, private alertController: AlertController, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
     

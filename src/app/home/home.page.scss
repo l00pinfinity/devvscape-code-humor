@@ -55,6 +55,56 @@ ion-button {
   text-align: center;
 }
 
+ion-menu::part(backdrop) {
+  background-color: rgba(13, 90, 62, 0.5);
+}
+
+ion-menu::part(container) {
+  border-radius: 0 20px 20px 0;
+  box-shadow: 4px 0px 16px rgba(13, 90, 62, 0.5);
+}
+
+
+ion-content {
+  background-color: none !important;
+}
+
+ion-footer {
+  margin: auto;
+  padding: 10px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+}
+
+ion-text {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  display: inline;
+  margin: 1em;
+}
+
+ion-icon {
+  width: 30px;
+  height: 30px;
+}
+
+ion-label{
+  margin-left: 1em;
+}
+
 @keyframes cssAnimation {
   0% {
     opacity: 0;
