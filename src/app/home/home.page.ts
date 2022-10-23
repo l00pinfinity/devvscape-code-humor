@@ -128,4 +128,9 @@ export class HomePage implements OnInit{
   toggle(event){
     console.log(event);
   }
+
+  logout(){
+    this.authService.logout();
+    this.router.navigateByUrl('/login');
+  }
 }
