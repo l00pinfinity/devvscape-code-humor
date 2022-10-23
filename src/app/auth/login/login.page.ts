@@ -31,6 +31,7 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit():void {
+    this.authService.logout();
     if(this.tokenStorage.getAccessToken()){
       this.router.navigateByUrl('/home');
     }else{
@@ -42,9 +43,9 @@ export class LoginPage implements OnInit {
     if (this.usernameOrEmail && this.password) {
       this.authService.login(this.usernameOrEmail.value,this.password.value).subscribe((response:any)=>{
         if(response){
-          console.log(response);
+          // console.log(response);
           this.tokenStorage.setSession(response);
-          console.log("User is logged in");
+          // console.log("User is logged in");
           this.isLoggedIn = true;
           this.isLoginFailed = false;
           this.router.navigateByUrl('/home');
@@ -59,7 +60,7 @@ export class LoginPage implements OnInit {
           duration: 10000,
           position:'bottom',
           color: 'danger',
-          icon: 'globe'
+          icon: 'sad'
         });
         (await toast).present();
         setTimeout(async () =>{

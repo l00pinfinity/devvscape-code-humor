@@ -34,11 +34,12 @@ export class SignupPage implements OnInit {
   }
 
   ngOnInit() {
+    this.authService.logout();
   }
 
   onSignUp():void {
     if (this.email && this.username, this.password, this.bio) {
-      this.authService.signup(this.email.value, this.username.value, this.password.value, this.bio.value).subscribe((response: any) => {
+      this.authService.signup(this.email.value, this.username.value, this.password.value, this.bio.value).subscribe(async (response: any) => {
         if (response.success == true) {
           console.log(response);        
           this.isSuccessul = true;  
@@ -47,6 +48,17 @@ export class SignupPage implements OnInit {
           this.signupStatus = response;
           this.errorMessage = this.signupStatus.message;
           this.isSignUpFailed = true;
+          const toast = this.toastCtrl.create({
+            message: this.errorMessage,
+            duration: 10000,
+            position: 'bottom',
+            color: 'danger',
+            icon: 'sad'
+          });
+          (await toast).present();
+          setTimeout(async () => {
+            (await toast).dismiss();
+          }, 3000)
         }
       }, async (error: Error | HttpErrorResponse) => {
         this.isSignUpFailed = true;
@@ -54,7 +66,8 @@ export class SignupPage implements OnInit {
           message: `${error.message}`,
           duration: 10000,
           position: 'bottom',
-          color: 'danger'
+          color: 'danger',
+          icon: 'sad'
         });
         (await toast).present();
         setTimeout(async () => {

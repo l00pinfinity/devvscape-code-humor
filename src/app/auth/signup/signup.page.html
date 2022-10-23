@@ -10,7 +10,6 @@
       <div class="row no-gutters">
         <div class="col-lg-12">
           <h1 class="font-weight-bold py-3 mx-5">Create account</h1>
-          <h5 class="error">{{errorMessage}}</h5>
           <form [formGroup]="signupForm" class="p-4 p-md-5" (ngSubmit)="onSignUp()">
             <div class="form-row">
               <div class="col-lg-7">
@@ -36,7 +35,8 @@
               <div class="col-lg-7">
                 <ion-input type="password" class="form-control my-3 p-3" formControlName="confirmpassword"
                   appConfirmEqualValidator="password" placeholder="Confirm password"></ion-input>
-                <ion-text class="error" *ngIf="passwordMatchError">Password do not match</ion-text>
+                <ion-text class="error" *ngIf="passwordMatchError">*Password do not match</ion-text>
+                <br>
                 <ion-text class="error"
                   *ngIf="confirmpassword && confirmpassword.invalid && confirmpassword.touched">*Confirm password is
                   required</ion-text>
