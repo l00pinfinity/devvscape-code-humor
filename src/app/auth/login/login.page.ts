@@ -32,6 +32,7 @@ export class LoginPage implements OnInit {
 
   ngOnInit():void {
     this.authService.logout();
+    localStorage.setItem('devvscapeFirstAppLoad','yes');
     if(this.tokenStorage.getAccessToken()){
       this.router.navigateByUrl('/home');
     }else{
@@ -55,8 +56,9 @@ export class LoginPage implements OnInit {
           this.isLoginFailed = true;
         }
       },async (error:Error | HttpErrorResponse) =>{
+        const message = error.message.split(" ").splice(-2);
         const toast = this.toastCtrl.create({
-          message: `${error.name}:Incorrect credentials, try again`,
+          message: `${error.name}: ${message}`,
           duration: 10000,
           position:'bottom',
           color: 'danger',

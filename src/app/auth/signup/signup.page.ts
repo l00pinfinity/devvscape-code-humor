@@ -35,6 +35,7 @@ export class SignupPage implements OnInit {
 
   ngOnInit() {
     this.authService.logout();
+    localStorage.setItem('devvscapeFirstAppLoad','yes');
   }
 
   onSignUp():void {

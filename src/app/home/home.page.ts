@@ -27,7 +27,8 @@ export class HomePage implements OnInit{
           message: "You are offline. Please connect to the internet.",
           duration: 5000,
           position: 'bottom',
-          color: 'danger'
+          color: 'danger',
+          icon: 'wifi'
         });
          await (await toast).present();
          setTimeout(async () =>{
@@ -45,6 +46,22 @@ export class HomePage implements OnInit{
   }
   
   getImages(){
+    this.data.getImages().subscribe((response:any) =>{
+      if(response){
+
+      }
+    },async (error:Error | HttpErrorResponse) =>{
+      const toast = this.toastCtrl.create({
+        message: `${error}`,
+        duration: 10000,
+        position:'bottom',
+        color: 'danger'
+      });
+      (await toast).present();
+        setTimeout(async () =>{
+          (await toast).dismiss();
+        },1000);
+    })
   }
 
   getImageById(id:number){
@@ -54,7 +71,6 @@ export class HomePage implements OnInit{
           // console.log(response);
           //save the id
         }
-        this.page++;
       },async (error:Error | HttpErrorResponse) =>{
         const toast = this.toastCtrl.create({
           message: `${error}`,
@@ -82,10 +98,11 @@ export class HomePage implements OnInit{
             this.page++;
           },async (error:Error | HttpErrorResponse) =>{
             const toast = this.toastCtrl.create({
-              message: `${error}`,
+              message: `${error.message}`,
               duration: 10000,
               position:'bottom',
-              color: 'danger'
+              color: 'danger',
+              icon: 'sad'
             });
             (await toast).present();
             setTimeout(async () =>{
@@ -98,7 +115,7 @@ export class HomePage implements OnInit{
   }
 
   onSelect(image:Images){
-    console.log(image);
+    // console.log(image);
   }
 
   ngOnInit(){
