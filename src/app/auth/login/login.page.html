@@ -15,18 +15,18 @@
           <form [formGroup]="loginForm" class="p-4 p-md-5" (ngSubmit)="onLogin()">
             <div class="form-row">
               <div class="col-lg-7">
-                <input type="text" class="form-control my-3 p-3" formControlName="usernameOrEmail"
-                  placeholder="Username or Email">
-                <span class="error"
+                <ion-input type="text" class="form-control my-3 p-3" formControlName="usernameOrEmail"
+                  placeholder="Username or Email"></ion-input>
+                <ion-text class="error"
                   *ngIf="usernameOrEmail && usernameOrEmail.invalid && usernameOrEmail.touched">*Username or Email is
-                  required</span>
+                  required</ion-text>
               </div>
             </div>
             <div class="form-row">
               <div class="col-lg-7">
-                <input type="password" class="form-control my-3 p-3" formControlName="password" placeholder="*******">
-                <span class="error" *ngIf="password && password.invalid && password.touched">*Password is
-                  required</span>
+                <ion-input type="password" class="form-control my-3 p-3" formControlName="password" placeholder="*******"></ion-input>
+                <ion-text class="error" *ngIf="password && password.invalid && password.touched">*Password is
+                  required</ion-text>
               </div>
             </div>
             <div class="form-row">
@@ -35,7 +35,7 @@
               </div>
             </div>
             <!-- <a href="">Forgot password</a> -->
-            <p>Don't have an account? <a href="/signup">Sign up</a></p>
+            <ion-text>Don't have an account? <a href="/signup">Sign up</a></ion-text>
           </form>
         </div>
       </div>

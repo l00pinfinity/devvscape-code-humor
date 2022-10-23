@@ -14,39 +14,39 @@
           <form [formGroup]="signupForm" class="p-4 p-md-5" (ngSubmit)="onSignUp()">
             <div class="form-row">
               <div class="col-lg-7">
-                <input type="email" class="form-control my-3 p-3" formControlName="email" placeholder="Email address">
-                <span class="error" *ngIf="email && email.invalid && email.touched">*Email address is required</span>
+                <ion-input type="email" class="form-control my-3 p-3" formControlName="email" placeholder="Email address"></ion-input>
+                <ion-text class="error" *ngIf="email && email.invalid && email.touched">*Email address is required</ion-text>
               </div>
             </div>
             <div class="form-row">
               <div class="col-lg-7">
-                <input type="text" class="form-control my-3 p-3" formControlName="username" placeholder="Username">
-                <span class="error" *ngIf="username && username.invalid && username.touched">*Username is
-                  required</span>
+                <ion-input type="text" class="form-control my-3 p-3" formControlName="username" placeholder="Username"></ion-input>
+                <ion-text class="error" *ngIf="username && username.invalid && username.touched">*Username is
+                  required</ion-text>
               </div>
             </div>
             <div class="form-row">
               <div class="col-lg-7">
-                <input type="password" class="form-control my-3 p-3" formControlName="password" placeholder="Password">
-                <span class="error" *ngIf="password && password.invalid && password.touched">*Password is
-                  required</span>
+                <ion-input type="password" class="form-control my-3 p-3" formControlName="password" placeholder="Password"></ion-input>
+                <ion-text class="error" *ngIf="password && password.invalid && password.touched">*Password is
+                  required</ion-text>
               </div>
             </div>
             <div class="form-row">
               <div class="col-lg-7">
-                <input type="password" class="form-control my-3 p-3" formControlName="confirmpassword"
-                  appConfirmEqualValidator="password" placeholder="Confirm password">
-                <span class="error" *ngIf="passwordMatchError">Password do not match</span>
-                <span class="error"
+                <ion-input type="password" class="form-control my-3 p-3" formControlName="confirmpassword"
+                  appConfirmEqualValidator="password" placeholder="Confirm password"></ion-input>
+                <ion-text class="error" *ngIf="passwordMatchError">Password do not match</ion-text>
+                <ion-text class="error"
                   *ngIf="confirmpassword && confirmpassword.invalid && confirmpassword.touched">*Confirm password is
-                  required</span>
+                  required</ion-text>
               </div>
             </div>
             <div class="form-row">
               <div class="col-lg-7">
-                <textarea type="text" class="form-control my-3 p-3" formControlName="bio"
-                  placeholder="About you"></textarea>
-                <span class="error" *ngIf="bio && bio.invalid && bio.touched">*Bio is required</span>
+                <ion-textarea type="text" class="form-control my-3 p-3" formControlName="bio"
+                  placeholder="About you"></ion-textarea>
+                <ion-text class="error" *ngIf="bio && bio.invalid && bio.touched">*Bio is required</ion-text>
               </div>
             </div>
             <div class="form-row">
@@ -55,7 +55,7 @@
               </div>
             </div>
             <!-- <a href="">Forgot password</a> -->
-            <p>Already have an account? <a href="/login">Login</a></p>
+            <ion-text class="lead">Already have an account? <a href="/login">Login</a></ion-text>
           </form>
         </div>
       </div>

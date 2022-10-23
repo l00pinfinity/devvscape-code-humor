@@ -51,7 +51,12 @@ input.ng-valid {
 
 .row{
     background-color: #fff;
-    border-radius: 30px;
-    height: 100%;
-    width: 100%;
+}
+
+ion-text,h1{
+    color: #000;
+}
+
+a{
+    text-decoration: none;
 }
