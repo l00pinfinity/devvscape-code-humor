@@ -31,7 +31,6 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit():void {
-    this.authService.logout();
     localStorage.setItem('devvscapeFirstAppLoad','yes');
     if(this.tokenStorage.getAccessToken()){
       this.router.navigateByUrl('/home');

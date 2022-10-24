@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AlertController, Platform } from '@ionic/angular';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 @Component({
   selector: 'app-root',
@@ -8,8 +9,17 @@ import { AlertController, Platform } from '@ionic/angular';
 })
 export class AppComponent {
   constructor(private platform: Platform,public alertCtrl: AlertController) {
+    this.initializeApp();
     this.platform.backButton.subscribeWithPriority(10,() => {
       this.exitConfirm();
+    })
+  }
+
+ async initializeApp() {
+    this.platform.ready().then(async () => {
+      await SplashScreen.hide({
+        fadeOutDuration:200
+      });
     })
   }
 
