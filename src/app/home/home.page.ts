@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ActionSheetController, AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
 import { DataService } from '../services/data.service';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 import { Images } from '../core/interface/images';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { TokenStorageService } from '../services/token-storage.service';
+import { Router } from '@angular/router';
+import { VersionService } from '../services/version.service';
 
 @Component({
   selector: 'app-home',
@@ -20,8 +21,9 @@ export class HomePage implements OnInit {
   likedImage?: Images;
   downloaded?: Images;
   loadingAsset = "../../assets/loading.gif";
+  currentVersion:string;
 
-  constructor(private data: DataService, private authService: AuthService, private tokenStorage: TokenStorageService, private router: Router, private onlineStatusService: OnlineStatusService, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
+  constructor(private data: DataService, private authService: AuthService,private version:VersionService, private tokenStorage: TokenStorageService, private router: Router, private onlineStatusService: OnlineStatusService, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
     
     this.onlineStatusService.status.subscribe(async (status: OnlineStatusType) => {
       if (status === OnlineStatusType.OFFLINE) {
@@ -122,6 +124,7 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.isAccessTokenPresent();
+    this.currentVersion = this.version.getCurrentVersion();
   }
 
   ionViewWillLeave() {

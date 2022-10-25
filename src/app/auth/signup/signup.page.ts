@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { PasswordValidators } from 'src/app/core/validators/password-validators';
 import { AuthService } from 'src/app/services/auth.service';
+import { VersionService } from 'src/app/services/version.service';
 
 @Component({
   selector: 'app-signup',
@@ -18,8 +19,9 @@ export class SignupPage implements OnInit {
   errorMessage:string;
   isSuccessul = false;
   isSignUpFailed = false;
+  currentVersion: string;
 
-  constructor(private router: Router, private authService: AuthService, private toastCtrl: ToastController) {
+  constructor(private router: Router, private authService: AuthService,private version:VersionService, private toastCtrl: ToastController) {
     this.signupForm = this.createFormGroup();
   }
 
@@ -34,6 +36,7 @@ export class SignupPage implements OnInit {
   }
 
   ngOnInit() {
+    this.currentVersion = this.version.getCurrentVersion();
     this.authService.logout();
     localStorage.setItem('devvscapeFirstAppLoad','yes');
   }

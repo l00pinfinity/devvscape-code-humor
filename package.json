@@ -19,6 +19,7 @@
     "@angular/platform-browser": "^14.0.0",
     "@angular/platform-browser-dynamic": "^14.0.0",
     "@angular/router": "^14.0.0",
+    "@angular/service-worker": "^14.0.0",
     "@capacitor/android": "4.3.0",
     "@capacitor/app": "4.0.1",
     "@capacitor/core": "4.3.0",
@@ -26,14 +27,13 @@
     "@capacitor/keyboard": "4.0.1",
     "@capacitor/splash-screen": "^4.1.1",
     "@capacitor/status-bar": "4.0.1",
-    "@ionic/angular": "^6.1.9",
+    "@ionic/angular": "^6.3.2",
     "capacitor": "^0.0.3",
     "ionicons": "^6.0.3",
     "moment": "^2.29.4",
     "ngx-online-status": "^2.0.0",
     "rxjs": "~6.6.0",
     "splash-screen": "^4.0.1",
-    "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -67,6 +67,7 @@
     "karma-jasmine-html-reporter": "^1.5.0",
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
+    "tslib": "^2.4.0",
     "typescript": "~4.7.3"
   },
   "description": "An Ionic project"

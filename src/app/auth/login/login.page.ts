@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { VersionService } from 'src/app/services/version.service';
 
 @Component({
   selector: 'app-login',
@@ -18,8 +19,9 @@ export class LoginPage implements OnInit {
   errorMessage:string;
   isLoggedIn = false;
   isLoginFailed = false;
+  currentVersion:string;
 
-  constructor(private router:Router,private authService:AuthService, private tokenStorage:TokenStorageService,public toastCtrl: ToastController) {
+  constructor(private router:Router,private authService:AuthService,private version:VersionService, private tokenStorage:TokenStorageService,public toastCtrl: ToastController) {
     this.loginForm = this.createFormGroup();
    }
 
@@ -31,6 +33,7 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit():void {
+    this.currentVersion = this.version.getCurrentVersion();
     localStorage.setItem('devvscapeFirstAppLoad','yes');
     if(this.tokenStorage.getAccessToken()){
       this.router.navigateByUrl('/home');
