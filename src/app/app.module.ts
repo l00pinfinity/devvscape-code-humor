@@ -9,9 +9,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { OnlineStatusModule } from 'ngx-online-status';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './core/interceptor/token-interceptor';
+import { LazyImgDirective } from './core/directive/lazy-img.directive';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, LazyImgDirective],
   imports: [BrowserModule,OnlineStatusModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide:HTTP_INTERCEPTORS,useClass:TokenInterceptor,multi:true}],

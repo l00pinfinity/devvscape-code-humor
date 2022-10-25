@@ -1,64 +1,134 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Devvscape - Sign Up</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-menu contentId="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Devvscape | SignUp</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding">
+    <ion-list>
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-label>
+            Socials
+          </ion-label>
+        </ion-item-divider>
 
-<ion-content>
-  <section class="form my-4">
-    <div class="container-fluid text-center ">
-      <div class="row no-gutters">
-        <div class="col-lg-12">
-          <h1 class="font-weight-bold py-3 mx-5">Create account</h1>
-          <form [formGroup]="signupForm" class="p-4 p-md-5" (ngSubmit)="onSignUp()">
-            <div class="form-row">
-              <div class="col-lg-7">
-                <ion-input type="email" class="form-control my-3 p-3" formControlName="email" placeholder="Email address"></ion-input>
-                <ion-text class="error" *ngIf="email && email.invalid && email.touched">*Email address is required</ion-text>
+        <ion-item href="https://devvscape.com/" class="ion-activated">
+          <ion-icon name="apps-sharp" slot="start"></ion-icon>
+          <ion-label>Devvscape </ion-label>
+        </ion-item>
+        <ion-item href="https://www.silkwebhq.com/" class="ion-activated">
+          <ion-icon name="desktop-sharp" slot="start"></ion-icon>
+          <ion-label>Silkweb HQ</ion-label>
+        </ion-item>
+      </ion-item-group>
+
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-label>
+            About
+          </ion-label>
+        </ion-item-divider>
+
+        <ion-item href="https://www.devvscape.com" class="ion-activated">
+          <ion-icon name="share-social-sharp" slot="start"></ion-icon>
+          <ion-label>Review and Share</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="code-sharp" slot="start"></ion-icon>
+          <ion-label>App Version</ion-label>
+          <ion-text class="text-muted">v.1.0</ion-text>
+        </ion-item>
+      </ion-item-group>
+    </ion-list>
+    <ion-footer>
+      <ion-text class="center" style="color: #fff;">The Future of SilkwebHQ and the SilkCommunity</ion-text>
+      <hr style="color: #fff;">
+      <ul>
+        <li><a href="https://discord.gg/hNY2xndWjF" target="_blank" class="socialBtn">
+            <ion-icon name="logo-discord"></ion-icon>
+          </a></li>
+        <li><a href="https://join.slack.com/t/silkwebhq/shared_invite/zt-18tuxa6n9-nTOBBbUGfS4YMdxp7aSbbw"
+            target="_blank" class="socialBtn">
+            <ion-icon name="logo-slack"></ion-icon>
+          </a></li>
+        <li><a href="https://github.com/silkwebhq" target="_blank" class="socialBtn">
+            <ion-icon name="logo-github"></ion-icon>
+          </a></li>
+        <li><a href="https://twitter.com/silkwebhq" target="_blank" class="socialBtn">
+            <ion-icon name="logo-twitter"></ion-icon>
+          </a></li>
+      </ul>
+    </ion-footer>
+  </ion-content>
+</ion-menu>
+<div class="ion-page" id="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Devvscape | CodeHumor</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding">
+    <section class="form my-4">
+      <div class="container-fluid">
+        <div class="row no-gutters">
+          <div class="col-lg-12">
+            <h1 class="font-weight-bold py-3 mx-5">Sign Up</h1>
+            <form [formGroup]="signupForm" class="p-4 p-md-5" (ngSubmit)="onSignUp()">
+              <ion-text>Let's get you all started and setup your profile :)</ion-text>
+              <ion-text class="error">{{errorMessage}}</ion-text>
+              <div class="form-row">
+                <div class="col-lg-7">
+                  <ion-input type="email" class="form-control my-3 p-1" formControlName="email" placeholder="Email address"></ion-input>
+                  <ion-text class="error" *ngIf="email && email.invalid && email.touched">*Email address is required</ion-text>
+                </div>
               </div>
-            </div>
-            <div class="form-row">
-              <div class="col-lg-7">
-                <ion-input type="text" class="form-control my-3 p-3" formControlName="username" placeholder="Username"></ion-input>
-                <ion-text class="error" *ngIf="username && username.invalid && username.touched">*Username is
-                  required</ion-text>
+              <div class="form-row">
+                <div class="col-lg-7">
+                  <ion-input type="text" class="form-control my-3 p-1" formControlName="username" placeholder="Username"></ion-input>
+                  <ion-text class="error" *ngIf="username && username.invalid && username.touched">*Username is
+                    required</ion-text>
+                </div>
               </div>
-            </div>
-            <div class="form-row">
-              <div class="col-lg-7">
-                <ion-input type="password" class="form-control my-3 p-3" formControlName="password" placeholder="Password"></ion-input>
-                <ion-text class="error" *ngIf="password && password.invalid && password.touched">*Password is
-                  required</ion-text>
+              <div class="form-row">
+                <div class="col-lg-7">
+                  <ion-input type="password" class="form-control my-3 p-1" formControlName="password" placeholder="Password"></ion-input>
+                  <ion-text class="error" *ngIf="password && password.invalid && password.touched">*Password is
+                    required</ion-text>
+                </div>
               </div>
-            </div>
-            <div class="form-row">
-              <div class="col-lg-7">
-                <ion-input type="password" class="form-control my-3 p-3" formControlName="confirmpassword"
-                  appConfirmEqualValidator="password" placeholder="Confirm password"></ion-input>
-                <ion-text class="error" *ngIf="passwordMatchError">*Password do not match</ion-text>
-                <br>
-                <ion-text class="error"
-                  *ngIf="confirmpassword && confirmpassword.invalid && confirmpassword.touched">*Confirm password is
-                  required</ion-text>
+              <div class="form-row">
+                <div class="col-lg-7">
+                  <ion-input type="password" class="form-control my-3 p-1" formControlName="confirmpassword"
+                    appConfirmEqualValidator="password" placeholder="Confirm password"></ion-input>
+                  <ion-text class="error" *ngIf="passwordMatchError">*Password do not match</ion-text>
+                  <br>
+                  <ion-text class="error"
+                    *ngIf="confirmpassword && confirmpassword.invalid && confirmpassword.touched">*Confirm password is
+                    required</ion-text>
+                </div>
               </div>
-            </div>
-            <div class="form-row">
-              <div class="col-lg-7">
-                <ion-textarea type="text" class="form-control my-3 p-3" formControlName="bio"
-                  placeholder="About you"></ion-textarea>
-                <ion-text class="error" *ngIf="bio && bio.invalid && bio.touched">*Bio is required</ion-text>
+              <div class="form-row">
+                <div class="col-lg-7">
+                  <ion-textarea type="text" class="form-control my-3" formControlName="bio"
+                    placeholder="About you"></ion-textarea>
+                  <ion-text class="error" *ngIf="bio && bio.invalid && bio.touched">*Bio is required</ion-text>
+                </div>
               </div>
-            </div>
-            <div class="form-row">
-              <div class="col-lg-7">
-                <button [disabled]="!signupForm.valid" class="btn mt-3 mb-5">Sign up</button>
+              <div class="form-row">
+                <div class="col-lg-7">
+                  <button [disabled]="!signupForm.valid" class="btn mt-3 mb-5">Sign up</button>
+                </div>
               </div>
-            </div>
-            <!-- <a href="">Forgot password</a> -->
-            <ion-text class="lead">Already have an account? <a href="/login">Login</a></ion-text>
-          </form>
+              <!-- <a href="">Forgot password</a> -->
+              <ion-text>Already have an account? <a href="/login"> Login</a></ion-text>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-</ion-content>
+    </section>
+  </ion-content>
+</div>

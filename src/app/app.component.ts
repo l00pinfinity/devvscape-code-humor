@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { AlertController, Platform } from '@ionic/angular';
+import { Component, Optional } from '@angular/core';
+import { AlertController, IonRouterOutlet, Platform } from '@ionic/angular';
 import { SplashScreen } from '@capacitor/splash-screen';
 
 @Component({
@@ -8,9 +8,9 @@ import { SplashScreen } from '@capacitor/splash-screen';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor(private platform: Platform,public alertCtrl: AlertController) {
+  constructor(private platform: Platform, public alertCtrl: AlertController,@Optional() private routerOutlet?: IonRouterOutlet) {
     this.initializeApp();
-    this.platform.backButton.subscribeWithPriority(10,() => {
+    this.platform.backButton.subscribeWithPriority(-1,() => {
       this.exitConfirm();
     })
   }
@@ -45,6 +45,5 @@ export class AppComponent {
       }]
     });
     (await confirm).present();
-  }
-  
+  }  
 }

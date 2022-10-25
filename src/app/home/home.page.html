@@ -92,7 +92,7 @@
       <br>
       <ion-card *ngFor="let image of images$" class="memeCard" (click)="onSelect(image)">
         <!--(click)="presentActionSheet()"-->
-        <ion-img src="{{image.imageUrl || loadingAsset}}" alt="{{image.id}}" loading="lazy"></ion-img>
+        <ion-img app:LazyImg src="{{image.imageUrl || loadingAsset}}" alt="{{image.id}}" loading="lazy"></ion-img>
         <ion-card-content>
           <ion-grid>
             <ion-row>

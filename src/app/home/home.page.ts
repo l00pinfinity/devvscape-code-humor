@@ -22,7 +22,7 @@ export class HomePage implements OnInit {
   loadingAsset = "../../assets/loading.gif";
 
   constructor(private data: DataService, private authService: AuthService, private tokenStorage: TokenStorageService, private router: Router, private onlineStatusService: OnlineStatusService, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
-
+    
     this.onlineStatusService.status.subscribe(async (status: OnlineStatusType) => {
       if (status === OnlineStatusType.OFFLINE) {
         const toast = this.toastCtrl.create({
@@ -40,7 +40,7 @@ export class HomePage implements OnInit {
     })
   }
 
-  doRefresh(event: { detail: { complete: () => void; }; }) {
+  doRefresh(event) {
     this.getPaginatedImages(false, "");
     setTimeout(() => {
       event.detail.complete();

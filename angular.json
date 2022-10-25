@@ -30,6 +30,7 @@
                 "output": "./svg"
               }
             ],
+            "allowedCommonJsDependencies": ["moment"],
             "styles": ["src/theme/variables.scss", "src/global.scss"],
             "scripts": [],
             "aot": false,
@@ -50,8 +51,8 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
+              "sourceMap": true,
+              "namedChunks": true,
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -59,8 +60,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "900KB",
+                  "maximumError": "1mb"
                 }
               ]
             },
