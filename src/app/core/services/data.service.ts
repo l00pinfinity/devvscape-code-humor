@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { throwError } from 'rxjs';
 import { catchError, map, retry, shareReplay } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Images } from "../core/interface/images";
+import { Images } from '../interface/images';
 
 @Injectable({
   providedIn: 'root'

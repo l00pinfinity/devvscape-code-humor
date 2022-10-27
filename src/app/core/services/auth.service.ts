@@ -13,6 +13,7 @@ const httpOptions = {
 })
 
 export class AuthService {
+  loading: boolean = true;
 
   constructor(private http: HttpClient) { }
 
@@ -26,6 +27,18 @@ export class AuthService {
     return this.http.post(environment.apiUrl + 'api/v1/auth/signup', {
       email, username, password, bio
     },httpOptions);
+  }
+
+  isPageLoading(): boolean {
+    if(this.loading === true){
+      setTimeout(() => {
+        // console.log(this.loading);
+        return this.loading = false;
+      }, 6000);
+    }else{
+      // console.log(this.loading);
+      return this.loading;
+    }
   }
 
   logout() {
