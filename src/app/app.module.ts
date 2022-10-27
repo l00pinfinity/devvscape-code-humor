@@ -12,6 +12,7 @@ import { TokenInterceptor } from './core/interceptor/token-interceptor';
 import { LazyImgDirective } from './core/directive/lazy-img.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 
 @NgModule({
   declarations: [AppComponent, LazyImgDirective],
@@ -21,8 +22,8 @@ import { environment } from '../environments/environment';
   // or after 30 seconds (whichever comes first).
   registrationStrategy: 'registerWhenStable:30000'
 })],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  providers: [InAppBrowser,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide:HTTP_INTERCEPTORS,useClass:TokenInterceptor,multi:true}],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

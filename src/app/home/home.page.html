@@ -13,11 +13,11 @@
           </ion-label>
         </ion-item-divider>
 
-        <ion-item href="https://devvscape.com/" class="ion-activated">
+        <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://devvscape.com/')">
           <ion-icon name="apps-sharp" slot="start"></ion-icon>
           <ion-label>Devvscape </ion-label>
         </ion-item>
-        <ion-item href="https://www.silkwebhq.com/" class="ion-activated">
+        <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://silkwebhq.com/')">
           <ion-icon name="desktop-sharp" slot="start"></ion-icon>
           <ion-label>Silkwebhq Technologies</ion-label>
         </ion-item>
@@ -30,15 +30,15 @@
           </ion-label>
         </ion-item-divider>
 
-        <ion-item href="https://play.google.com/store/apps/details?id=com.silkwebhq.devvscapecode" class="ion-activated">
+        <ion-item class="ion-activated" (click)="openWithSystemBrowser('https://play.google.com/store/apps/details?id=com.silkwebhq.devvscapecode')">
           <ion-icon name="share-social-sharp" slot="start"></ion-icon>
           <ion-label>Review and Share</ion-label>
         </ion-item>
-        <ion-item href="https://silkwebhq.com/terms" class="ion-activated">
+        <ion-item  (click)="openWithInAppBrowser('https://silkwebhq.com/terms')">
           <ion-icon name="document-outline" slot="start"></ion-icon>
           <ion-label>Terms & Conditions</ion-label>
         </ion-item>
-        <ion-item href="https://silkwebhq.com/privacy" class="ion-activated">
+        <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://silkwebhq.com/privacy')">
           <ion-icon name="document-lock-outline" slot="start"></ion-icon>
           <ion-label>Privacy Policy</ion-label>
         </ion-item>

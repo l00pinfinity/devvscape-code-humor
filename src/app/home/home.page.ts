@@ -8,6 +8,7 @@ import { AuthService } from '../core/services/auth.service';
 import { TokenStorageService } from '../core/services/token-storage.service';
 import { Router } from '@angular/router';
 import { VersionService } from '../core/services/version.service';
+import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
 
 @Component({
   selector: 'app-home',
@@ -21,10 +22,27 @@ export class HomePage implements OnInit {
   likedImage?: Images;
   downloaded?: Images;
   loadingAsset = "../../assets/loading.gif";
-  currentVersion:string;
+  currentVersion: string;
   loading: boolean;
+  options: InAppBrowserOptions = {
+    location: 'yes',//Or 'no' 
+    hidden: 'no', //Or  'yes'
+    clearcache: 'yes',
+    clearsessioncache: 'yes',
+    zoom: 'yes',//Android only ,shows browser zoom controls 
+    hardwareback: 'yes',
+    mediaPlaybackRequiresUserAction: 'no',
+    shouldPauseOnSuspend: 'no', //Android only 
+    closebuttoncaption: 'Close', //iOS only
+    disallowoverscroll: 'no', //iOS only 
+    toolbar: 'yes', //iOS only 
+    enableViewportScale: 'no', //iOS only 
+    allowInlineMediaPlayback: 'no',//iOS only 
+    presentationstyle: 'pagesheet',//iOS only 
+    fullscreen: 'yes',//Windows only    
+  };
 
-  constructor(private data: DataService, private authService: AuthService,private version:VersionService, private tokenStorage: TokenStorageService, private router: Router, private onlineStatusService: OnlineStatusService, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {    
+  constructor(private data: DataService, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, private onlineStatusService: OnlineStatusService, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser) {
     this.onlineStatusService.status.subscribe(async (status: OnlineStatusType) => {
       if (status === OnlineStatusType.OFFLINE) {
         const toast = this.toastCtrl.create({
@@ -128,6 +146,15 @@ export class HomePage implements OnInit {
     this.loading = this.authService.isPageLoading();
   }
 
+  public openWithSystemBrowser(url: string) {
+    let target = "_system";
+    this.iab.create(url, target, this.options);
+  }
+  public openWithInAppBrowser(url: string) {
+    let target = "_blank";
+    this.iab.create(url, target, this.options);
+  }
+
   ionViewWillLeave() {
     this.isAccessTokenPresent();
     this.authService.refresh();
@@ -152,8 +179,28 @@ export class HomePage implements OnInit {
     console.log(event);
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigateByUrl('/login');
+  async logout() {
+    try {
+      const loading = await this.loadingCtrl.create({
+        message: 'Logging out...',
+        duration: 3000,
+        cssClass: 'custom-loading',
+      });
+      loading.present();
+      this.authService.logout();
+      this.router.navigateByUrl('/login');
+    } catch (error) {
+      const toast = this.toastCtrl.create({
+        message: error,
+        duration: 10000,
+        position: 'bottom',
+        color: 'danger',
+        icon: 'sad'
+      });
+      (await toast).present();
+      setTimeout(async () => {
+        (await toast).dismiss();
+      }, 1000);
+    }
   }
 }
