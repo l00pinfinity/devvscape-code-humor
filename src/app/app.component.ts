@@ -1,6 +1,8 @@
-import { Component, Optional } from '@angular/core';
-import { AlertController, IonRouterOutlet, Platform } from '@ionic/angular';
+import { Component } from '@angular/core';
+import { AlertController, Platform } from '@ionic/angular';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { TokenStorageService } from './core/services/token-storage.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -8,22 +10,23 @@ import { SplashScreen } from '@capacitor/splash-screen';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor(private platform: Platform, public alertCtrl: AlertController,@Optional() private routerOutlet?: IonRouterOutlet) {
-    this.initializeApp();
-    this.platform.backButton.subscribeWithPriority(-1,() => {
+  constructor(private platform: Platform,public alertCtrl: AlertController) {
+    this.platform.backButton.subscribeWithPriority(10,() => {
       this.exitConfirm();
-    })
+    });
+
+    this.initializeApp();
   }
 
  async initializeApp() {
     this.platform.ready().then(async () => {
-      await SplashScreen.hide({
-        fadeOutDuration:200
+      await SplashScreen.show({
+        fadeOutDuration:2000
       });
     })
   }
 
-    async exitConfirm() {
+  async exitConfirm() {
     const confirm = this.alertCtrl.create({
       header: 'Exit App',
       message: 'Do you  want to exit the app?',
@@ -45,5 +48,5 @@ export class AppComponent {
       }]
     });
     (await confirm).present();
-  }  
+  } 
 }

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
-import { DataService } from '../services/data.service';
+import { DataService } from '../core/services/data.service';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 import { Images } from '../core/interface/images';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AuthService } from '../services/auth.service';
-import { TokenStorageService } from '../services/token-storage.service';
+import { AuthService } from '../core/services/auth.service';
+import { TokenStorageService } from '../core/services/token-storage.service';
 import { Router } from '@angular/router';
-import { VersionService } from '../services/version.service';
+import { VersionService } from '../core/services/version.service';
 
 @Component({
   selector: 'app-home',
@@ -22,9 +22,9 @@ export class HomePage implements OnInit {
   downloaded?: Images;
   loadingAsset = "../../assets/loading.gif";
   currentVersion:string;
+  loading: boolean;
 
-  constructor(private data: DataService, private authService: AuthService,private version:VersionService, private tokenStorage: TokenStorageService, private router: Router, private onlineStatusService: OnlineStatusService, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {
-    
+  constructor(private data: DataService, private authService: AuthService,private version:VersionService, private tokenStorage: TokenStorageService, private router: Router, private onlineStatusService: OnlineStatusService, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController) {    
     this.onlineStatusService.status.subscribe(async (status: OnlineStatusType) => {
       if (status === OnlineStatusType.OFFLINE) {
         const toast = this.toastCtrl.create({
@@ -125,6 +125,7 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.isAccessTokenPresent();
     this.currentVersion = this.version.getCurrentVersion();
+    this.loading = this.authService.isPageLoading();
   }
 
   ionViewWillLeave() {
