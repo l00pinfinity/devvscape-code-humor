@@ -20,8 +20,8 @@ export class AppComponent {
 
  async initializeApp() {
     this.platform.ready().then(async () => {
-      await SplashScreen.show({
-        fadeOutDuration:2000
+      await SplashScreen.hide({
+        fadeOutDuration:1000
       });
     })
   }

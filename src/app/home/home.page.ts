@@ -67,31 +67,11 @@ export class HomePage implements OnInit {
     }, 2000);
   }
 
-  getImages() {
-    this.data.getImages().subscribe((response: any) => {
-      if (response) {
-
-      }
-    }, async (error: Error | HttpErrorResponse) => {
-      const toast = this.toastCtrl.create({
-        message: `${error}`,
-        duration: 10000,
-        position: 'bottom',
-        color: 'danger'
-      });
-      (await toast).present();
-      setTimeout(async () => {
-        (await toast).dismiss();
-      }, 1000);
-    })
-  }
-
-  getImageById(id: number) {
-    this.data.getImageById(id).subscribe(
-      (response: any) => {
+  async getImages() {
+    try {
+      this.data.getImages().subscribe((response: any) => {
         if (response) {
-          // console.log(response);
-          //save the id
+
         }
       }, async (error: Error | HttpErrorResponse) => {
         const toast = this.toastCtrl.create({
@@ -105,35 +85,111 @@ export class HomePage implements OnInit {
           (await toast).dismiss();
         }, 1000);
       })
+    } catch (error) {
+      const toast = this.toastCtrl.create({
+        message: error,
+        duration: 10000,
+        position: 'bottom',
+        color: 'danger'
+      });
+      (await toast).present();
+      setTimeout(async () => {
+        (await toast).dismiss();
+      }, 1000);
+    }
   }
 
-  public getPaginatedImages(isFirstLoad, event) {
-    this.data.getPaginatedImages(this.page).subscribe(
-      (response: any) => {
-        if (response) {
-          // console.log(response);
-          this.images$ = response;
-        }
-        if (isFirstLoad) {
-          event.target.complete();
-        }
-        this.page++;
-      }, async (error: Error | HttpErrorResponse) => {
-        const toast = this.toastCtrl.create({
-          message: `${error.message}`,
-          duration: 10000,
-          position: 'bottom',
-          color: 'danger',
-          icon: 'sad'
-        });
-        (await toast).present();
-        setTimeout(async () => {
-          (await toast).dismiss();
-        }, 1000);
+  async getImageById(id: number) {
+    try {
+      this.data.getImageById(id).subscribe(
+        (response: any) => {
+          if (response) {
+            // console.log(response);
+            //save the id
+          }
+        }, async (error: Error | HttpErrorResponse) => {
+          const toast = this.toastCtrl.create({
+            message: `${error}`,
+            duration: 10000,
+            position: 'bottom',
+            color: 'danger'
+          });
+          (await toast).present();
+          setTimeout(async () => {
+            (await toast).dismiss();
+          }, 1000);
+        })
+    } catch (error) {
+      const toast = this.toastCtrl.create({
+        message: error,
+        duration: 10000,
+        position: 'bottom',
+        color: 'danger'
+      });
+      (await toast).present();
+      setTimeout(async () => {
+        (await toast).dismiss();
+      }, 1000);
+    }
+  }
 
-        //redirect to login to update token
-        this.router.navigateByUrl('/login')
-      })
+  public async getPaginatedImages(isFirstLoad, event) {
+    try {
+      this.data.getPaginatedImages(this.page).subscribe(
+        async (response: any) => {
+          if (response) {
+            // console.log(response);
+            this.images$ = response;
+          }else{
+            const toast = this.toastCtrl.create({
+              message: "Something went wrong! Try again",
+              duration: 10000,
+              position: 'bottom',
+              color: 'danger',
+              icon: 'sad'
+            });
+            (await toast).present();
+            setTimeout(async () => {
+              (await toast).dismiss();
+            }, 1000);
+          }
+
+          if (isFirstLoad) {
+            event.target.complete();
+          }
+          this.page++;
+        }, async (error: Error | HttpErrorResponse) => {
+          const toast = this.toastCtrl.create({
+            message: `${error.message}`,
+            duration: 10000,
+            position: 'bottom',
+            color: 'danger',
+            icon: 'sad'
+          });
+          (await toast).present();
+          setTimeout(async () => {
+            (await toast).dismiss();
+          }, 1000);
+
+          //redirect to login to update token
+          this.router.navigateByUrl('/login')
+        })
+    } catch (error) {
+      const toast = this.toastCtrl.create({
+        message: error,
+        duration: 10000,
+        position: 'bottom',
+        color: 'danger',
+        icon: 'sad'
+      });
+      (await toast).present();
+      setTimeout(async () => {
+        (await toast).dismiss();
+      }, 1000);
+
+      //redirect to login to update token
+      this.router.navigateByUrl('/login')
+    }
   }
 
   onSelect(image: Images) {
@@ -189,6 +245,7 @@ export class HomePage implements OnInit {
       loading.present();
       this.authService.logout();
       this.router.navigateByUrl('/login');
+      loading.dismiss();
     } catch (error) {
       const toast = this.toastCtrl.create({
         message: error,
