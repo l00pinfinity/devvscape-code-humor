@@ -4,8 +4,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { PasswordValidators } from 'src/app/core/validators/password-validators';
-import { AuthService } from 'src/app/services/auth.service';
-import { VersionService } from 'src/app/services/version.service';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { VersionService } from 'src/app/core/services/version.service';
 
 @Component({
   selector: 'app-signup',

@@ -3,9 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { AuthService } from 'src/app/services/auth.service';
-import { TokenStorageService } from 'src/app/services/token-storage.service';
-import { VersionService } from 'src/app/services/version.service';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { TokenStorageService } from 'src/app/core/services/token-storage.service';
+import { VersionService } from 'src/app/core/services/version.service';
 
 @Component({
   selector: 'app-login',
