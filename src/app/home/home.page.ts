@@ -6,9 +6,9 @@ import { Images } from '../core/interface/images';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../core/services/auth.service';
 import { TokenStorageService } from '../core/services/token-storage.service';
-import { Router } from '@angular/router';
 import { VersionService } from '../core/services/version.service';
 import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +23,6 @@ export class HomePage implements OnInit {
   downloaded?: Images;
   loadingAsset = "../../assets/loading.gif";
   currentVersion: string;
-  loading: boolean;
   options: InAppBrowserOptions = {
     location: 'yes',//Or 'no' 
     hidden: 'no', //Or  'yes'
@@ -199,7 +198,6 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.isAccessTokenPresent();
     this.currentVersion = this.version.getCurrentVersion();
-    this.loading = this.authService.isPageLoading();
   }
 
   public openWithSystemBrowser(url: string) {
