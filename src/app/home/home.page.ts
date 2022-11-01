@@ -21,6 +21,7 @@ export class HomePage implements OnInit {
   page = 0;
   likedImage?: Images;
   downloaded?: Images;
+  loading:boolean = true;
   loadingAsset = "../../assets/loading.gif";
   currentVersion: string;
   options: InAppBrowserOptions = {
@@ -196,6 +197,10 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
+    setTimeout(() =>{
+      //delay for three seconds
+      this.loading = false;
+    },3000)
     this.isAccessTokenPresent();
     this.currentVersion = this.version.getCurrentVersion();
   }
