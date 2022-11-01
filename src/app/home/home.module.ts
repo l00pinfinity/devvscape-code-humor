@@ -14,7 +14,7 @@ import { HomePageRoutingModule } from './home-routing.module';
     FormsModule,
     IonicModule,
     HomePageRoutingModule,
-    ScrollingModule
+    ScrollingModule,
   ],
   declarations: [HomePage]
 })
