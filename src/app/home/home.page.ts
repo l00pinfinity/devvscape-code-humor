@@ -43,21 +43,7 @@ export class HomePage implements OnInit {
   };
 
   constructor(private data: DataService, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, private onlineStatusService: OnlineStatusService, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser) {
-    this.onlineStatusService.status.subscribe(async (status: OnlineStatusType) => {
-      if (status === OnlineStatusType.OFFLINE) {
-        const toast = this.toastCtrl.create({
-          message: "You are offline. Please connect to the internet.",
-          duration: 5000,
-          position: 'bottom',
-          color: 'danger',
-          icon: 'wifi'
-        });
-        await (await toast).present();
-        setTimeout(async () => {
-          (await toast).dismiss();
-        }, 3000);
-      }
-    })
+
   }
 
   doRefresh(event) {
@@ -197,12 +183,31 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
+    this.checkOnlineStatus();
     setTimeout(() =>{
       //delay for three seconds
       this.loading = false;
-    },3000)
+    },4000)
     this.isAccessTokenPresent();
     this.currentVersion = this.version.getCurrentVersion();
+  }
+
+  public checkOnlineStatus(){
+    this.onlineStatusService.status.subscribe(async (status: OnlineStatusType) => {
+      if (status === OnlineStatusType.OFFLINE) {
+        const toast = this.toastCtrl.create({
+          message: "You are offline. Please connect to the internet.",
+          duration: 5000,
+          position: 'bottom',
+          color: 'danger',
+          icon: 'wifi'
+        });
+        await (await toast).present();
+        setTimeout(async () => {
+          (await toast).dismiss();
+        }, 3000);
+      }
+    })
   }
 
   public openWithSystemBrowser(url: string) {
@@ -219,14 +224,24 @@ export class HomePage implements OnInit {
     this.authService.refresh();
   }
 
-  isAccessTokenPresent() {
+  async isAccessTokenPresent() {
     if (localStorage.getItem('devvscapeFirstAppLoad')) {
       //already been loaded
       if (this.tokenStorage.getAccessToken()) {
         this.getPaginatedImages(false, "");
       } else {
         this.router.navigateByUrl('/login');
-        this.isAccessTokenPresent();
+        const toast = this.toastCtrl.create({
+          message: "Please verify your login credentials and try again",
+          duration: 10000,
+          position: 'bottom',
+          color: 'danger',
+          icon: 'sad'
+        });
+        (await toast).present();
+        setTimeout(async () => {
+          (await toast).dismiss();
+        }, 2000);
       }
     } else {
       localStorage.setItem('devvscapeFirstAppLoad', 'yes');

@@ -69,9 +69,8 @@ export class LoginPage implements OnInit {
           }
         }, async (error: Error | HttpErrorResponse) => {
           loading.dismiss();
-          const message = error.message.split(" ").splice(-2);
           const toast = this.toastCtrl.create({
-            message: `${error.name}: ${message}`,
+            message: `${error}`,
             duration: 10000,
             position: 'bottom',
             color: 'danger',

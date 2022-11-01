@@ -1,8 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { map, shareReplay, retry, catchError } from 'rxjs/operators';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type':'application/json'})
@@ -13,14 +14,22 @@ const httpOptions = {
 })
 
 export class AuthService {
-  loading: boolean = true;
 
   constructor(private http: HttpClient) { }
 
   login(usernameOrEmail: string, password: string): Observable<any> {
     return this.http.post(environment.apiUrl + 'api/v1/auth/signin', {
       usernameOrEmail, password
-    },httpOptions);
+    },httpOptions).pipe(
+      map((response:any) =>{
+        return response.object.map((loginResponse:any) =>{
+          console.log(loginResponse);
+          return loginResponse;
+        })
+      }),
+      shareReplay(1),
+      catchError(this.handleError)
+    );
   }
 
   signup(email: string, username: string, password: string, bio: string): Observable<any> {
@@ -29,16 +38,41 @@ export class AuthService {
     },httpOptions);
   }
 
-  isPageLoading(): boolean {
-    if(this.loading === true){
-      setTimeout(() => {
-        // console.log(this.loading);
-        return this.loading = false;
-      }, 6000);
+  public handleError(error: HttpErrorResponse){
+    let errorMessage:string;
+    if(error.error instanceof ErrorEvent){
+      //Client side error
+      errorMessage = `Error: ${error.message}`;
     }else{
-      // console.log(this.loading);
-      return this.loading;
+      //Server side error
+      switch (error.status) {
+        case 400:
+          errorMessage = `Bad request,something went wrong Code: ${error.status}`;
+          break;
+        case 401:
+          errorMessage = `Unauthorized, You have entered an invalid username or password Code: ${error.status}`;
+          break;
+        case 402:
+          errorMessage = `Payment required, something went wrong Code: ${error.status}`;
+          break;
+        case 403:
+          errorMessage = `Forbidden, something went wrong Code: ${error.status}`;
+          break;
+        case 404:
+          errorMessage = `Not found, something went wrong Code: ${error.status}`;
+          break;
+        case 405:
+          errorMessage = `Method not allowed, something went wrong Code: ${error.status}`;
+          break;
+        case 406:
+          errorMessage = `Not acceptable, something went wrong Code: ${error.status}`;
+          break;
+      
+        default:
+          break;
+      }
     }
+    return throwError(errorMessage);
   }
 
   logout() {
@@ -48,7 +82,7 @@ export class AuthService {
   }
 
   public isLoggedIn() {
-    return moment().isBefore(this.getExpiration());
+    return !!localStorage.getItem('devvsapeAccessToken');
   }
 
   isLoggedOut() {

@@ -15,7 +15,6 @@
             <h1 class="font-weight-bold py-3 mx-5">Login</h1>
             <form [formGroup]="loginForm" class="p-4 p-md-5" (ngSubmit)="onLogin()">
               <ion-text>Thank you for getting back to Devvscape :)</ion-text>
-              <ion-text class="error">{{errorMessage}}</ion-text>
               <div class="form-row">
                 <div class="col-lg-7">
                   <ion-input type="text" class="form-control my-3 p-1" formControlName="usernameOrEmail"
