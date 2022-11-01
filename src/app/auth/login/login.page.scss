@@ -66,39 +66,7 @@ ion-title{
     text-align: center;
 }
 
-ion-footer {
-  margin: auto;
-  padding: 10px;
-  text-align: center;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: -1;
-}
-
 ion-text {
   font-size: 16px;
   font-weight: bold;
-}
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-li {
-  display: inline;
-  margin: 1em;
-}
-
-ion-icon {
-  width: 30px;
-  height: 30px;
-  color: darkgreen;
-}
-
-ion-label {
-  margin-left: 1em;
 }

@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { AlertController, Platform } from '@ionic/angular';
 import { SplashScreen } from '@capacitor/splash-screen';
-import { TokenStorageService } from './core/services/token-storage.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -10,19 +8,18 @@ import { Router } from '@angular/router';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor(private platform: Platform,public alertCtrl: AlertController) {
-    this.platform.backButton.subscribeWithPriority(10,() => {
+  constructor(private platform: Platform, public alertCtrl: AlertController) {
+    this.platform.backButton.subscribeWithPriority(10, () => {
       this.exitConfirm();
     });
 
     this.initializeApp();
   }
 
- async initializeApp() {
+  async initializeApp() {
     this.platform.ready().then(async () => {
-      await SplashScreen.hide({
-        fadeOutDuration:1000
-      });
+      // Show the splash for two seconds and then automatically hide it:
+      await SplashScreen.hide();
     })
   }
 
@@ -32,21 +29,21 @@ export class AppComponent {
       message: 'Do you  want to exit the app?',
       buttons: [
         {
-        text: 'Cancel',
-        role: 'cancel',
-        handler: () => {
-          // console.log('Confirm Cancel');
-        }
-      },
-      {
-        text: 'Exit',
-        role: 'exit',
-        handler: () => {
-          // console.log('Confirm Exit');
-          navigator['app'].exitApp();
-        }
-      }]
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            // console.log('Confirm Cancel');
+          }
+        },
+        {
+          text: 'Exit',
+          role: 'exit',
+          handler: () => {
+            // console.log('Confirm Exit');
+            navigator['app'].exitApp();
+          }
+        }]
     });
     (await confirm).present();
-  } 
+  }
 }

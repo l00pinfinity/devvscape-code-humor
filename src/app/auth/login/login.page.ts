@@ -21,7 +21,7 @@ export class LoginPage implements OnInit {
   isLoginFailed = false;
   currentVersion: string;
 
-  constructor(private router: Router, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, public toastCtrl: ToastController,public loadingCtrl: LoadingController) {
+  constructor(private router: Router, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, public toastCtrl: ToastController, public loadingCtrl: LoadingController) {
     this.loginForm = this.createFormGroup();
   }
 

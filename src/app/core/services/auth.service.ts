@@ -6,7 +6,7 @@ import { Observable, throwError } from 'rxjs';
 import { map, shareReplay, retry, catchError } from 'rxjs/operators';
 
 const httpOptions = {
-  headers: new HttpHeaders({'Content-Type':'application/json'})
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
 @Injectable({
@@ -20,13 +20,7 @@ export class AuthService {
   login(usernameOrEmail: string, password: string): Observable<any> {
     return this.http.post(environment.apiUrl + 'api/v1/auth/signin', {
       usernameOrEmail, password
-    },httpOptions).pipe(
-      map((response:any) =>{
-        return response.object.map((loginResponse:any) =>{
-          console.log(loginResponse);
-          return loginResponse;
-        })
-      }),
+    }, httpOptions).pipe(
       shareReplay(1),
       catchError(this.handleError)
     );
@@ -35,15 +29,15 @@ export class AuthService {
   signup(email: string, username: string, password: string, bio: string): Observable<any> {
     return this.http.post(environment.apiUrl + 'api/v1/auth/signup', {
       email, username, password, bio
-    },httpOptions);
+    }, httpOptions);
   }
 
-  public handleError(error: HttpErrorResponse){
-    let errorMessage:string;
-    if(error.error instanceof ErrorEvent){
+  public handleError(error: HttpErrorResponse) {
+    let errorMessage: string;
+    if (error.error instanceof ErrorEvent) {
       //Client side error
       errorMessage = `Error: ${error.message}`;
-    }else{
+    } else {
       //Server side error
       switch (error.status) {
         case 400:
@@ -67,7 +61,10 @@ export class AuthService {
         case 406:
           errorMessage = `Not acceptable, something went wrong Code: ${error.status}`;
           break;
-      
+        case 500:
+          errorMessage = `Server error, something went wrong Code: ${error.status}`;
+          break;
+
         default:
           break;
       }

@@ -1,4 +1,4 @@
-package com.silkwebhq.devvscape;
+package com.silkwebhq.devvscapecode;
 
 import com.getcapacitor.BridgeActivity;
 
