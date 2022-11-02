@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { Images } from '../core/interface/images';
+import { Images } from 'src/app/core/interface/images';
 
 @Component({
   selector: 'app-view-images',

@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
-import { DataService } from '../core/services/data.service';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
-import { Images } from '../core/interface/images';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AuthService } from '../core/services/auth.service';
-import { TokenStorageService } from '../core/services/token-storage.service';
-import { VersionService } from '../core/services/version.service';
 import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { Router } from '@angular/router';
+import { Images } from 'src/app/core/interface/images';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { DataService } from 'src/app/core/services/data.service';
+import { TokenStorageService } from 'src/app/core/services/token-storage.service';
+import { VersionService } from 'src/app/core/services/version.service';
 
 @Component({
   selector: 'app-home',

@@ -5,12 +5,12 @@ import { AuthGuard } from './core/guard/auth.guard';
 const routes: Routes = [
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule),
+    loadChildren: () => import('./components/home/home.module').then( m => m.HomePageModule),
     canActivate:[AuthGuard]
   },
   {
     path: 'images/:id',
-    loadChildren: () => import('./view-images/view-images.module').then( m => m.ViewImagesPageModule)
+    loadChildren: () => import('./components/view-images/view-images.module').then( m => m.ViewImagesPageModule)
   },
   {
     path: '',
@@ -19,11 +19,11 @@ const routes: Routes = [
   },
   {
     path: 'signup',
-    loadChildren: () => import('./auth/signup/signup.module').then( m => m.SignupPageModule)
+    loadChildren: () => import('./components/auth/signup/signup.module').then( m => m.SignupPageModule)
   },
   {
     path: 'login',
-    loadChildren: () => import('./auth/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./components/auth/login/login.module').then( m => m.LoginPageModule)
   }
 ];
 
