@@ -7,6 +7,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { HomePage } from './home.page';
 import { HomePageRoutingModule } from './home-routing.module';
+import { DateAgoPipe } from '../core/pipe/date-ago.pipe';
 
 @NgModule({
   imports: [
@@ -16,6 +17,6 @@ import { HomePageRoutingModule } from './home-routing.module';
     HomePageRoutingModule,
     ScrollingModule,
   ],
-  declarations: [HomePage]
+  declarations: [HomePage,DateAgoPipe]
 })
 export class HomePageModule {}
