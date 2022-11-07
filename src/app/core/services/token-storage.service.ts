@@ -12,6 +12,7 @@ export class TokenStorageService {
     const expiresAt = moment().add(response.expiresIn, 'second');
 
     localStorage.removeItem('devvsapeAccessToken');
+    localStorage.removeItem('devvscapEexpiresIn');
     localStorage.setItem('devvsapeAccessToken', response.accessToken);
     localStorage.setItem('devvscapEexpiresIn', JSON.stringify(expiresAt.valueOf()));
   }

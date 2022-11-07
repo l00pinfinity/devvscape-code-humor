@@ -42,7 +42,7 @@ export class HomePage implements OnInit {
     fullscreen: 'yes',//Windows only    
   };
 
-  constructor(private data: DataService, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, private onlineStatusService: OnlineStatusService, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser) {
+  constructor(private data: DataService, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser) {
 
   }
 
@@ -183,31 +183,12 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    this.checkOnlineStatus();
     setTimeout(() =>{
       //delay for three seconds
       this.loading = false;
     },4000)
     this.isAccessTokenPresent();
     this.currentVersion = this.version.getCurrentVersion();
-  }
-
-  public checkOnlineStatus(){
-    this.onlineStatusService.status.subscribe(async (status: OnlineStatusType) => {
-      if (status === OnlineStatusType.OFFLINE) {
-        const toast = this.toastCtrl.create({
-          message: "You are offline. Please connect to the internet.",
-          duration: 5000,
-          position: 'bottom',
-          color: 'danger',
-          icon: 'wifi'
-        });
-        await (await toast).present();
-        setTimeout(async () => {
-          (await toast).dismiss();
-        }, 3000);
-      }
-    })
   }
 
   public openWithSystemBrowser(url: string) {
@@ -230,7 +211,6 @@ export class HomePage implements OnInit {
       if (this.tokenStorage.getAccessToken()) {
         this.getPaginatedImages(false, "");
       } else {
-        this.router.navigateByUrl('/login');
         const toast = this.toastCtrl.create({
           message: "Please verify your login credentials and try again",
           duration: 10000,
@@ -242,6 +222,8 @@ export class HomePage implements OnInit {
         setTimeout(async () => {
           (await toast).dismiss();
         }, 2000);
+        //redirect back to login page
+        this.router.navigateByUrl('/login');
       }
     } else {
       localStorage.setItem('devvscapeFirstAppLoad', 'yes');

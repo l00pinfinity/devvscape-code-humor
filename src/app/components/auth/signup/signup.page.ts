@@ -38,7 +38,6 @@ export class SignupPage implements OnInit {
   ngOnInit() {
     this.currentVersion = this.version.getCurrentVersion();
     this.authService.logout();
-    localStorage.setItem('devvscapeFirstAppLoad', 'yes');
   }
 
   async onSignUp(): Promise<void> {

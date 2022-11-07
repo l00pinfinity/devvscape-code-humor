@@ -37,9 +37,7 @@ export class LoginPage implements OnInit {
     localStorage.setItem('devvscapeFirstAppLoad', 'yes');
     if (this.tokenStorage.getAccessToken()) {
       this.router.navigateByUrl('/home');
-    } else {
-      this.router.navigateByUrl('/login');
-    }
+    } 
   }
 
   async onLogin() {
