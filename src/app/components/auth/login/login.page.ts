@@ -20,6 +20,7 @@ export class LoginPage implements OnInit {
   isLoggedIn = false;
   isLoginFailed = false;
   currentVersion: string;
+  showPassword: boolean = false;
 
   constructor(private router: Router, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, public toastCtrl: ToastController, public loadingCtrl: LoadingController) {
     this.loginForm = this.createFormGroup();
@@ -32,12 +33,16 @@ export class LoginPage implements OnInit {
     })
   }
 
+  public togglePasswordText() {
+    this.showPassword = !this.showPassword;
+  }
+
   ngOnInit(): void {
     this.currentVersion = this.version.getCurrentVersion();
     localStorage.setItem('devvscapeFirstAppLoad', 'yes');
     if (this.tokenStorage.getAccessToken()) {
       this.router.navigateByUrl('/home');
-    } 
+    }
   }
 
   async onLogin() {

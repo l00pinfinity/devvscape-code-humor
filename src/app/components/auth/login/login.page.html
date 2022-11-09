@@ -25,9 +25,20 @@
                 </div>
               </div>
               <div class="form-row">
-                <div class="col-lg-7">
-                  <ion-input type="password" class="form-control my-3 p-1" formControlName="password"
-                    placeholder="*******"></ion-input>
+                <div class="col-lg-7" *ngIf="showPassword">
+                  <ion-input type="text" class="form-control my-3 p-1" formControlName="password" id="password"
+                    placeholder="*******">
+                    <ion-icon slot="end" color="primary" id="eye" name="eye" (click)="togglePasswordText()"></ion-icon>
+                  </ion-input>
+                  <ion-text class="error" *ngIf="password && password.invalid && password.touched">*Password is
+                    required</ion-text>
+                </div>
+                <div class="col-lg-7" *ngIf="!showPassword">
+                  <ion-input type="password" class="form-control my-3 p-1" formControlName="password" id="password"
+                    placeholder="*******">
+                    <ion-icon slot="end" color="medium" id="eye" name="eye-off" (click)="togglePasswordText()">
+                    </ion-icon>
+                  </ion-input>
                   <ion-text class="error" *ngIf="password && password.invalid && password.touched">*Password is
                     required</ion-text>
                 </div>
