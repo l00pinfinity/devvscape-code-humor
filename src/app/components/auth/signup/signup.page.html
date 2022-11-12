@@ -26,6 +26,7 @@
                   <ion-input type="text" class="form-control my-3 p-1" formControlName="username" placeholder="Username"></ion-input>
                   <ion-text class="error" *ngIf="username && username.invalid && username.touched">*Username is
                     required</ion-text>
+                    <ion-text class="error" *ngIf="username.errors?.cannotContainWhitespace">*Username cannot contain spaces</ion-text>
                 </div>
               </div>
               <div class="form-row">

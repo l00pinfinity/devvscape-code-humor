@@ -22,7 +22,6 @@ export class HomePage implements OnInit {
   likedImage?: Images;
   downloaded?: Images;
   loading:boolean = true;
-  loadingAsset = "../../assets/loading.gif";
   currentVersion: string;
   options: InAppBrowserOptions = {
     location: 'yes',//Or 'no' 
@@ -85,41 +84,8 @@ export class HomePage implements OnInit {
     }
   }
 
-  async getImageById(id: number) {
-    try {
-      this.data.getImageById(id).subscribe(
-        (response: any) => {
-          if (response) {
-            // console.log(response);
-            //save the id
-          }
-        }, async (error: Error | HttpErrorResponse) => {
-          const toast = this.toastCtrl.create({
-            message: `${error}`,
-            duration: 10000,
-            position: 'bottom',
-            color: 'danger'
-          });
-          (await toast).present();
-          setTimeout(async () => {
-            (await toast).dismiss();
-          }, 1000);
-        })
-    } catch (error) {
-      const toast = this.toastCtrl.create({
-        message: error,
-        duration: 10000,
-        position: 'bottom',
-        color: 'danger'
-      });
-      (await toast).present();
-      setTimeout(async () => {
-        (await toast).dismiss();
-      }, 1000);
-    }
-  }
 
-  public async getPaginatedImages(isFirstLoad, event) {
+  async getPaginatedImages(isFirstLoad, event) {
     try {
       this.data.getPaginatedImages(this.page).subscribe(
         async (response: any) => {

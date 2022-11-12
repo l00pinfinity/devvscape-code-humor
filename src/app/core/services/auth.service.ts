@@ -32,6 +32,15 @@ export class AuthService {
     }, httpOptions);
   }
 
+  sendEmail(recipient: string,msgBody: string, subject: string): Observable<any> {
+    return this.http.post(environment.apiUrl + 'api/v1/mail/sendEmail',{
+      recipient,msgBody,subject
+    }, httpOptions).pipe(
+      shareReplay(1),
+      catchError(this.handleError)
+    );
+  }
+
   public handleError(error: HttpErrorResponse) {
     let errorMessage: string;
     if (error.error instanceof ErrorEvent) {
