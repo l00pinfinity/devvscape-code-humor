@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
-import { Images } from 'src/app/core/interface/images';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
+
+import { DataService } from '../../core/services/data.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-view-images',
@@ -8,56 +12,62 @@ import { Images } from 'src/app/core/interface/images';
   styleUrls: ['./view-images.page.scss'],
 })
 export class ViewImagesPage implements OnInit {
+  images:any;
 
-  constructor(private alertController: AlertController) { }
+  constructor(private route: ActivatedRoute,private data: DataService,private location: Location, public toastCtrl: ToastController) { }
+
+  async viewImageById(){
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    try {
+      this.data.getImageById(id).subscribe(
+        async (response: any) => {
+          if (response) {
+            console.log(response);
+            this.images = response;
+          }else{
+            const toast = this.toastCtrl.create({
+              message: "Something went wrong! Try again",
+              duration: 10000,
+              position: 'bottom',
+              color: 'danger',
+              icon: 'sad'
+            });
+            (await toast).present();
+            setTimeout(async () => {
+              (await toast).dismiss();
+            }, 1000);
+          }
+        }, async (error: Error | HttpErrorResponse) => {
+          const toast = this.toastCtrl.create({
+            message: `${error.message}`,
+            duration: 10000,
+            position: 'bottom',
+            color: 'danger',
+            icon: 'sad'
+          });
+          (await toast).present();
+          setTimeout(async () => {
+            (await toast).dismiss();
+          }, 1000);
+        })
+    } catch (error) {
+      const toast = this.toastCtrl.create({
+        message: error,
+        duration: 10000,
+        position: 'bottom',
+        color: 'danger',
+        icon: 'sad'
+      });
+      (await toast).present();
+      setTimeout(async () => {
+        (await toast).dismiss();
+      }, 1000);
+    }
+  }
 
   ngOnInit() {
-  }
-
-  async like(image: Images) {
-    console.log(image.id + " liked");
-    const alert = await this.alertController.create({
-      header: 'Liked',
-      subHeader: 'This feature is not available yet',
-      buttons: [
-        {
-          text: 'Close',
-          role: 'cancel',
-        },
-        {
-          text: 'OK',
-          role: 'ok',
-        }
-      ]
-    });
-
-    await alert.present();
-    setTimeout(() => {
-      alert.dismiss();
-    }, 1000);
-  }
-
-  async download(image: Images) {
-    console.log(image.id + " downloaded");
-    const alert = await this.alertController.create({
-      header: 'Liked',
-      subHeader: 'This feature is not available yet',
-      buttons: [
-        {
-          text: 'Close',
-          role: 'cancel',
-        },
-        {
-          text: 'OK',
-          role: 'ok',
-        }
-      ]
-    });
-
-    await alert.present();
-    setTimeout(() => {
-      alert.dismiss();
-    }, 1000);
+    console.log("Clicked")
+    this.viewImageById();
   }
 
 }

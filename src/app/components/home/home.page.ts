@@ -18,6 +18,7 @@ import { VersionService } from 'src/app/core/services/version.service';
 export class HomePage implements OnInit {
 
   images$: any;
+  selectedImage?: Images;
   page = 0;
   likedImage?: Images;
   downloaded?: Images;
@@ -144,10 +145,6 @@ export class HomePage implements OnInit {
     }
   }
 
-  onSelect(image: Images) {
-    // console.log(image.id + ' selected');
-  }
-
   ngOnInit() {
     setTimeout(() =>{
       //delay for three seconds
@@ -205,7 +202,7 @@ export class HomePage implements OnInit {
     try {
       const loading = await this.loadingCtrl.create({
         message: 'Logging out...',
-        duration: 3000,
+        duration: 10000,
         cssClass: 'custom-loading',
       });
       loading.present();

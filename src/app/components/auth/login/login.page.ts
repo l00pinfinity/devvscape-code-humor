@@ -49,7 +49,7 @@ export class LoginPage implements OnInit {
     try {
       const loading = await this.loadingCtrl.create({
         message: 'Logging in...',
-        duration: 3000,
+        duration: 10000,
         cssClass: 'custom-loading',
       });
       loading.present();

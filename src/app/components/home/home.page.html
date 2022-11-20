@@ -16,11 +16,11 @@
 
           <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://devvscape.com/')">
             <ion-icon name="apps-sharp" slot="start"></ion-icon>
-            <ion-label>Devvscape </ion-label>
+            <ion-label>DEVVSCAPE </ion-label>
           </ion-item>
           <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://silkwebhq.com/')">
             <ion-icon name="desktop-sharp" slot="start"></ion-icon>
-            <ion-label>Silkwebhq Technologies</ion-label>
+            <ion-label>SILKWEBHQ</ion-label>
           </ion-item>
         </ion-item-group>
 
@@ -94,6 +94,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding" [scrollY]="false">
+      <ion-progress-bar type="indeterminate" *ngIf="!images$"></ion-progress-bar>
       <ion-refresher slot="fixed" pullFactor="0.5" pullMin="100" pullMax="200" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>

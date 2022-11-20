@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map, retry, shareReplay } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Images } from '../interface/images';
@@ -12,7 +12,7 @@ export class DataService {
 
   constructor(private http:HttpClient) { }
 
-  public getPaginatedImages(page:Number){
+  public getPaginatedImages(page:Number):Observable<Images>{
     return this.http.get<Images> (environment.apiUrl + 'api/v1/devvscape/images/page/' + page).pipe(
       map((response:any) =>{
         return response.object.map((images:any) =>{
@@ -38,7 +38,7 @@ export class DataService {
     )
   }
 
-  public getImageById(id: number) {
+  public getImageById(id: number) :Observable<Images>{
     return this.http.get<Images> (environment.apiUrl + 'api/v1/devvscape/images/' + id).pipe(
       map((response:any) =>{
         return response.object.map((images:any) =>{

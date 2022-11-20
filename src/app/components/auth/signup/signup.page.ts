@@ -66,8 +66,6 @@ export class SignupPage implements OnInit {
             setTimeout(async () => {
               (await toast).dismiss();
             }, 3000);
-            //Send email notification
-            this.authService.sendEmail(this.email.value, `Hello ${this.username.value} \n\nI'm Collins, the founder and CEO of SilkwebHQ Technologies.\n\nWe're happy to have you join our family, so I wanted to say hello. I would like to express my sincere thanks to you on behalf of the Silk Community, the entire Silk Team and myself.\n\nIn Developers Escape, an app with memes related to the programmer world, code humour is the focus. Those who understand binary will find this place useful. Check it out :).\n\nBecome part of our active developer community and share that meme :) https://www.silkwebhq.com/\n\nRegards, \n\nCollins Boit`, "Welcome to Devvscape | CodeHumor");
             this.router.navigateByUrl('/login');
             loading.dismiss();
           } else {
