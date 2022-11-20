@@ -124,6 +124,9 @@ export class HomePage implements OnInit {
             (await toast).dismiss();
           }, 1000);
 
+          //just loggout the user to login
+          this.authService.logout();
+
           //redirect to login to update token
           this.router.navigateByUrl('/login')
         })
