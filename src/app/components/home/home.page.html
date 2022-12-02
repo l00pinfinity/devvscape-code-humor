@@ -101,7 +101,7 @@
 
       <cdk-virtual-scroll-viewport class="ion-content-scroll-host" itemSize="40" minBufferPx="900" maxBufferPx="1350">
         <ion-list *ngIf="images$" id="showImages">
-          <ion-card *cdkVirtualFor="let image of images$" class="memeCard" (click)="showActionSheet(image)">
+          <ion-card *cdkVirtualFor="let image of images$" class="memeCard">
             <!--(click)="presentActionSheet()"-->
             <ion-img app:LazyImg src="{{image.imageUrl}}" alt="{{image.id}}" loading="lazy" animated style="min-height: 35vh"></ion-img>
             <ion-card-content>
