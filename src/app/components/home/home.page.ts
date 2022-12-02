@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
-import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { Router } from '@angular/router';
 import { Images } from 'src/app/core/interface/images';
@@ -9,6 +8,8 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { DataService } from 'src/app/core/services/data.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { VersionService } from 'src/app/core/services/version.service';
+import { FileSaverOptions } from "file-saver";
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +23,7 @@ export class HomePage implements OnInit {
   page = 0;
   likedImage?: Images;
   downloaded?: Images;
-  loading:boolean = true;
+  loading: boolean = true;
   currentVersion: string;
   options: InAppBrowserOptions = {
     location: 'yes',//Or 'no' 
@@ -42,7 +43,7 @@ export class HomePage implements OnInit {
     fullscreen: 'yes',//Windows only    
   };
 
-  constructor(private data: DataService, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser) {
+  constructor(private data: DataService,private http:HttpClient, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser) {
 
   }
 
@@ -93,7 +94,7 @@ export class HomePage implements OnInit {
           if (response) {
             // console.log(response);
             this.images$ = response;
-          }else{
+          } else {
             const toast = this.toastCtrl.create({
               message: "Something went wrong! Try again",
               duration: 10000,
@@ -149,12 +150,39 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    setTimeout(() =>{
+    setTimeout(() => {
       //delay for three seconds
       this.loading = false;
-    },4000)
+    }, 4000)
     this.isAccessTokenPresent();
     this.currentVersion = this.version.getCurrentVersion();
+  }
+
+  async showActionSheet(image: Images) {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Select any of the actions below to proceed',
+      cssClass: 'my-custom-class',
+      buttons: [
+        {
+          text: 'Download',
+          icon: 'download',
+          data: 10,
+          handler: async () => {
+            //Download image code
+          }
+        }, {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }]
+    });
+    await actionSheet.present();
+
+    const { role, data } = await actionSheet.onDidDismiss();
+    console.log('onDidDismiss resolved with role and data', role, data);
   }
 
   public openWithSystemBrowser(url: string) {

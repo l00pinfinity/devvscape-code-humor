@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
@@ -30,6 +30,16 @@ export class AuthService {
     return this.http.post(environment.apiUrl + 'api/v1/auth/signup', {
       email, username, password, bio
     }, httpOptions);
+  }
+
+  forgotPassword(email:string):Observable<any>{    
+    return this.http.post(environment.apiUrl + 'api/v1/auth/forgot-password?email=' + email,httpOptions);
+  }
+
+  resetPassword(token:string,password:string):Observable<any>{
+    return this.http.post(environment.apiUrl + 'api/v1/auth/reset?token=' + token,{
+      password
+    },httpOptions)
   }
 
   public handleError(error: HttpErrorResponse) {
