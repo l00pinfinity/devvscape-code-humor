@@ -2,7 +2,7 @@
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="start">
-        <ion-back-button defaultHref="/login"></ion-back-button>
+        <ion-back-button defaultHref="/forgot-password"></ion-back-button>
     </ion-buttons>
       <ion-title>Devvscape | CodeHumor</ion-title>
     </ion-toolbar>
@@ -12,21 +12,15 @@
       <div class="container-fluid">
         <div class="row no-gutters">
           <div class="col-lg-12">
-            <h1 class="font-weight-bold py-3 mx-5">Sign Up</h1>
-            <form [formGroup]="signupForm" class="p-4 p-md-5" (ngSubmit)="onSignUp()">
+            <h1 class="font-weight-bold py-3 mx-5">Reset Password</h1>
+            <form [formGroup]="passwordForm" class="p-4 p-md-5" (ngSubmit)="resetPassword()">
               <ion-text>Let's get you all started and setup your profile :)</ion-text>
               <div class="form-row">
                 <div class="col-lg-7">
-                  <ion-input type="email" class="form-control my-3 p-1" formControlName="email" placeholder="Email address"></ion-input>
-                  <ion-text class="error" *ngIf="email && email.invalid && email.touched">*Email address is required</ion-text>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="col-lg-7">
-                  <ion-input type="text" class="form-control my-3 p-1" formControlName="username" placeholder="Username"></ion-input>
-                  <ion-text class="error" *ngIf="username && username.invalid && username.touched">*Username is
+                  <ion-input type="text" class="form-control my-3 p-1" formControlName="token" placeholder="Token"></ion-input>
+                  <ion-text class="error" *ngIf="token && token.invalid && token.touched">*Token is
                     required</ion-text>
-                    <ion-text class="error" *ngIf="username.errors?.cannotContainWhitespace">*Username cannot contain spaces</ion-text>
+                    <ion-text class="error" *ngIf="token.errors?.cannotContainWhitespace">*Token cannot contain spaces</ion-text>
                 </div>
               </div>
               <div class="form-row">
@@ -45,18 +39,9 @@
               </div>
               <div class="form-row">
                 <div class="col-lg-7">
-                  <ion-textarea type="text" class="form-control my-3" formControlName="bio"
-                    placeholder="Headline"></ion-textarea>
-                  <ion-text class="error" *ngIf="bio && bio.invalid && bio.touched">*Bio is required</ion-text>
+                  <button [disabled]="!passwordForm.valid" class="btn mt-3 mb-5">Reset Password</button>
                 </div>
               </div>
-              <div class="form-row">
-                <div class="col-lg-7">
-                  <button [disabled]="!signupForm.valid" class="btn mt-3 mb-5">Register</button>
-                </div>
-              </div>
-              <!-- <a href="">Forgot password</a> -->
-              <ion-text>Already have an account? <a href="/login"> Login</a></ion-text>
             </form>
           </div>
         </div>

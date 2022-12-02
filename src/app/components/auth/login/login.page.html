@@ -12,7 +12,7 @@
       <div class="container-fluid">
         <div class="row no-gutters">
           <div class="col-lg-12">
-            <h1 class="font-weight-bold py-3 mx-5">Login</h1>
+            <h1 class="font-weight-bold py-3 mx-5">Hello again</h1>
             <form [formGroup]="loginForm" class="p-4 p-md-5" (ngSubmit)="onLogin()">
               <ion-text>Thank you for getting back to Devvscape :)</ion-text>
               <div class="form-row">
@@ -42,13 +42,13 @@
                   <ion-text class="error" *ngIf="password && password.invalid && password.touched">*Password is
                     required</ion-text>
                 </div>
+                <ion-text style="float: right;"><a href="/forgot-password">Forgot password?</a></ion-text>
               </div>
               <div class="form-row">
                 <div class="col-lg-7">
                   <button [disabled]="!loginForm.valid" class="btn mt-3 mb-5">Sign in</button>
                 </div>
               </div>
-              <!-- <a href="">Forgot password</a> -->
               <ion-text>Don't have an account yet? <a href="/signup"> Join Devvscape</a></ion-text>
             </form>
           </div>
