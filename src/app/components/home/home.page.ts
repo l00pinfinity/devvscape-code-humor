@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
+import { ActionSheetController, AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { Router } from '@angular/router';
@@ -43,7 +43,7 @@ export class HomePage implements OnInit {
     fullscreen: 'yes',//Windows only    
   };
 
-  constructor(private data: DataService,private http:HttpClient, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser) {
+  constructor(private data: DataService,private http:HttpClient, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser,private alertController: AlertController) {
 
   }
 
@@ -53,39 +53,6 @@ export class HomePage implements OnInit {
       event.detail.complete();
     }, 2000);
   }
-
-  async getImages() {
-    try {
-      this.data.getImages().subscribe((response: any) => {
-        if (response) {
-
-        }
-      }, async (error: Error | HttpErrorResponse) => {
-        const toast = this.toastCtrl.create({
-          message: `${error}`,
-          duration: 10000,
-          position: 'bottom',
-          color: 'danger'
-        });
-        (await toast).present();
-        setTimeout(async () => {
-          (await toast).dismiss();
-        }, 1000);
-      })
-    } catch (error) {
-      const toast = this.toastCtrl.create({
-        message: error,
-        duration: 10000,
-        position: 'bottom',
-        color: 'danger'
-      });
-      (await toast).present();
-      setTimeout(async () => {
-        (await toast).dismiss();
-      }, 1000);
-    }
-  }
-
 
   async getPaginatedImages(isFirstLoad, event) {
     try {
@@ -169,6 +136,13 @@ export class HomePage implements OnInit {
           data: 10,
           handler: async () => {
             //Download image code
+            const alert = await this.alertController.create({
+              header: 'Soon to come',
+              message: 'Developing this feature is a high priority for us',
+              buttons: ['OK'],
+            });
+        
+            await alert.present();
           }
         }, {
           text: 'Cancel',

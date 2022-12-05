@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -16,6 +16,7 @@ import { DateAgoPipe } from '../../core/pipe/date-ago.pipe';
     IonicModule,
     HomePageRoutingModule,
     ScrollingModule,
+    NgOptimizedImage
   ],
   declarations: [HomePage,DateAgoPipe]
 })

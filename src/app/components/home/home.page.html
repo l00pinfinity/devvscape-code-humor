@@ -15,11 +15,11 @@
           </ion-item-divider>
 
           <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://devvscape.com/')">
-            <ion-icon name="apps-sharp" slot="start"></ion-icon>
+            <ion-icon name="crop-sharp" slot="start"></ion-icon>
             <ion-label>DEVVSCAPE </ion-label>
           </ion-item>
           <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://silkwebhq.com/')">
-            <ion-icon name="desktop-sharp" slot="start"></ion-icon>
+            <ion-icon name="globe-sharp" slot="start"></ion-icon>
             <ion-label>SILKWEBHQ</ion-label>
           </ion-item>
         </ion-item-group>
@@ -31,23 +31,35 @@
             </ion-label>
           </ion-item-divider>
 
+          <ion-item (click)="openWithInAppBrowser('https://silkwebhq.com/terms')">
+            <ion-icon name="document-text-sharp" slot="start"></ion-icon>
+            <ion-label>Terms & Conditions</ion-label>
+          </ion-item>
+          <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://silkwebhq.com/privacy')">
+            <ion-icon name="document-lock-sharp" slot="start"></ion-icon>
+            <ion-label>Privacy Policy</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="code-slash-sharp" slot="start"></ion-icon>
+            <ion-label>App Version</ion-label>
+            <ion-text class="text-muted">{{currentVersion}}</ion-text>
+          </ion-item>
+        </ion-item-group>
+        <ion-item-group>
+          <ion-item-divider>
+            <ion-label>
+              SUPPORT
+            </ion-label>
+          </ion-item-divider>
+
           <ion-item class="ion-activated"
             (click)="openWithSystemBrowser('https://play.google.com/store/apps/details?id=com.silkwebhq.devvscapecode')">
             <ion-icon name="share-social-sharp" slot="start"></ion-icon>
             <ion-label>Review and Share</ion-label>
           </ion-item>
-          <ion-item (click)="openWithInAppBrowser('https://silkwebhq.com/terms')">
-            <ion-icon name="document-outline" slot="start"></ion-icon>
-            <ion-label>Terms & Conditions</ion-label>
-          </ion-item>
-          <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://silkwebhq.com/privacy')">
-            <ion-icon name="document-lock-outline" slot="start"></ion-icon>
-            <ion-label>Privacy Policy</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-icon name="code-sharp" slot="start"></ion-icon>
-            <ion-label>App Version</ion-label>
-            <ion-text class="text-muted">{{currentVersion}}</ion-text>
+          <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://www.buymeacoffee.com/l00pinfinity')">
+            <ion-icon name="cafe-sharp" slot="start"></ion-icon>
+            <ion-label>Buy me coffee</ion-label>
           </ion-item>
         </ion-item-group>
         <ion-item-group>
@@ -58,7 +70,7 @@
           </ion-item-divider>
 
           <ion-item class="ion-activated" (click)="logout()">
-            <ion-icon name="log-out-outline" slot="start"></ion-icon>
+            <ion-icon name="log-out" slot="start"></ion-icon>
             <ion-label>Logout</ion-label>
           </ion-item>
         </ion-item-group>
@@ -101,9 +113,10 @@
 
       <cdk-virtual-scroll-viewport class="ion-content-scroll-host" itemSize="40" minBufferPx="900" maxBufferPx="1350">
         <ion-list *ngIf="images$" id="showImages">
-          <ion-card *cdkVirtualFor="let image of images$" class="memeCard">
-            <!--(click)="presentActionSheet()"-->
-            <ion-img app:LazyImg src="{{image.imageUrl}}" alt="{{image.id}}" loading="lazy" animated style="min-height: 35vh"></ion-img>
+          <ion-card *cdkVirtualFor="let image of images$" class="memeCard" (click)="showActionSheet(image)">
+            <img app:LazyImg ngSrc="{{image.imageUrl}}" alt="{{image.id}}" rel="preconnect" priority animated
+              style="min-height: 40vh" rawSrcset="200w, 400w, 600w, 800w, 1000w, 1200w, 1600w, 2000w, 3000w" width="720"
+              height="400">
             <ion-card-content>
               <ion-grid>
                 <ion-row>
@@ -114,32 +127,6 @@
               </ion-grid>
             </ion-card-content>
           </ion-card>
-        </ion-list>
-
-        <!-- Skeleton -->
-        <ion-list *ngIf="!images$">
-          <br>
-          <ion-card>
-            <ion-skeleton-text animated style="height: 40vh"></ion-skeleton-text>
-            <div class="card-body">
-              <ion-skeleton-text animated style="height: 5vh"></ion-skeleton-text>
-            </div>
-          </ion-card>
-          <br>
-          <ion-card>
-            <ion-skeleton-text animated style="height: 40vh"></ion-skeleton-text>
-            <div class="card-body">
-              <ion-skeleton-text animated style="height: 5vh"></ion-skeleton-text>
-            </div>
-          </ion-card>
-          <br>
-          <ion-card>
-            <ion-skeleton-text animated style="height: 40vh"></ion-skeleton-text>
-            <div class="card-body">
-              <ion-skeleton-text animated style="height: 5vh"></ion-skeleton-text>
-            </div>
-          </ion-card>
-          <br>
         </ion-list>
 
         <ion-card class="endScroll" *ngIf="images$">

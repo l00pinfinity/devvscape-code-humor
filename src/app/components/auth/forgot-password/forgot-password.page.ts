@@ -37,7 +37,7 @@ export class ForgotPasswordPage implements OnInit {
 
       if (this.email) {
         this.authService.forgotPassword(this.email.value).subscribe(async (response: any) => {
-          if (response) {
+          if (response.success == true) {
             // console.log(response);
             const toast = this.toastCtrl.create({
               message: response.message,
@@ -54,7 +54,7 @@ export class ForgotPasswordPage implements OnInit {
             loading.dismiss();
           } else {
             const toast = this.toastCtrl.create({
-              message: "Something went wrong try again later!",
+              message: "There is no account with an email address",
               duration: 10000,
               position: 'bottom',
               color: 'danger',
