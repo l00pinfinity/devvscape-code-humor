@@ -8,8 +8,6 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { DataService } from 'src/app/core/services/data.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { VersionService } from 'src/app/core/services/version.service';
-import { FileSaverOptions } from "file-saver";
-import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +17,7 @@ import * as FileSaver from 'file-saver';
 export class HomePage implements OnInit {
 
   images$: any;
+  randomImages$: any;
   selectedImage?: Images;
   page = 0;
   likedImage?: Images;
@@ -42,9 +41,17 @@ export class HomePage implements OnInit {
     presentationstyle: 'pagesheet',//iOS only 
     fullscreen: 'yes',//Windows only    
   };
+  segmentModel = "random";
+
 
   constructor(private data: DataService,private http:HttpClient, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser,private alertController: AlertController) {
 
+  }
+
+  segmentChanged(event: any){
+    console.log(this.segmentModel);
+    event.preventDefault();
+    console.log(event);
   }
 
   doRefresh(event) {
@@ -116,6 +123,63 @@ export class HomePage implements OnInit {
     }
   }
 
+  async getRandomImages(){
+    try {
+      this.data.getRandomImages().subscribe(
+        async (response: any) => {
+          if (response) {
+            console.log(response);
+            this.randomImages$ = response;
+          } else {
+            const toast = this.toastCtrl.create({
+              message: "Something went wrong! Try again",
+              duration: 10000,
+              position: 'bottom',
+              color: 'danger',
+              icon: 'sad'
+            });
+            (await toast).present();
+            setTimeout(async () => {
+              (await toast).dismiss();
+            }, 1000);
+          }
+        }, async (error: Error | HttpErrorResponse) => {
+          const toast = this.toastCtrl.create({
+            message: `${error.message}`,
+            duration: 10000,
+            position: 'bottom',
+            color: 'danger',
+            icon: 'sad'
+          });
+          (await toast).present();
+          setTimeout(async () => {
+            (await toast).dismiss();
+          }, 1000);
+
+          //just loggout the user to login
+          this.authService.logout();
+
+          //redirect to login to update token
+          this.router.navigateByUrl('/login')
+        })
+    } catch (error) {
+      const toast = this.toastCtrl.create({
+        message: error,
+        duration: 10000,
+        position: 'bottom',
+        color: 'danger',
+        icon: 'sad'
+      });
+      (await toast).present();
+      setTimeout(async () => {
+        (await toast).dismiss();
+      }, 1000);
+
+      //redirect to login to update token
+      this.router.navigateByUrl('/login')
+    }
+  }
+
   ngOnInit() {
     setTimeout(() => {
       //delay for three seconds
@@ -136,13 +200,28 @@ export class HomePage implements OnInit {
           data: 10,
           handler: async () => {
             //Download image code
-            const alert = await this.alertController.create({
-              header: 'Soon to come',
-              message: 'Developing this feature is a high priority for us',
-              buttons: ['OK'],
-            });
+            const imageUrl  = image.imageUrl;
+            const url = imageUrl;
         
-            await alert.present();
+            const parsedUrl = new URL(imageUrl);
+            const fileName = parsedUrl.pathname.split('/').pop();
+            console.log(fileName); // Output: "mFkSDpCKvk.jpg"
+          
+            // Fetch the image data
+            const response = await fetch(url);
+            const blob = await response.blob();
+          
+            // Create a temporary anchor element to initiate the download
+            const a = document.createElement("a");
+            a.href = window.URL.createObjectURL(blob);
+            a.download = fileName;
+          
+            // Trigger a click event on the anchor element to initiate the download
+            a.dispatchEvent(new MouseEvent("click"));
+          
+            // Clean up the temporary anchor element
+            window.URL.revokeObjectURL(a.href);
+            a.remove();
           }
         }, {
           text: 'Cancel',
@@ -177,6 +256,7 @@ export class HomePage implements OnInit {
     if (localStorage.getItem('devvscapeFirstAppLoad')) {
       //already been loaded
       if (this.tokenStorage.getAccessToken()) {
+        this.getRandomImages();
         this.getPaginatedImages(false, "");
       } else {
         const toast = this.toastCtrl.create({

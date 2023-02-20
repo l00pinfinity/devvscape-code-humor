@@ -37,6 +37,19 @@ export class DataService {
       catchError(this.handleError)
     )
   }
+  
+  public getRandomImages(){
+    return this.http.get<Images> (environment.apiUrl + 'api/v1/devvscape/images/random').pipe(
+      map((response:any) =>{
+        return response.object.map((images:any) =>{
+          return images;
+        })
+      }),
+      shareReplay(1),
+      retry(1),
+      catchError(this.handleError)
+    )
+  }
 
   public getImageById(id: number) :Observable<Images>{
     return this.http.get<Images> (environment.apiUrl + 'api/v1/devvscape/images/' + id).pipe(
