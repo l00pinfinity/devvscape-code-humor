@@ -8,6 +8,9 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { DataService } from 'src/app/core/services/data.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { VersionService } from 'src/app/core/services/version.service';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { Plugins } from '@capacitor/core';
+const { Permissions } = Plugins;
 
 @Component({
   selector: 'app-home',
@@ -45,13 +48,13 @@ export class HomePage implements OnInit {
 
 
   constructor(private data: DataService,private http:HttpClient, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser,private alertController: AlertController) {
-
+    this.requestPermission();
   }
 
   segmentChanged(event: any){
-    console.log(this.segmentModel);
+    //console.log(this.segmentModel);
     event.preventDefault();
-    console.log(event);
+    //console.log(event);
   }
 
   doRefresh(event) {
@@ -128,7 +131,7 @@ export class HomePage implements OnInit {
       this.data.getRandomImages().subscribe(
         async (response: any) => {
           if (response) {
-            console.log(response);
+            //console.log(response);
             this.randomImages$ = response;
           } else {
             const toast = this.toastCtrl.create({
@@ -308,4 +311,36 @@ export class HomePage implements OnInit {
       }, 1000);
     }
   }
+
+  async requestPermission() {
+    const result = await Permissions.requestPermission({ name: 'foregroundService' });
+    if (result.state === 'granted') {
+      console.log('Foreground service permission granted');
+      this.scheduleNotification();
+    } else {
+      console.log('Foreground service permission not granted');
+    }
+  }
+  
+
+  async scheduleNotification() {
+    const notifs = await LocalNotifications.schedule({
+      notifications: [
+        {
+          title: 'Stop scrolling through boring code! ',
+          body: 'Get your daily dose of laughs and keep your coding skills sharp! 🤣👨‍💻🚀',
+          id: 1,
+          schedule: {
+            on: { hour: 18, minute: 0 },
+            repeats: true
+          },
+          sound: "default",
+          attachments: null,
+          actionTypeId: '',
+          extra: null
+        }
+      ]
+    });
+  }
+  
 }
