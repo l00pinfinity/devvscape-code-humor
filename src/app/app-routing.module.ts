@@ -29,7 +29,8 @@ const routes: Routes = [
     },
     loadChildren: () => import('./components/view-images/view-images.module').then( m => m.ViewImagesPageModule),
     canActivate:[AuthGuard]
-  },  {
+  },
+  {
     path: 'forgot-password',
     loadChildren: () => import('./components/auth/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
   },

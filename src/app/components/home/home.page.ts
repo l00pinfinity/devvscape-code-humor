@@ -312,6 +312,7 @@ export class HomePage implements OnInit {
     }
   }
 
+
   async requestPermission() {
     const result = await Permissions.requestPermission({ name: 'foregroundService' });
     if (result.state === 'granted') {
