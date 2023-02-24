@@ -30,6 +30,7 @@ const routes: Routes = [
     loadChildren: () => import('./components/auth/reset/reset.module').then( m => m.ResetPageModule)
   }
 
+
 ];
 
 @NgModule({
