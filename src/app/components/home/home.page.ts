@@ -9,8 +9,7 @@ import { DataService } from 'src/app/core/services/data.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { VersionService } from 'src/app/core/services/version.service';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { Plugins } from '@capacitor/core';
-const { Permissions } = Plugins;
+import { Http } from '@capacitor-community/http';
 
 @Component({
   selector: 'app-home',
@@ -47,11 +46,12 @@ export class HomePage implements OnInit {
   segmentModel = "random";
 
 
-  constructor(private data: DataService,private http:HttpClient, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser,private alertController: AlertController) {
-    this.requestPermission();
+  constructor(private data: DataService, private http: HttpClient, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser, private alertController: AlertController) {
+
   }
 
-  segmentChanged(event: any){
+
+  segmentChanged(event: any) {
     //console.log(this.segmentModel);
     event.preventDefault();
     //console.log(event);
@@ -126,7 +126,7 @@ export class HomePage implements OnInit {
     }
   }
 
-  async getRandomImages(){
+  async getRandomImages() {
     try {
       this.data.getRandomImages().subscribe(
         async (response: any) => {
@@ -202,29 +202,42 @@ export class HomePage implements OnInit {
           icon: 'download',
           data: 10,
           handler: async () => {
-            //Download image code
-            const imageUrl  = image.imageUrl;
-            const url = imageUrl;
-        
+            const imageUrl = image.imageUrl;            
+
+            // Get the image file name from the URL
             const parsedUrl = new URL(imageUrl);
-            const fileName = parsedUrl.pathname.split('/').pop();
-            console.log(fileName); // Output: "mFkSDpCKvk.jpg"
-          
-            // Fetch the image data
-            const response = await fetch(url);
-            const blob = await response.blob();
-          
-            // Create a temporary anchor element to initiate the download
-            const a = document.createElement("a");
-            a.href = window.URL.createObjectURL(blob);
-            a.download = fileName;
-          
-            // Trigger a click event on the anchor element to initiate the download
-            a.dispatchEvent(new MouseEvent("click"));
-          
-            // Clean up the temporary anchor element
-            window.URL.revokeObjectURL(a.href);
-            a.remove();
+            const fileName = parsedUrl.pathname.split('/').pop();  // Output: "mFkSDpCKvk.jpg"
+
+            Http.downloadFile({
+              url: imageUrl,
+              filePath: `${fileName}`
+            }).then(async (result) => {
+              const toast = this.toastCtrl.create({
+                message: "Image downloaded successfully",
+                duration: 5000,
+                position: 'bottom',
+                color: 'success',
+                icon: 'image'
+              });
+              (await toast).present();
+              setTimeout(async () => {
+                (await toast).dismiss();
+              }, 3000);
+              console.log('Image downloaded successfully: ' + result.path);
+            }, async (error) => {
+              const toast = this.toastCtrl.create({
+                message: "Error downloading image! Try again",
+                duration: 5000,
+                position: 'bottom',
+                color: 'danger',
+                icon: 'sad'
+              });
+              (await toast).present();
+              setTimeout(async () => {
+                (await toast).dismiss();
+              }, 3000);
+              console.error('Error downloading image: ' + error);
+            });
           }
         }, {
           text: 'Cancel',
@@ -313,16 +326,6 @@ export class HomePage implements OnInit {
   }
 
 
-  async requestPermission() {
-    const result = await Permissions.requestPermission({ name: 'foregroundService' });
-    if (result.state === 'granted') {
-      console.log('Foreground service permission granted');
-      this.scheduleNotification();
-    } else {
-      console.log('Foreground service permission not granted');
-    }
-  }
-  
 
   async scheduleNotification() {
     const notifs = await LocalNotifications.schedule({
@@ -343,5 +346,5 @@ export class HomePage implements OnInit {
       ]
     });
   }
-  
+
 }

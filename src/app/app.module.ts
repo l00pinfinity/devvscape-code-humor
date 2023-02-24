@@ -13,7 +13,7 @@ import { LazyImgDirective } from './core/directive/lazy-img.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-
+import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 
 @NgModule({
   declarations: [AppComponent, LazyImgDirective],
@@ -23,7 +23,7 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
   // or after 30 seconds (whichever comes first).
   registrationStrategy: 'registerWhenStable:30000'
 })],
-  providers: [InAppBrowser,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  providers: [InAppBrowser, AndroidPermissions,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide:HTTP_INTERCEPTORS,useClass:TokenInterceptor,multi:true}],
   bootstrap: [AppComponent]
 })

@@ -1,8 +1,8 @@
 {
   "name": "devvscape-code-humor",
-  "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "version": "1.7.0",
+  "author": "Collins Boit",
+  "homepage": "https://silkwebhq.com/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -24,6 +24,7 @@
     "@awesome-cordova-plugins/in-app-browser": "^6.1.0",
     "@awesome-cordova-plugins/power-optimization": "^6.1.0",
     "@awesome-cordova-plugins/splash-screen": "^6.1.0",
+    "@capacitor-community/http": "^1.4.1",
     "@capacitor/android": "4.3.0",
     "@capacitor/app": "4.0.1",
     "@capacitor/core": "^4.3.0",
@@ -32,6 +33,7 @@
     "@capacitor/local-notifications": "^4.1.5",
     "@capacitor/splash-screen": "^4.1.1",
     "@capacitor/status-bar": "4.0.1",
+    "@ionic-native/android-permissions": "^5.36.0",
     "@ionic-native/foreground-service": "^5.36.0",
     "@ionic/angular": "^6.3.7",
     "capacitor": "^0.0.3",
