@@ -223,7 +223,7 @@ export class HomePage implements OnInit {
               setTimeout(async () => {
                 (await toast).dismiss();
               }, 3000);
-              console.log('Image downloaded successfully: ' + result.path);
+              //console.log('Image downloaded successfully: ' + result.path);
             }, async (error) => {
               const toast = this.toastCtrl.create({
                 message: "Error downloading image! Try again",
@@ -236,7 +236,7 @@ export class HomePage implements OnInit {
               setTimeout(async () => {
                 (await toast).dismiss();
               }, 3000);
-              console.error('Error downloading image: ' + error);
+              //console.error('Error downloading image: ' + error);
             });
           }
         }, {
