@@ -19,7 +19,7 @@
     "@angular/forms": "^14.0.0",
     "@angular/platform-browser": "^14.0.0",
     "@angular/platform-browser-dynamic": "^14.0.0",
-    "@angular/pwa": "^0.5.3",
+    "@angular/pwa": "^16.0.0",
     "@angular/router": "^14.0.0",
     "@angular/service-worker": "^14.0.0",
     "@awesome-cordova-plugins/in-app-browser": "^6.1.0",
