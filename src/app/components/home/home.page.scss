@@ -1,0 +1,97 @@
+ion-content {
+  --padding-top: 40px;
+}
+
+.section-header {
+  font-weight: bold;
+  margin-left: 20px;
+  margin-bottom: 30px;
+}
+
+.top-right-button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 25px;
+  font-family: "Spotify";
+  font-weight: bold;
+  float: right;
+  margin-right: 10px;
+  margin-bottom: 30px;
+  margin-top: 18px;
+}
+
+ion-content {
+  ion-textarea {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .image-card {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease-in-out;
+
+    &:hover {
+      border-color: #007bff;
+    }
+
+    .card-label {
+      display: block;
+      cursor: pointer;
+
+      .card-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .fa-upload {
+          font-size: 24px;
+          margin-bottom: 10px;
+        }
+
+        p {
+          margin: 0;
+          font-size: 16px;
+          color: #555;
+        }
+      }
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+  }
+
+  .selected-image {
+    max-width: 100%;
+  }
+
+  input {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  input::file-selector-button {
+    font-weight: bold;
+    color: dodgerblue;
+    padding: 0.5em;
+    border: thin solid grey;
+    border-radius: 3px;
+  }
+
+  .cancel-button {
+    position: absolute;
+    top: 100px;
+    left: 10px;
+    font-size: 18px;
+  }
+}
+
+/* Style the close button in the modal header */
+ion-button.close-button {
+  font-size: 16px;
+}
