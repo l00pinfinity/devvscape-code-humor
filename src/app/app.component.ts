@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, Platform, ToastController } from '@ionic/angular';
-import { SplashScreen } from '@capacitor/splash-screen';
-import { TokenStorageService } from './core/services/token-storage.service';
-import { Router } from '@angular/router';
+import { App } from '@capacitor/app';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { Platform, AlertController, ToastController } from '@ionic/angular';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 @Component({
   selector: 'app-root',
@@ -12,109 +10,91 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  constructor(private platform: Platform, private router: Router, private alertCtrl: AlertController, private tokenStorage: TokenStorageService, private onlineStatusService: OnlineStatusService, private toastCtrl: ToastController,private permissions: AndroidPermissions) {
+  constructor(
+    private platform: Platform,
+    private androidPermissions: AndroidPermissions,
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController,
+    private onlineStatusService: OnlineStatusService
+  ) {
     this.platform.backButton.subscribeWithPriority(10, () => {
       this.exitConfirm();
     });
 
     this.initializeApp();
   }
-  ngOnInit(): void {
-    this.checkOnlineStatus();
-    localStorage.setItem('devvscapeFirstAppLoad', 'yes');
-    if (this.tokenStorage.getAccessToken()) {
-      this.router.navigateByUrl('/home');
-    }
-  }
 
   async initializeApp() {
-    this.platform.ready().then(async () => {
-      // Show the splash for two seconds and then automatically hide it:
-      await SplashScreen.hide();
-    })
-
-        // Check for storage permission
-        const hasPermission = await this.permissions.checkPermission(this.permissions.PERMISSION.WRITE_EXTERNAL_STORAGE);
-        if (!hasPermission) {
-          try {
-            const result = await this.permissions.requestPermission(this.permissions.PERMISSION.WRITE_EXTERNAL_STORAGE);
-            if (!result.hasPermission) {
-              // Permission denied
-              const confirm = this.alertCtrl.create({
-                header: 'Permission Denied',
-                message: 'Storage permission denied',
-                buttons: [
-                  {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    handler: () => {
-                      // Handle cancel button click
-                    }
-                  }]
-              });
-              (await confirm).present();
-              return;
-            }
-          } catch (err) {
-            // Handle error
+    this.androidPermissions
+      .checkPermission(this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE)
+      .then(
+        (result) => console.log('Has permission?', result.hasPermission),
+        async () => {
+          const hasPermission = await this.androidPermissions.requestPermission(
+            this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
+          );
+          if (!hasPermission.hasPermission) {
             const confirm = this.alertCtrl.create({
-              header: 'Error',
-              message: err,
+              header: 'Permission Denied',
+              message: 'Storage permission is required to upload images.',
               buttons: [
                 {
-                  text: 'Ok',
+                  text: 'OK',
                   role: 'cancel',
-                  handler: () => {
-                    // Handle cancel button click
-                  }
-                }]
+                  handler: () => {},
+                },
+              ],
             });
             (await confirm).present();
-            return;
           }
         }
+      );
   }
 
   async exitConfirm() {
     const confirm = this.alertCtrl.create({
-      header: 'Exit App',
-      message: 'Do you  want to exit the app?',
+      header: 'Code Escape Portal',
+      message:
+        'Ready to close the coding dimension and face reality? Choose your destiny.',
       buttons: [
         {
           text: 'Cancel',
           role: 'cancel',
-          handler: () => {
-            // console.log('Confirm Cancel');
-          }
+          handler: () => {},
         },
         {
           text: 'Exit',
           role: 'exit',
           handler: () => {
-            // console.log('Confirm Exit');
-            navigator['app'].exitApp();
-          }
-        }]
+            App.exitApp();
+          },
+        },
+      ],
     });
     (await confirm).present();
   }
 
-  //checkOnlineStatus
-  public checkOnlineStatus() {
-    this.onlineStatusService.status.subscribe(async (status: OnlineStatusType) => {
-      if (status === OnlineStatusType.OFFLINE) {
-        const toast = this.toastCtrl.create({
-          message: "You are offline. Please connect to the internet.",
-          duration: 5000,
-          position: 'bottom',
-          color: 'danger',
-          icon: 'wifi'
-        });
-        await (await toast).present();
-        setTimeout(async () => {
-          (await toast).dismiss();
-        }, 3000);
+  ngOnInit(): void {
+    this.checkOnlineStatus();
+  }
+
+  checkOnlineStatus() {
+    this.onlineStatusService.status.subscribe(
+      async (status: OnlineStatusType) => {
+        if (status === OnlineStatusType.OFFLINE) {
+          const toast = this.toastCtrl.create({
+            message: 'Looks like you are in the land of offline adventures!',
+            duration: 5000,
+            position: 'bottom',
+            color: 'danger',
+            icon: 'alert',
+          });
+          await (await toast).present();
+          setTimeout(async () => {
+            (await toast).dismiss();
+          }, 3000);
+        }
       }
-    })
+    );
   }
 }

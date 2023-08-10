@@ -1,0 +1,28 @@
+<ion-content class="content">
+  <ion-row class="content-header">
+    <ion-col size="2">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/"></ion-back-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-col>
+    <ion-col size="10">
+      <h2 class="section-header">Login</h2>
+    </ion-col>
+  </ion-row>
+
+  <app-auth-form
+    #loginForm
+    (formSubmitted)="loginUser($event)"
+    [actionButtonText]="'Login'"
+  ></app-auth-form>
+
+  <ion-button expand="block" fill="clear" routerLink="/signup" class="secondary-button">
+    Create a new account
+  </ion-button>
+
+  <ion-button expand="block" fill="clear" routerLink="/reset-password" class="secondary-button">
+    I forgot my password
+  </ion-button>
+</ion-content>

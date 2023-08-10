@@ -30,3 +30,12 @@ npm-debug.log*
 /platforms
 /plugins
 /www
+/android
+
+# Ignore env
+.env
+package-lock.json
+resources/android/**/*
+.firebase
+src/environments/enviroment.prod.ts
+src/environments/enviroment.ts

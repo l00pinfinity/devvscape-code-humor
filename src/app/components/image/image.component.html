@@ -1,0 +1,48 @@
+<ion-item *ngIf="image" [detail]="false">
+  <ion-card>
+    <ion-item>
+      <ion-avatar slot="start" (click)="openProfile(image.postedBy)">
+        <img
+          alt="DP"
+          src="https://ionicframework.com/docs/img/demos/avatar.svg"
+        />
+      </ion-avatar>
+      <ion-icon
+        slot="end"
+        name="ellipsis-horizontal-outline"
+        (click)="imageDropdown(image)"
+      ></ion-icon>
+      <ion-label>
+        <h2>{{ image.displayName || "devvscape_user" }}</h2>
+      </ion-label>
+    </ion-item>
+
+    <div class="card" *ngIf="!imageLoaded">
+      <ngx-shimmer-loading
+        [width]="'100%'"
+        [height]="'350px'"
+      ></ngx-shimmer-loading>
+    </div>
+
+    <img
+      [src]="image.imageUrl"
+      [alt]="image.postText"
+      (load)="imageLoaded = true"
+      (dblclick)="starImage(image)"
+      style="position: relative"
+    />
+
+    <ion-icon
+      name="star-outline"
+      size="large"
+      class="star-icon"
+      *ngIf="image.isStarred"
+    ></ion-icon>
+
+    <ion-card-header *ngIf="image.postText">
+      <ion-card-subtitle>
+        <b>{{ image.displayName || "devvscape_user" }}</b> {{ image.postText }}
+      </ion-card-subtitle>
+    </ion-card-header>
+  </ion-card>
+</ion-item>

@@ -4,39 +4,59 @@ import { AuthGuard } from './core/guard/auth.guard';
 
 const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
+    path: 'home',
+    loadChildren: () =>
+      import('./components/home/home.module').then((m) => m.HomePageModule),
+    canActivate: [AuthGuard],
   },
   {
-    path: 'signup',
-    loadChildren: () => import('./components/auth/signup/signup.module').then( m => m.SignupPageModule)
+    path: 'profile',
+    loadChildren: () =>
+      import('./components/auth/pages/profile/profile.module').then(
+        (m) => m.ProfilePageModule
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full',
+  },
+  {
+    path: 'notifications',
+    loadChildren: () =>
+      import('./components/notification/notification.module').then(
+        (m) => m.NotificationPageModule
+      ),
+    canActivate: [AuthGuard],
   },
   {
     path: 'login',
-    loadChildren: () => import('./components/auth/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () =>
+      import('./components/auth/pages/login/login.module').then(
+        (m) => m.LoginPageModule
+      ),
   },
   {
-    path: 'home',
-    loadChildren: () => import('./components/home/home.module').then( m => m.HomePageModule),
-    canActivate:[AuthGuard]
+    path: 'signup',
+    loadChildren: () =>
+      import('./components/auth/pages/signup/signup.module').then(
+        (m) => m.SignupPageModule
+      ),
   },
   {
-    path: 'forgot-password',
-    loadChildren: () => import('./components/auth/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
+    path: 'reset-password',
+    loadChildren: () =>
+      import(
+        './components/auth/pages/reset-password/reset-password.module'
+      ).then((m) => m.ResetPasswordPageModule),
   },
-  {
-    path: 'reset',
-    loadChildren: () => import('./components/auth/reset/reset.module').then( m => m.ResetPageModule)
-  }
-
-
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

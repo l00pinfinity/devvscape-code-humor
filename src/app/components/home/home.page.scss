@@ -1,130 +1,97 @@
-ion-title {
-  text-align: center;
+ion-content {
+  --padding-top: 40px;
 }
 
-ion-card img {
-  text-align: center;
-  width: 100%;
+.section-header {
+  font-weight: bold;
+  margin-left: 20px;
+  margin-bottom: 30px;
 }
 
-ion-card div p {
-  text-align: center;
-}
-
-ion-card div a {
-  margin-left: 2em;
-}
-
-ion-item {
-  background-color: aliceblue;
-}
-
-ion-button {
-  display: none;
-  position: fixed;
-  bottom: 35px;
-  right: 20px;
-  z-index: 99;
-}
-
-.dot {
-  display: block;
-  height: 12px;
-  width: 12px;
-  border-radius: 50%;
-  align-self: start;
-  margin: 16px 10px 16px 16px;
-}
-
-.dot-unread {
-  background: var(--ion-color-primary);
-}
-
-#showMe {
-  opacity: 0;
-  -moz-animation: cssAnimation 0.5s;
-  -webkit-animation: cssAnimation 0.5s;
-  -o-animation: cssAnimation 0.5s;
-  animation: cssAnimation 0.5s;
-  -webkit-animation-fill-mode: forwards;
-  animation-fill-mode: forwards;
-}
-
-.endScroll {
-  text-align: center;
-}
-
-ion-menu::part(backdrop) {
-  background-color: rgba(13, 90, 62, 0.5);
-}
-
-ion-menu::part(container) {
-  border-radius: 0 20px 20px 0;
-  box-shadow: 4px 0px 16px rgba(13, 90, 62, 0.5);
+.top-right-button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 25px;
+  font-family: "Spotify";
+  font-weight: bold;
+  float: right;
+  margin-right: 10px;
+  margin-bottom: 30px;
+  margin-top: 18px;
 }
 
 ion-content {
-  background-color: none !important;
-}
-
-ion-footer {
-  margin: auto;
-  padding: 10px;
-  text-align: center;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: -1;
-}
-
-ion-text {
-  font-size: 12px;
-  font-weight: bold;
-}
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-li {
-  display: inline;
-  margin: 1em;
-}
-
-ion-icon {
-  width: 30px;
-  height: 30px;
-  color: darkgreen;
-}
-
-ion-label {
-  margin-left: 1em;
-}
-
-cdk-virtual-scroll-viewport {
-  height: 100%;
-  width: 100%;
-}
-
-@keyframes cssAnimation {
-  0% {
-    opacity: 0;
+  ion-textarea {
+    width: 100%;
+    font-size: 14px;
   }
 
-  100% {
-    opacity: 1;
+  .image-card {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease-in-out;
+
+    &:hover {
+      border-color: #007bff;
+    }
+
+    .card-label {
+      display: block;
+      cursor: pointer;
+
+      .card-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .fa-upload {
+          font-size: 24px;
+          margin-bottom: 10px;
+        }
+
+        p {
+          margin: 0;
+          font-size: 16px;
+          color: #555;
+        }
+      }
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+  }
+
+  .selected-image {
+    max-width: 100%;
+  }
+
+  input {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  input::file-selector-button {
+    font-weight: bold;
+    color: dodgerblue;
+    padding: 0.5em;
+    border: thin solid grey;
+    border-radius: 3px;
+  }
+
+  .cancel-button {
+    position: absolute;
+    top: 100px;
+    left: 10px;
+    font-size: 18px;
   }
 }
 
-@-webkit-keyframes cssAnimation {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
+/* Style the close button in the modal header */
+ion-button.close-button {
+  font-size: 16px;
 }

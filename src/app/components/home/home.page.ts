@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { ActionSheetController, AlertController, LoadingController, ToastController } from '@ionic/angular';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { InAppBrowser, InAppBrowserOptions } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { Router } from '@angular/router';
-import { Images } from 'src/app/core/interface/images';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { DataService } from 'src/app/core/services/data.service';
-import { TokenStorageService } from 'src/app/core/services/token-storage.service';
-import { VersionService } from 'src/app/core/services/version.service';
-import { LocalNotifications } from '@capacitor/local-notifications';
-import { Http } from '@capacitor-community/http';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import {
+  AlertController,
+  LoadingController,
+  ModalController,
+  NavController,
+  ToastController,
+} from '@ionic/angular';
+import { ImageService } from 'src/app/core/services/image.service';
+import { Image } from '../../core/interface/image';
+import { Auth } from '@angular/fire/auth';
+import { DocumentSnapshot } from '@angular/fire/firestore';
+import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 
 @Component({
   selector: 'app-home',
@@ -17,334 +19,214 @@ import { Http } from '@capacitor-community/http';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
+  public welcomeMessage = '';
+  presentingElement = undefined;
+  imageFile: File | null = null;
+  postText = '';
+  imageSrc: string | ArrayBuffer | null = null;
+  images: Image[] = [];
+  lastDocument: DocumentSnapshot | undefined;
+  public loading: HTMLIonLoadingElement;
+  errorOccurred = false;
+  errorMessage = '';
 
-  images$: any;
-  randomImages$: any;
-  selectedImage?: Images;
-  page = 0;
-  likedImage?: Images;
-  downloaded?: Images;
-  loading: boolean = true;
-  currentVersion: string;
-  options: InAppBrowserOptions = {
-    location: 'yes',//Or 'no' 
-    hidden: 'no', //Or  'yes'
-    clearcache: 'yes',
-    clearsessioncache: 'yes',
-    zoom: 'yes',//Android only ,shows browser zoom controls 
-    hardwareback: 'yes',
-    mediaPlaybackRequiresUserAction: 'no',
-    shouldPauseOnSuspend: 'no', //Android only 
-    closebuttoncaption: 'Close', //iOS only
-    disallowoverscroll: 'no', //iOS only 
-    toolbar: 'yes', //iOS only 
-    enableViewportScale: 'no', //iOS only 
-    allowInlineMediaPlayback: 'no',//iOS only 
-    presentationstyle: 'pagesheet',//iOS only 
-    fullscreen: 'yes',//Windows only    
-  };
-  segmentModel = "random";
+  constructor(
+    private auth: Auth,
+    private imageService: ImageService,
+    private navCtrl: NavController,
+    private androidPermissions: AndroidPermissions,
+    private modalController: ModalController,
+    private loadingCtrl: LoadingController,
+    public toastCtrl: ToastController,
+    private alertCtrl: AlertController,
+    private modalCtrl: ModalController,
+    private onlineStatusService: OnlineStatusService
+  ) {}
 
-
-  constructor(private data: DataService, private http: HttpClient, private authService: AuthService, private version: VersionService, private tokenStorage: TokenStorageService, private router: Router, public loadingCtrl: LoadingController, public toastCtrl: ToastController, public actionSheetCtrl: ActionSheetController, private iab: InAppBrowser, private alertController: AlertController) {
-
+  async ngOnInit(): Promise<void> {
+    this.setWelcomeMessage();
+    this.checkOnlineStatus();
+    this.presentingElement = document.querySelector('.ion-page');
+    this.fetchImagePosts();
   }
-
-
-  segmentChanged(event: any) {
-    //console.log(this.segmentModel);
-    event.preventDefault();
-    //console.log(event);
-  }
-
-  doRefresh(event) {
-    this.getPaginatedImages(false, "");
-    setTimeout(() => {
-      event.detail.complete();
-    }, 2000);
-  }
-
-  async getPaginatedImages(isFirstLoad, event) {
+  async fetchImagePosts() {
     try {
-      this.data.getPaginatedImages(this.page).subscribe(
-        async (response: any) => {
-          if (response) {
-            // console.log(response);
-            this.images$ = response;
-          } else {
-            const toast = this.toastCtrl.create({
-              message: "Something went wrong! Try again",
-              duration: 10000,
-              position: 'bottom',
-              color: 'danger',
-              icon: 'sad'
-            });
-            (await toast).present();
-            setTimeout(async () => {
-              (await toast).dismiss();
-            }, 1000);
-          }
-
-          if (isFirstLoad) {
-            event.target.complete();
-          }
-          this.page++;
-        }, async (error: Error | HttpErrorResponse) => {
-          const toast = this.toastCtrl.create({
-            message: `${error.message}`,
-            duration: 10000,
-            position: 'bottom',
-            color: 'danger',
-            icon: 'sad'
-          });
-          (await toast).present();
-          setTimeout(async () => {
-            (await toast).dismiss();
-          }, 1000);
-
-          //just loggout the user to login
-          this.authService.logout();
-
-          //redirect to login to update token
-          this.router.navigateByUrl('/login')
-        })
+      this.images = await this.imageService.getImagePosts();
+      this.errorOccurred = false;
     } catch (error) {
-      const toast = this.toastCtrl.create({
-        message: error,
-        duration: 10000,
+      this.errorOccurred = true;
+      this.errorMessage = 'Something went wrong, try again later';
+
+      const toast = await this.toastCtrl.create({
+        message: this.errorMessage,
+        duration: 5000,
         position: 'bottom',
         color: 'danger',
-        icon: 'sad'
+        icon: 'alert',
       });
-      (await toast).present();
-      setTimeout(async () => {
-        (await toast).dismiss();
-      }, 1000);
 
-      //redirect to login to update token
-      this.router.navigateByUrl('/login')
+      await toast.present();
     }
   }
 
-  async getRandomImages() {
-    try {
-      this.data.getRandomImages().subscribe(
-        async (response: any) => {
-          if (response) {
-            //console.log(response);
-            this.randomImages$ = response;
-          } else {
-            const toast = this.toastCtrl.create({
-              message: "Something went wrong! Try again",
-              duration: 10000,
-              position: 'bottom',
-              color: 'danger',
-              icon: 'sad'
-            });
-            (await toast).present();
-            setTimeout(async () => {
-              (await toast).dismiss();
-            }, 1000);
-          }
-        }, async (error: Error | HttpErrorResponse) => {
-          const toast = this.toastCtrl.create({
-            message: `${error.message}`,
-            duration: 10000,
-            position: 'bottom',
-            color: 'danger',
-            icon: 'sad'
-          });
-          (await toast).present();
-          setTimeout(async () => {
-            (await toast).dismiss();
-          }, 1000);
-
-          //just loggout the user to login
-          this.authService.logout();
-
-          //redirect to login to update token
-          this.router.navigateByUrl('/login')
-        })
-    } catch (error) {
-      const toast = this.toastCtrl.create({
-        message: error,
-        duration: 10000,
-        position: 'bottom',
-        color: 'danger',
-        icon: 'sad'
-      });
-      (await toast).present();
-      setTimeout(async () => {
-        (await toast).dismiss();
-      }, 1000);
-
-      //redirect to login to update token
-      this.router.navigateByUrl('/login')
-    }
-  }
-
-  ngOnInit() {
+  refresh(ev: any) {
+    this.fetchImagePosts();
     setTimeout(() => {
-      //delay for three seconds
-      this.loading = false;
-    }, 4000)
-    this.isAccessTokenPresent();
-    this.currentVersion = this.version.getCurrentVersion();
+      ev.detail.complete();
+    }, 3000);
   }
 
-  async showActionSheet(image: Images) {
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Select any of the actions below to proceed',
-      cssClass: 'my-custom-class',
-      buttons: [
-        {
-          text: 'Download',
-          icon: 'download',
-          data: 10,
-          handler: async () => {
-            const imageUrl = image.imageUrl;            
+  setWelcomeMessage(): void {
+    const currentDate = new Date();
+    const currentHour = currentDate.getHours();
 
-            // Get the image file name from the URL
-            const parsedUrl = new URL(imageUrl);
-            const fileName = parsedUrl.pathname.split('/').pop();  // Output: "mFkSDpCKvk.jpg"
-
-            Http.downloadFile({
-              url: imageUrl,
-              filePath: `${fileName}`
-            }).then(async (result) => {
-              const toast = this.toastCtrl.create({
-                message: "Image downloaded successfully",
-                duration: 5000,
-                position: 'bottom',
-                color: 'success',
-                icon: 'image'
-              });
-              (await toast).present();
-              setTimeout(async () => {
-                (await toast).dismiss();
-              }, 3000);
-              //console.log('Image downloaded successfully: ' + result.path);
-            }, async (error) => {
-              const toast = this.toastCtrl.create({
-                message: "Error downloading image! Try again",
-                duration: 5000,
-                position: 'bottom',
-                color: 'danger',
-                icon: 'sad'
-              });
-              (await toast).present();
-              setTimeout(async () => {
-                (await toast).dismiss();
-              }, 3000);
-              //console.error('Error downloading image: ' + error);
-            });
-          }
-        }, {
-          text: 'Cancel',
-          icon: 'close',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        }]
-    });
-    await actionSheet.present();
-
-    const { role, data } = await actionSheet.onDidDismiss();
-    console.log('onDidDismiss resolved with role and data', role, data);
-  }
-
-  public openWithSystemBrowser(url: string) {
-    let target = "_system";
-    this.iab.create(url, target, this.options);
-  }
-  public openWithInAppBrowser(url: string) {
-    let target = "_blank";
-    this.iab.create(url, target, this.options);
-  }
-
-  ionViewWillLeave() {
-    this.isAccessTokenPresent();
-    this.authService.refresh();
-  }
-
-  async isAccessTokenPresent() {
-    if (localStorage.getItem('devvscapeFirstAppLoad')) {
-      //already been loaded
-      if (this.tokenStorage.getAccessToken()) {
-        this.getRandomImages();
-        this.getPaginatedImages(false, "");
-      } else {
-        const toast = this.toastCtrl.create({
-          message: "Please verify your login credentials and try again",
-          duration: 10000,
-          position: 'bottom',
-          color: 'danger',
-          icon: 'sad'
-        });
-        (await toast).present();
-        setTimeout(async () => {
-          (await toast).dismiss();
-        }, 2000);
-        //redirect back to login page
-        this.router.navigateByUrl('/login');
-      }
+    if (currentHour >= 5 && currentHour < 12) {
+      this.welcomeMessage = 'Good morning';
+    } else if (currentHour >= 12 && currentHour < 18) {
+      this.welcomeMessage = 'Good afternoon';
     } else {
-      localStorage.setItem('devvscapeFirstAppLoad', 'yes');
-      this.router.navigateByUrl('/signup')
+      this.welcomeMessage = 'Good evening';
     }
   }
 
-  toggle(event) {
-    console.log(event);
+  async openModal() {
+    this.androidPermissions
+      .checkPermission(this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE)
+      .then(
+        (result) => console.log('Has permission?', result.hasPermission),
+        async () => {
+          const hasPermission = await this.androidPermissions.requestPermission(
+            this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
+          );
+          if (!hasPermission.hasPermission) {
+            const confirm = this.alertCtrl.create({
+              header: 'Permission Denied',
+              message: 'Storage permission is required to upload images.',
+              buttons: [
+                {
+                  text: 'OK',
+                  role: 'cancel',
+                  handler: () => {},
+                },
+              ],
+            });
+            (await confirm).present();
+          }
+        }
+      );
+
+    const modalElement = document.getElementById('open-modal');
+    const modal = await this.modalCtrl.create({
+      component: modalElement,
+    });
+
+    await modal.present();
   }
 
-  async logout() {
+  openProfile() {
+    this.navCtrl.navigateForward('/profile');
+  }
+
+  openNotification() {
+    this.navCtrl.navigateForward('/notifications');
+  }
+
+  async uploadImageAndPostText() {
+    const user = this.auth.currentUser;
+    console.log('Clicked upload with text ' + this.postText + '.');
+    if (this.imageFile) {
+      this.showLoading();
+      await this.imageService.uploadImageAndPostText(
+        this.imageFile,
+        this.postText,
+        user.uid,
+        user.displayName
+      );
+
+      this.hideLoading();
+      // Dismiss the modal after successful upload
+      this.modalController.dismiss();
+
+      const toast = this.toastCtrl.create({
+        message: 'Your post has been committed to the app repository!',
+        duration: 5000,
+        position: 'bottom',
+        color: 'success',
+      });
+      (await toast).present();
+
+      this.imageFile = null;
+      this.postText = '';
+      this.imageSrc = null;
+
+      this.fetchImagePosts();
+    }
+  }
+
+  onFileSelected(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement.files && inputElement.files.length) {
+      this.imageFile = inputElement.files[0];
+      this.displaySelectedImage();
+    }
+  }
+
+  displaySelectedImage() {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      this.imageSrc = event.target?.result;
+    };
+    reader.readAsDataURL(this.imageFile);
+  }
+
+  cancelImageSelection() {
+    this.imageFile = null;
+    this.imageSrc = null;
+  }
+
+  async showLoading(): Promise<void> {
     try {
-      const loading = await this.loadingCtrl.create({
-        message: 'Logging out...',
-        duration: 10000,
+      this.loading = await this.loadingCtrl.create({
+        message: 'Uploading...',
         cssClass: 'custom-loading',
       });
-      loading.present();
-      this.authService.logout();
-      this.router.navigateByUrl('/login');
-      loading.dismiss();
+      await this.loading.present();
     } catch (error) {
-      const toast = this.toastCtrl.create({
-        message: error,
-        duration: 10000,
-        position: 'bottom',
-        color: 'danger',
-        icon: 'sad'
-      });
-      (await toast).present();
-      setTimeout(async () => {
-        (await toast).dismiss();
-      }, 1000);
+      this.handleError(error);
     }
   }
 
-
-
-  async scheduleNotification() {
-    const notifs = await LocalNotifications.schedule({
-      notifications: [
-        {
-          title: 'Stop scrolling through boring code! ',
-          body: 'Get your daily dose of laughs and keep your coding skills sharp! 🤣👨‍💻🚀',
-          id: 1,
-          schedule: {
-            on: { hour: 18, minute: 0 },
-            repeats: true
-          },
-          sound: "default",
-          attachments: null,
-          actionTypeId: '',
-          extra: null
-        }
-      ]
-    });
+  hideLoading(): Promise<boolean> {
+    return this.loading.dismiss();
   }
 
+  async handleError(error: { message: any }): Promise<void> {
+    const toast = this.toastCtrl.create({
+      message: `${error.message}`,
+      duration: 5000,
+      position: 'bottom',
+      color: 'danger',
+    });
+    (await toast).present();
+  }
+
+  checkOnlineStatus() {
+    this.onlineStatusService.status.subscribe(
+      async (status: OnlineStatusType) => {
+        if (status === OnlineStatusType.OFFLINE) {
+          const toast = this.toastCtrl.create({
+            message: 'Looks like you are in the land of offline adventures!',
+            duration: 5000,
+            position: 'bottom',
+            color: 'danger',
+            icon: 'alert',
+          });
+          await (await toast).present();
+          setTimeout(async () => {
+            (await toast).dismiss();
+          }, 3000);
+        }
+      }
+    );
+  }
 }

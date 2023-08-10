@@ -1,177 +1,103 @@
-<ion-app>
-  <ion-menu contentId="main-content" [disabled]="loading" auto-hide="false" persistent="true" class="overlay">
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Profile | Devvscape</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding">
-      <ion-list>
-        <ion-item-group>
-          <ion-item-divider>
-            <ion-label>
-              SOCIALS
-            </ion-label>
-          </ion-item-divider>
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-row>
+    <ion-col size="7">
+      <h2 class="section-header">{{welcomeMessage}}</h2>
+    </ion-col>
+    <ion-col size="5">
+      <button class="top-right-button" (click)="openProfile()">
+        <ion-icon name="person-outline"></ion-icon>
+      </button>
+      <button class="top-right-button" (click)="openNotification()">
+        <ion-icon name="notifications-outline"></ion-icon>
+      </button>
+      <button id="open-modal" class="top-right-button" (click)="openModal()">
+        <ion-icon name="add-outline"></ion-icon>
+      </button>
+    </ion-col>
+  </ion-row>
+  <ion-progress-bar
+    *ngIf="images.length === 0 && !errorOccurred"
+    type="indeterminate"
+  ></ion-progress-bar>
 
-          <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://devvscape.com/')">
-            <ion-icon name="crop-sharp" slot="start"></ion-icon>
-            <ion-label>DEVVSCAPE </ion-label>
-          </ion-item>
-          <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://silkwebhq.com/')">
-            <ion-icon name="globe-sharp" slot="start"></ion-icon>
-            <ion-label>SILKWEBHQ</ion-label>
-          </ion-item>
-        </ion-item-group>
-
-        <ion-item-group>
-          <ion-item-divider>
-            <ion-label>
-              ABOUT
-            </ion-label>
-          </ion-item-divider>
-
-          <ion-item (click)="openWithInAppBrowser('https://silkwebhq.com/terms')">
-            <ion-icon name="document-text-sharp" slot="start"></ion-icon>
-            <ion-label>Terms & Conditions</ion-label>
-          </ion-item>
-          <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://silkwebhq.com/privacy')">
-            <ion-icon name="document-lock-sharp" slot="start"></ion-icon>
-            <ion-label>Privacy Policy</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-icon name="code-slash-sharp" slot="start"></ion-icon>
-            <ion-label>App Version</ion-label>
-            <ion-text class="text-muted">{{currentVersion}}</ion-text>
-          </ion-item>
-        </ion-item-group>
-        <ion-item-group>
-          <ion-item-divider>
-            <ion-label>
-              SUPPORT
-            </ion-label>
-          </ion-item-divider>
-
-          <ion-item class="ion-activated"
-            (click)="openWithSystemBrowser('https://play.google.com/store/apps/details?id=com.silkwebhq.devvscapecode')">
-            <ion-icon name="share-social-sharp" slot="start"></ion-icon>
-            <ion-label>Review and Share</ion-label>
-          </ion-item>
-          <ion-item class="ion-activated" (click)="openWithInAppBrowser('https://www.buymeacoffee.com/l00pinfinity')">
-            <ion-icon name="cafe-sharp" slot="start"></ion-icon>
-            <ion-label>Buy me coffee</ion-label>
-          </ion-item>
-        </ion-item-group>
-        <ion-item-group>
-          <ion-item-divider>
-            <ion-label>
-              SETTINGS
-            </ion-label>
-          </ion-item-divider>
-
-          <ion-item class="ion-activated" (click)="logout()">
-            <ion-icon name="log-out" slot="start"></ion-icon>
-            <ion-label>Logout</ion-label>
-          </ion-item>
-        </ion-item-group>
-      </ion-list>
-      <ion-footer>
-        <ion-text class="center">The Future of SilkwebHQ and the SilkCommunity</ion-text>
-        <hr style="color: #fff;">
-        <ul>
-          <li><a href="https://discord.gg/hNY2xndWjF" target="_blank" class="socialBtn">
-              <ion-icon name="logo-discord"></ion-icon>
-            </a></li>
-          <li><a href="https://join.slack.com/t/silkwebhq/shared_invite/zt-18tuxa6n9-nTOBBbUGfS4YMdxp7aSbbw"
-              target="_blank" class="socialBtn">
-              <ion-icon name="logo-slack"></ion-icon>
-            </a></li>
-          <li><a href="https://github.com/silkwebhq" target="_blank" class="socialBtn">
-              <ion-icon name="logo-github"></ion-icon>
-            </a></li>
-          <li><a href="https://twitter.com/silkwebhq" target="_blank" class="socialBtn">
-              <ion-icon name="logo-twitter"></ion-icon>
-            </a></li>
-        </ul>
-      </ion-footer>
-    </ion-content>
-  </ion-menu>
-  <div class="ion-page" id="main-content">
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-title>Devvscape | CodeHumor</ion-title>
-      </ion-toolbar>
-      
-      <ion-toolbar>
-        <ion-segment value="random" 
-        color="success" 
-        scrollable="true"
-        mode="ios"
-        [(ngModel)]="segmentModel" 
-        (ionChange)="segmentChanged($event)">
-          <ion-segment-button value="random">
-            Random
-          </ion-segment-button>
-          <ion-segment-button value="all">
-            All
-          </ion-segment-button>
-        </ion-segment>
-      </ion-toolbar>
-      <ion-progress-bar type="indeterminate" *ngIf="!images$"></ion-progress-bar>
-    </ion-header>
-
-    <ion-content [fullscreen]="true" class="ion-padding" *ngIf="segmentModel === 'random'">
-
-      <cdk-virtual-scroll-viewport class="ion-content-scroll-host" itemSize="40" minBufferPx="900" maxBufferPx="1350">
-        <ion-list *ngIf="randomImages$" id="showImages">
-          <ion-card *cdkVirtualFor="let image of randomImages$" class="memeCard" (click)="showActionSheet(image)">
-            <img app:LazyImg src="{{image.imageUrl}}" alt="{{image.id}}" style="min-height: 40vh" >
-            <ion-card-content>
-              <ion-grid>
-                <ion-row>
-                  <ion-col>
-                    <ion-text>{{image.createdAt | dateAgo}}</ion-text>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-card-content>
-          </ion-card>
-        </ion-list>
-      </cdk-virtual-scroll-viewport>
-
-    </ion-content>
-
-    <ion-content [fullscreen]="true" class="ion-padding" *ngIf="segmentModel === 'all'">
-      <ion-refresher slot="fixed" pullFactor="0.5" pullMin="100" pullMax="200" (ionRefresh)="doRefresh($event)">
-        <ion-refresher-content></ion-refresher-content>
-      </ion-refresher>
-
-      <cdk-virtual-scroll-viewport class="ion-content-scroll-host" itemSize="40" minBufferPx="900" maxBufferPx="1350">
-        <ion-list *ngIf="images$" id="showImages">
-          <ion-card *cdkVirtualFor="let image of images$" class="memeCard" (click)="showActionSheet(image)">
-            <img app:LazyImg src="{{image.imageUrl}}" alt="{{image.id}}" style="min-height: 40vh" >
-            <ion-card-content>
-              <ion-grid>
-                <ion-row>
-                  <ion-col>
-                    <ion-text>{{image.createdAt | dateAgo}}</ion-text>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-card-content>
-          </ion-card>
-        </ion-list>
-
-        <ion-card class="endScroll" *ngIf="images$">
-          <ion-text color="primary">
-            <p class="text-center">You've reached the end! 👋, pull down to refresh</p>
-          </ion-text>
-        </ion-card>
-      </cdk-virtual-scroll-viewport>
-    </ion-content>
+  <div *ngIf="errorOccurred" class="error-message">
+    <p>An error occurred: {{ errorMessage }}</p>
   </div>
 
-</ion-app>
+  <ion-list>
+    <app-image *ngFor="let image of images" [image]="image"></app-image>
+  </ion-list>
+
+  <ion-modal
+    #modal
+    trigger="open-modal"
+    [presentingElement]="presentingElement"
+  >
+    <ng-template>
+      <ion-content class="ion-padding">
+        <ion-row>
+          <ion-col size="7">
+            <h2 class="section-header">Create post</h2>
+          </ion-col>
+          <ion-col size="5">
+            <button class="top-right-button" (click)="modal.dismiss()">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </ion-col>
+        </ion-row>
+        <div class="card">
+          <div class="image-card" *ngIf="!imageFile">
+            <label for="imageInput" class="card-label">
+              <div class="card-content">
+                <i class="fas fa-upload"></i>
+                <p>Click to select an image</p>
+              </div>
+            </label>
+            <input
+              type="file"
+              id="imageInput"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+            />
+          </div>
+
+          <ion-button
+            *ngIf="imageFile"
+            class="cancel-button"
+            fill="clear"
+            (click)="cancelImageSelection()"
+          >
+            <ion-icon name="trash"></ion-icon>
+          </ion-button>
+          <br />
+          <div *ngIf="imageFile">
+            <img
+              [src]="imageSrc"
+              [alt]="imageFile.name"
+              class="selected-image"
+            />
+          </div>
+          <ion-item-divider *ngIf="imageFile"></ion-item-divider>
+          <ion-textarea
+            *ngIf="imageFile"
+            class="full-width-textarea"
+            [(ngModel)]="postText"
+            placeholder="Say something about the meme..."
+            [autoGrow]="true"
+          ></ion-textarea>
+          <br /><br />
+          <ion-button
+            *ngIf="imageFile"
+            expand="block"
+            class="post-button"
+            (click)="uploadImageAndPostText()"
+            >Post</ion-button
+          >
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">Devvscape</string>
-    <string name="title_activity_main">Devvscape</string>
-    <string name="package_name">com.silkwebhq.devvscapecode</string>
-    <string name="custom_url_scheme">com.silkwebhq.devvscapecode</string>
-</resources>

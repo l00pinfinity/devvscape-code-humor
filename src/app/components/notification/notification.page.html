@@ -1,0 +1,42 @@
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-row>
+    <ion-col size="2">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/"></ion-back-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-col>
+    <ion-col size="6">
+      <h2 class="section-header">Notifications</h2>
+    </ion-col>
+    <ion-col size="4" *ngIf="notifications?.length > 0">
+      <button class="top-right-button" (click)="markAsRead()">
+        <ion-icon name="checkmark-done-outline"></ion-icon>
+      </button>
+    </ion-col>
+  </ion-row>
+
+  <ion-list *ngIf="notifications?.length > 0">
+    <ion-item
+      *ngFor="let notification of notifications"
+      [class.read]="notification.read"
+    >
+      <ion-icon
+        [name]="notification.read ? 'checkmark-done-circle' : 'ellipse-outline'"
+        [color]="notification.read ? 'success' : 'primary'"
+      ></ion-icon>
+      <ion-label>
+        <h3>{{ notification.title }}</h3>
+        <p>{{ notification.message }}</p>
+        <p class="timestamp">{{ notification.timestamp | date }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <div class="no-notifications" *ngIf="notifications?.length === 0">
+    No notifications at the moment.
+  </div>
+</ion-content>

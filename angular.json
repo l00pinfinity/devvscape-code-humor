@@ -28,67 +28,19 @@
                 "glob": "**/*.svg",
                 "input": "node_modules/ionicons/dist/ionicons/svg",
                 "output": "./svg"
-              },
-              "src/manifest.webmanifest",
-              "src/manifest.webmanifest",
-              "src/manifest.webmanifest",
-              "src/manifest.webmanifest",
-              {
-                "glob": "**/*.svg",
-                "input": "node_modules/ionicons/dist/ionicons/svg",
-                "output": "./svg"
               }
-            ],
-            "allowedCommonJsDependencies": [
-              "moment"
             ],
             "styles": [
               "src/theme/variables.scss",
-              "src/global.scss",
-              {
-                "input": "node_modules/@ionic/angular/css/core.css"
-              },
-              {
-                "input": "node_modules/@ionic/angular/css/normalize.css"
-              },
-              {
-                "input": "node_modules/@ionic/angular/css/structure.css"
-              },
-              {
-                "input": "node_modules/@ionic/angular/css/typography.css"
-              },
-              {
-                "input": "node_modules/@ionic/angular/css/display.css"
-              },
-              {
-                "input": "node_modules/@ionic/angular/css/padding.css"
-              },
-              {
-                "input": "node_modules/@ionic/angular/css/float-elements.css"
-              },
-              {
-                "input": "node_modules/@ionic/angular/css/text-alignment.css"
-              },
-              {
-                "input": "node_modules/@ionic/angular/css/text-transformation.css"
-              },
-              {
-                "input": "node_modules/@ionic/angular/css/flex-utils.css"
-              },
-              {
-                "input": "src/theme/variables.css"
-              }
+              "src/global.scss"
             ],
             "scripts": [],
-            "aot": false,
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true,
-            "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.json"
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -100,8 +52,8 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": true,
-              "namedChunks": true,
+              "sourceMap": false,
+              "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -109,8 +61,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1mb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 }
               ]
             },
@@ -158,15 +110,6 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets"
-              },
-              "src/manifest.webmanifest",
-              "src/manifest.webmanifest",
-              "src/manifest.webmanifest",
-              "src/manifest.webmanifest",
-              {
-                "glob": "**/*.svg",
-                "input": "node_modules/ionicons/dist/ionicons/svg",
-                "output": "./svg"
               }
             ]
           },
@@ -200,30 +143,6 @@
               "devServerTarget": "app:serve:ci"
             }
           }
-        },
-        "ionic-cordova-serve": {
-          "builder": "@ionic/angular-toolkit:cordova-serve",
-          "options": {
-            "cordovaBuildTarget": "app:ionic-cordova-build",
-            "devServerTarget": "app:serve"
-          },
-          "configurations": {
-            "production": {
-              "cordovaBuildTarget": "app:ionic-cordova-build:production",
-              "devServerTarget": "app:serve:production"
-            }
-          }
-        },
-        "ionic-cordova-build": {
-          "builder": "@ionic/angular-toolkit:cordova-build",
-          "options": {
-            "browserTarget": "app:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "app:build:production"
-            }
-          }
         }
       }
     }
@@ -231,8 +150,7 @@
   "cli": {
     "schematicCollections": [
       "@ionic/angular-toolkit"
-    ],
-    "analytics": "16187a51-33f7-4c81-9cee-314e1ef822c7"
+    ]
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {

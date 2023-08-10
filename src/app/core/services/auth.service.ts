@@ -1,108 +1,52 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import * as moment from 'moment';
-import { Observable, throwError } from 'rxjs';
-import { map, shareReplay, retry, catchError } from 'rxjs/operators';
-
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
+import {
+  Auth,
+  authState,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  User,
+  UserCredential,
+} from '@angular/fire/auth';
+import { doc, Firestore, setDoc } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class AuthService {
+  public userId: string;
+  constructor(private auth: Auth, private firestore: Firestore) {}
 
-  constructor(private http: HttpClient) { }
-
-  login(usernameOrEmail: string, password: string): Observable<any> {
-    return this.http.post(environment.apiUrl + 'api/v1/auth/signin', {
-      usernameOrEmail, password
-    }, httpOptions).pipe(
-      shareReplay(1),
-      catchError(this.handleError)
-    );
+  getUser(): Observable<User> {
+    return authState(this.auth);
   }
 
-  signup(email: string, username: string, password: string, bio: string): Observable<any> {
-    return this.http.post(environment.apiUrl + 'api/v1/auth/signup', {
-      email, username, password, bio
-    }, httpOptions);
+  login(email: string, password: string): Promise<UserCredential> {
+    return signInWithEmailAndPassword(this.auth, email, password);
   }
 
-  forgotPassword(email:string):Observable<any>{    
-    return this.http.post(environment.apiUrl + 'api/v1/auth/forgot-password?email=' + email,httpOptions);
-  }
-
-  resetPassword(token:string,password:string):Observable<any>{
-    return this.http.post(environment.apiUrl + 'api/v1/auth/reset?token=' + token,{
-      password
-    },httpOptions)
-  }
-
-  public handleError(error: HttpErrorResponse) {
-    let errorMessage: string;
-    if (error.error instanceof ErrorEvent) {
-      //Client side error
-      errorMessage = `Error: ${error.message}`;
-    } else {
-      //Server side error
-      switch (error.status) {
-        case 400:
-          errorMessage = `Bad request,something went wrong Code: ${error.status}`;
-          break;
-        case 401:
-          errorMessage = `Unauthorized, You have entered an invalid username or password Code: ${error.status}`;
-          break;
-        case 402:
-          errorMessage = `Payment required, something went wrong Code: ${error.status}`;
-          break;
-        case 403:
-          errorMessage = `Forbidden, something went wrong Code: ${error.status}`;
-          break;
-        case 404:
-          errorMessage = `Not found, something went wrong Code: ${error.status}`;
-          break;
-        case 405:
-          errorMessage = `Method not allowed, something went wrong Code: ${error.status}`;
-          break;
-        case 406:
-          errorMessage = `Not acceptable, something went wrong Code: ${error.status}`;
-          break;
-        case 500:
-          errorMessage = `Server error, something went wrong Code: ${error.status}`;
-          break;
-
-        default:
-          break;
-      }
+  async signup(email: string, password: string): Promise<User> {
+    try {
+      const newUserCredential: UserCredential =
+        await createUserWithEmailAndPassword(this.auth, email, password);
+      const userReference = doc(
+        this.firestore,
+        `users/${newUserCredential.user.uid}`
+      );
+      await setDoc(userReference, { email }, { merge: true });
+      return newUserCredential.user;
+    } catch (error) {
+      throw error;
     }
-    return throwError(errorMessage);
   }
 
-  logout() {
-    localStorage.removeItem('devvsapeAccessToken');
-    localStorage.removeItem('devvscapEexpiresIn');
-    localStorage.removeItem('devvscapeFirstAppLoad');
+  resetPassword(email: string): Promise<void> {
+    return sendPasswordResetEmail(this.auth, email);
   }
 
-  public isLoggedIn() {
-    return !!localStorage.getItem('devvsapeAccessToken');
-  }
-
-  isLoggedOut() {
-    return !this.isLoggedIn();
-  }
-
-  getExpiration(): moment.MomentInput {
-    const expiration = localStorage.getItem('devvscapEexpiresIn');
-    const expiresAt = JSON.parse(expiration);
-    return moment(expiresAt);
-  }
-
-  refresh(): void {
-    window.location.reload();
+  logout(): Promise<void> {
+    return signOut(this.auth);
   }
 }

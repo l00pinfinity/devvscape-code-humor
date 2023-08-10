@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VersionService {
+  version = 'v.2.0.0';
 
-  version:string = "v.1.7.0";
+  constructor() {}
 
-  constructor() { }
-
-  getCurrentVersion(){
+  getCurrentVersion() {
     return this.version;
   }
 }

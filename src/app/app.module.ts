@@ -6,25 +6,25 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { OnlineStatusModule } from 'ngx-online-status';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { TokenInterceptor } from './core/interceptor/token-interceptor';
-import { LazyImgDirective } from './core/directive/lazy-img.directive';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
-  declarations: [AppComponent, LazyImgDirective],
-  imports: [BrowserModule,OnlineStatusModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule, ServiceWorkerModule.register('ngsw-worker.js', {
-  enabled: environment.production,
-  // Register the ServiceWorker as soon as the application is stable
-  // or after 30 seconds (whichever comes first).
-  registrationStrategy: 'registerWhenStable:30000'
-})],
-  providers: [InAppBrowser, AndroidPermissions,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    {provide:HTTP_INTERCEPTORS,useClass:TokenInterceptor,multi:true}],
-  bootstrap: [AppComponent]
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    OnlineStatusModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
+  ],
+  providers: [AndroidPermissions, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,22 +1,21 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { ScrollingModule } from '@angular/cdk/scrolling';
-
 
 import { HomePage } from './home.page';
 import { HomePageRoutingModule } from './home-routing.module';
-import { DateAgoPipe } from '../../core/pipe/date-ago.pipe';
+import { ImageComponentModule } from '../image/image.module';
 
 @NgModule({
+  declarations: [HomePage],
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     HomePageRoutingModule,
-    ScrollingModule,
+    ImageComponentModule,
   ],
-  declarations: [HomePage,DateAgoPipe]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class HomePageModule {}
