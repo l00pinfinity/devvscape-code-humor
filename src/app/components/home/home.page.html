@@ -18,7 +18,10 @@
       </button>
     </ion-col>
   </ion-row>
-  <ion-progress-bar *ngIf="images.length === 0 && !errorOccurred" type="indeterminate"></ion-progress-bar>
+  <ion-progress-bar
+    *ngIf="images.length === 0 && !errorOccurred"
+    type="indeterminate"
+  ></ion-progress-bar>
 
   <div *ngIf="errorOccurred" class="error-message">
     <p>An error occurred: {{ errorMessage }}</p>
@@ -57,14 +60,16 @@
               type="file"
               id="imageInput"
               (change)="onFileSelected($event)"
-              accept="image/*"/>
+              accept="image/*"
+            />
           </div>
-          
+
           <ion-button
             *ngIf="imageFile"
             class="cancel-button"
             fill="clear"
-            (click)="cancelImageSelection()">
+            (click)="cancelImageSelection()"
+          >
             <ion-icon name="trash"></ion-icon>
           </ion-button>
           <br />
@@ -83,8 +88,14 @@
             placeholder="Say something about the meme..."
             [autoGrow]="true"
           ></ion-textarea>
-          <br><br>
-          <ion-button *ngIf="imageFile" expand="block" class="post-button" (click)="uploadImageAndPostText()">Post</ion-button>
+          <br /><br />
+          <ion-button
+            *ngIf="imageFile"
+            expand="block"
+            class="post-button"
+            (click)="uploadImageAndPostText()"
+            >Post</ion-button
+          >
         </div>
       </ion-content>
     </ng-template>

@@ -11,7 +11,7 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { OnlineStatusModule } from 'ngx-online-status';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { environment } from 'src/environments/enviroment';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
