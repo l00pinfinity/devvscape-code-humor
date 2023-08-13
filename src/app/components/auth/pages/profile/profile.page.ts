@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { UserProfile } from 'src/app/core/interface/user';
@@ -9,6 +9,13 @@ import { ProfileService } from 'src/app/core/services/profile.service';
 import { ProfileStore } from './profile.store';
 import { Auth, updateProfile } from '@angular/fire/auth';
 import { ImageService } from 'src/app/core/services/image.service';
+import { Image } from 'src/app/core/interface/image';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getFirestore,
+} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-profile',
@@ -32,6 +39,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     private router: Router,
     private profileService: ProfileService,
     private alertCtrl: AlertController,
+    public toastCtrl: ToastController,
     private readonly profileStore: ProfileStore
   ) {}
 
@@ -49,6 +57,7 @@ export class ProfilePage implements OnDestroy, OnInit {
   }
 
   refresh(ev) {
+    this.fetchImages();
     setTimeout(() => {
       ev.detail.complete();
     }, 3000);
@@ -174,5 +183,55 @@ export class ProfilePage implements OnDestroy, OnInit {
     } else if (this.selectedSegment === 'comments') {
     } else if (this.selectedSegment === 'stars') {
     }
+  }
+
+  async deleteImage(image: Image) {
+    const confirm = this.alertCtrl.create({
+      header: 'Delete',
+      message:
+        'About to delete a post? Don\'t worry, reality bites less when it\'s not in binary!',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {},
+        },
+        {
+          text: 'Delete',
+          role: 'exit',
+          handler: async () => {
+            const user = this.auth.currentUser;
+            const userId = user.uid;
+            try {
+              if (image.postedBy === userId) {
+                const firestore = getFirestore();
+                const postsCollection = collection(firestore, 'posts');
+                const postRef = doc(postsCollection, image.id);
+
+                await deleteDoc(postRef);
+                this.fetchImages();
+
+                const toast = this.toastCtrl.create({
+                  message:
+                    'Your post has been deleted from the app repository!',
+                  duration: 5000,
+                  position: 'bottom',
+                  color: 'success',
+                });
+                (await toast).present();
+
+                console.log(`Post with ID ${image.id} deleted`);
+              } else {
+                console.error('You are not authorized to delete this post.');
+              }
+            } catch (error) {
+              console.error('Error deleting post:', error);
+              throw error;
+            }
+          },
+        },
+      ],
+    });
+    (await confirm).present();
   }
 }

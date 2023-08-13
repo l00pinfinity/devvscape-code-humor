@@ -96,30 +96,36 @@
     <ion-segment-button value="posts">
       <ion-label>Posts</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="comments">
+    <!-- <ion-segment-button value="comments">
       <ion-label>Comments</ion-label>
-    </ion-segment-button>
+    </ion-segment-button> -->
     <ion-segment-button value="stars">
       <ion-label>Stars</ion-label>
     </ion-segment-button>
+    <!-- <ion-segment-button value="bookmarks">
+      <ion-label>Bookmarks</ion-label>
+    </ion-segment-button> -->
   </ion-segment>
 
   <ng-container *ngIf="selectedSegment === 'posts'">
+    
     <ion-item *ngFor="let image of images" [detail]="false">
       <ion-card>
         <ion-item>
-          <ion-avatar slot="start">
+          <!-- <ion-avatar slot="start">
             <img
               alt="DP"
               src="https://ionicframework.com/docs/img/demos/avatar.svg"
             />
-          </ion-avatar>
+          </ion-avatar> -->
           <ion-icon
-            slot="end"
-            name="ellipsis-horizontal-outline"
-          ></ion-icon>
+          slot="end"
+          name="trash-outline"
+          (click)="deleteImage(image)"
+        ></ion-icon>
           <ion-label>
             <h2>{{ image.displayName || "devvscape_user" }}</h2>
+            <p>{{ image.createdAt | dateAgo }}</p>
           </ion-label>
         </ion-item>
     
@@ -136,8 +142,19 @@
           (load)="imageLoaded = true"
         />
     
-        <ion-card-header *ngIf="image.postText">
-          <ion-card-subtitle>
+        <ion-card-header>
+          <!-- <ion-card-subtitle *ngIf="image.stars > 0">
+            <ng-container *ngIf="image.stars > 1; else singleLiker">
+              Starred by {{ image.stars }} others
+            </ng-container>
+            <ng-template #singleLiker>
+              Starred by {{ image.stars }} person
+            </ng-template>
+          </ion-card-subtitle>
+          <ion-card-subtitle *ngIf="!image.stars">
+            Be the first to star this
+          </ion-card-subtitle> -->
+          <ion-card-subtitle *ngIf="image.postText">
             <b>{{ image.displayName || "devvscape_user" }}</b> {{ image.postText }}
           </ion-card-subtitle>
         </ion-card-header>
@@ -148,15 +165,21 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="selectedSegment === 'comments'">
+  <!-- <ng-container *ngIf="selectedSegment === 'comments'">
     <div class="no-comments">
       Comment on some memes in the app repository to have them here
     </div>
-  </ng-container>
+  </ng-container> -->
 
   <ng-container *ngIf="selectedSegment === 'stars'">
     <div class="no-stars">
       Star on some memes in the app repository to have them here
     </div>
   </ng-container>
+
+  <!-- <ng-container *ngIf="selectedSegment === 'bookmarks'">
+    <div class="no-bookmarks">
+      Bookmark on some memes in the app repository to have them here
+    </div>
+  </ng-container> -->
 </ion-content>

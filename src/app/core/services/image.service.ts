@@ -14,7 +14,16 @@ import {
 } from '@angular/fire/firestore';
 import { Image } from '../interface/image';
 import { Observable } from 'rxjs';
-import { getDocs, query, where } from 'firebase/firestore';
+import {
+  DocumentSnapshot,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { Auth } from '@angular/fire/auth';
 
 @Injectable({
@@ -57,12 +66,13 @@ export class ImageService {
         updatedAt: serverTimestamp(),
         displayName,
         comments: [],
+        likedBy:[],
         tags,
         hashtags,
       });
-      console.log('Post saved to Firestore');
+      //console.log('Post saved to Firestore');
     } catch (error) {
-      console.error('Error saving post to Firestore:', error);
+      throw new Error('Error saving post to Firestore:');
     }
   }
 
@@ -71,9 +81,12 @@ export class ImageService {
       const postsCollection = collection(this.firestore, 'posts');
       const querySnapshot = await getDocs(postsCollection);
 
-      return querySnapshot.docs.map((doc) => doc.data() as Image);
+      return querySnapshot.docs.map((document) => {
+        const data = document.data() as Image;
+        const id = document.id;
+        return { id, ...data };
+      });
     } catch (error) {
-      //console.error('Error fetching image posts:', error);
       throw new Error('Unable to fetch image posts');
     }
   }
@@ -91,7 +104,11 @@ export class ImageService {
 
         const querySnapshot = await getDocs(q);
 
-        const userPosts = querySnapshot.docs.map((doc) => doc.data());
+        const userPosts = querySnapshot.docs.map((document) => {
+          const data = document.data() as Image;
+          const id = document.id;
+          return {id,...data};
+        });
         return userPosts;
       } else {
         return [];
@@ -101,7 +118,56 @@ export class ImageService {
       throw error;
     }
   }
+
   async getStarredImages() {}
+
+  async likeImage(postId: string, userId: string): Promise<void> {
+    try {
+      const firestore = getFirestore();
+      const postsCollection = collection(firestore, 'posts');
+      const postRef = doc(postsCollection, postId);
+      const postSnapshot: DocumentSnapshot<unknown> = await getDoc(postRef);
+
+      if (postSnapshot.exists()) {
+        const data = postSnapshot.data() as Image;
+        const likedBy = data.likedBy || [];
+
+        // Check if the user has already liked the post
+        const userLiked = likedBy.includes(userId);
+
+        // Calculate the new stars count based on the user's previous like status
+        const newStars = data.stars + (userLiked ? -1 : 1);
+
+        // Update the stars and likedBy fields of the post
+        await updateDoc(postRef, {
+          stars: newStars,
+          likedBy: userLiked
+            ? likedBy.filter((id) => id !== userId) // Remove user ID from likedBy array
+            : [...likedBy, userId], // Add user ID to likedBy array
+        });
+
+        console.log(
+          `Stars ${
+            userLiked ? 'decremented' : 'incremented'
+          } for post ${postId}`
+        );
+      } else {
+        console.error('Post not found');
+      }
+    } catch (error) {
+      console.error('Error updating stars:', error);
+      throw error;
+    }
+  }
+
+  //need to confirm arrayUnion
+  // async addComment(postId: string, comment: string): Promise<void> {
+  //   const firestore = getFirestore();
+  //   const postsCollection = collection(firestore, 'posts');
+  //   const postRef = doc(postsCollection, postId);
+
+  //   await updateDoc(postRef, {comments: comment});
+  // }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   public words: string[] = [

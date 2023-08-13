@@ -11,7 +11,7 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { OnlineStatusModule } from 'ngx-online-status';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/enviroments/enviroment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,7 +24,10 @@ import { environment } from 'src/environments/environment';
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
   ],
-  providers: [AndroidPermissions, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    AndroidPermissions,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

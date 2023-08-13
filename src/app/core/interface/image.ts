@@ -1,5 +1,6 @@
 export interface Image {
-  docId: any;
+  likedBy: any[];
+  id: string;
   imageUrl: string;
   postText: string;
   postedBy: string;

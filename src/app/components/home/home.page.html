@@ -23,9 +23,11 @@
     type="indeterminate"
   ></ion-progress-bar>
 
-  <div *ngIf="errorOccurred" class="error-message">
-    <p>An error occurred: {{ errorMessage }}</p>
-  </div>
+  <ng-container *ngIf="errorOccurred" class="error-message">
+    <div class="error">
+      An error occurred: {{ errorMessage }}
+    </div>
+  </ng-container>
 
   <ion-list>
     <app-image *ngFor="let image of images" [image]="image"></app-image>
@@ -48,7 +50,6 @@
             </button>
           </ion-col>
         </ion-row>
-        <div class="card">
           <div class="image-card" *ngIf="!imageFile">
             <label for="imageInput" class="card-label">
               <div class="card-content">
@@ -68,8 +69,7 @@
             *ngIf="imageFile"
             class="cancel-button"
             fill="clear"
-            (click)="cancelImageSelection()"
-          >
+            (click)="cancelImageSelection()">
             <ion-icon name="trash"></ion-icon>
           </ion-button>
           <br />
@@ -96,7 +96,6 @@
             (click)="uploadImageAndPostText()"
             >Post</ion-button
           >
-        </div>
       </ion-content>
     </ng-template>
   </ion-modal>
