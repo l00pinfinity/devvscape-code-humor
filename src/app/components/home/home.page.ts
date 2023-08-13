@@ -52,6 +52,7 @@ export class HomePage implements OnInit {
   async fetchImagePosts() {
     try {
       this.images = await this.imageService.getImagePosts();
+      console.log(this.images);
       this.errorOccurred = false;
     } catch (error) {
       this.errorOccurred = true;
@@ -140,7 +141,7 @@ export class HomePage implements OnInit {
         this.imageFile,
         this.postText,
         user.uid,
-        user.displayName
+        user.displayName,
       );
 
       this.hideLoading();

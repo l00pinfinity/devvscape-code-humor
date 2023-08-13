@@ -95,3 +95,12 @@ ion-content {
 ion-button.close-button {
   font-size: 16px;
 }
+
+.error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 20%;
+  margin: auto;
+}

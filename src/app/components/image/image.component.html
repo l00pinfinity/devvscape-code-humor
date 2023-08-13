@@ -1,19 +1,20 @@
 <ion-item *ngIf="image" [detail]="false">
   <ion-card>
     <ion-item>
-      <ion-avatar slot="start" (click)="openProfile(image.postedBy)">
+      <!-- <ion-avatar slot="start" (click)="openProfile(image.postedBy)">
         <img
           alt="DP"
           src="https://ionicframework.com/docs/img/demos/avatar.svg"
         />
-      </ion-avatar>
+      </ion-avatar> -->
       <ion-icon
         slot="end"
-        name="ellipsis-horizontal-outline"
-        (click)="imageDropdown(image)"
+        name="cloud-download-outline"
+        (click)="downloadImage(image)"
       ></ion-icon>
       <ion-label>
         <h2>{{ image.displayName || "devvscape_user" }}</h2>
+        <p>{{ image.createdAt | dateAgo }}</p>
       </ion-label>
     </ion-item>
 
@@ -28,21 +29,29 @@
       [src]="image.imageUrl"
       [alt]="image.postText"
       (load)="imageLoaded = true"
-      (dblclick)="starImage(image)"
       style="position: relative"
     />
 
-    <ion-icon
-      name="star-outline"
-      size="large"
-      class="star-icon"
-      *ngIf="image.isStarred"
-    ></ion-icon>
-
-    <ion-card-header *ngIf="image.postText">
-      <ion-card-subtitle>
-        <b>{{ image.displayName || "devvscape_user" }}</b> {{ image.postText }}
+    <ion-card-header>
+      <!-- <ion-card-subtitle *ngIf="image.stars > 0">
+        <ng-container *ngIf="image.stars > 1; else singleLiker">
+          Starred by {{ image.stars }} others
+        </ng-container>
+        <ng-template #singleLiker>
+          Starred by {{ image.stars }} person
+        </ng-template>
       </ion-card-subtitle>
+      <ion-card-subtitle *ngIf="!image.stars">
+        Be the first to star this
+      </ion-card-subtitle>
+      
+      <ion-item lines="none">
+        <ion-icon slot="start" name="star-outline" (click)="likeImage(image)">Star</ion-icon>
+        <ion-icon slot="end" name="warning-outline" (click)="reportImage(image)"></ion-icon>
+      </ion-item> -->
+      
+      <ion-card-subtitle [innerHTML]="formatCardSubtitle(image)"></ion-card-subtitle>
     </ion-card-header>
+    
   </ion-card>
 </ion-item>

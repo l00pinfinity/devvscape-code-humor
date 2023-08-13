@@ -23,6 +23,7 @@
     "@awesome-cordova-plugins/admob": "^6.4.0",
     "@awesome-cordova-plugins/android-permissions": "^6.4.0",
     "@awesome-cordova-plugins/core": "^6.4.0",
+    "@capacitor-community/http": "^1.4.1",
     "@capacitor/android": "4.3.0",
     "@capacitor/app": "4.0.1",
     "@capacitor/core": "4.3.0",

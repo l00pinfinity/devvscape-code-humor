@@ -10,6 +10,7 @@ import { ProfilePage } from './profile.page';
 import { ProfileStore } from './profile.store';
 import { ImageComponentModule } from '../../../image/image.module';
 import { NgxShimmerLoadingModule } from  'ngx-shimmer-loading';
+import { SharedModule } from 'src/app/core/modules/shared.module';
 
 @NgModule({
   declarations: [ProfilePage],
@@ -20,7 +21,8 @@ import { NgxShimmerLoadingModule } from  'ngx-shimmer-loading';
     IonicModule,
     ProfilePageRoutingModule,
     ImageComponentModule,
-    NgxShimmerLoadingModule
+    NgxShimmerLoadingModule,
+    SharedModule
   ],
 })
 export class ProfilePageModule {}

@@ -37,5 +37,5 @@ npm-debug.log*
 package-lock.json
 resources/android/**/*
 .firebase
-src/environments/enviroment.prod.ts
-src/environments/enviroment.ts
+src/enviroments/enviroment.prod.ts
+src/enviroments/enviroment.ts
