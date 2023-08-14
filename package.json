@@ -39,7 +39,6 @@
     "firebase": "^9.8.3",
     "ionicons": "^6.0.3",
     "ngx-online-status": "^2.0.0",
-    "ngx-shimmer-loading": "^0.0.5",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"

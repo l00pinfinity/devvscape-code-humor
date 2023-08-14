@@ -9,7 +9,6 @@ import { ProfilePageRoutingModule } from './profile-routing.module';
 import { ProfilePage } from './profile.page';
 import { ProfileStore } from './profile.store';
 import { ImageComponentModule } from '../../../image/image.module';
-import { NgxShimmerLoadingModule } from  'ngx-shimmer-loading';
 import { SharedModule } from 'src/app/core/modules/shared.module';
 
 @NgModule({
@@ -21,7 +20,6 @@ import { SharedModule } from 'src/app/core/modules/shared.module';
     IonicModule,
     ProfilePageRoutingModule,
     ImageComponentModule,
-    NgxShimmerLoadingModule,
     SharedModule
   ],
 })
