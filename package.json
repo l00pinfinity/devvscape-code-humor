@@ -36,6 +36,7 @@
     "cordova-connectivity-monitor": "^1.2.2",
     "cordova-libgoogleadmobads": "^7.13.1",
     "cordova-play-services-version-adapter": "^1.1.0",
+    "cordova-plugin-android-permissions": "^1.1.5",
     "firebase": "^9.8.3",
     "ionicons": "^6.0.3",
     "ngx-online-status": "^2.0.0",

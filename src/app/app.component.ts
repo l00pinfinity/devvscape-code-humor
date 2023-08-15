@@ -87,7 +87,6 @@ export class AppComponent implements OnInit {
             duration: 5000,
             position: 'bottom',
             color: 'danger',
-            icon: 'alert',
           });
           await (await toast).present();
           setTimeout(async () => {

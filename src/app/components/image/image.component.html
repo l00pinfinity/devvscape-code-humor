@@ -47,7 +47,7 @@
         <ion-icon slot="end" name="warning-outline" (click)="reportImage(image)"></ion-icon>
       </ion-item> -->
       
-      <ion-card-subtitle [innerHTML]="formatCardSubtitle(image)"></ion-card-subtitle>
+      <ion-card-subtitle *ngIf="image.postText" [innerHTML]="formatCardSubtitle(image)"></ion-card-subtitle>
     </ion-card-header>
     
   </ion-card>

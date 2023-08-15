@@ -29,6 +29,7 @@ export class HomePage implements OnInit {
   public loading: HTMLIonLoadingElement;
   errorOccurred = false;
   errorMessage = '';
+  private modalInstance: HTMLIonModalElement;
 
   constructor(
     private auth: Auth,
@@ -91,37 +92,42 @@ export class HomePage implements OnInit {
   }
 
   async openModal() {
-    this.androidPermissions
-      .checkPermission(this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE)
-      .then(
-        (result) => console.log('Has permission?', result.hasPermission),
-        async () => {
-          const hasPermission = await this.androidPermissions.requestPermission(
-            this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
-          );
-          if (!hasPermission.hasPermission) {
-            const confirm = this.alertCtrl.create({
-              header: 'Permission Denied',
-              message: 'Storage permission is required to upload images.',
-              buttons: [
-                {
-                  text: 'OK',
-                  role: 'cancel',
-                  handler: () => {},
-                },
-              ],
-            });
-            (await confirm).present();
-          }
-        }
+    const permissionResult = await this.androidPermissions.checkPermission(
+      this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
+    );
+
+    if (!permissionResult.hasPermission) {
+      const hasPermission = await this.androidPermissions.requestPermission(
+        this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
       );
 
+      if (!hasPermission.hasPermission) {
+        const confirm = await this.alertCtrl.create({
+          header: 'Permission Denied',
+          message: 'Storage permission is required to upload images.',
+          buttons: [
+            {
+              text: 'OK',
+              role: 'cancel',
+              handler: async () => {
+                if (this.modalInstance) {
+                  await this.modalInstance.dismiss();
+                }
+              },
+            },
+          ],
+        });
+        await confirm.present();
+        return;
+      }
+    }
+
+    // Permission granted or not required, present the modal
     const modalElement = document.getElementById('open-modal');
-    const modal = await this.modalCtrl.create({
+    this.modalInstance = await this.modalCtrl.create({
       component: modalElement,
     });
-
-    await modal.present();
+    await this.modalInstance.present();
   }
 
   openProfile() {
@@ -141,7 +147,7 @@ export class HomePage implements OnInit {
         this.imageFile,
         this.postText,
         user.uid,
-        user.displayName,
+        user.displayName
       );
 
       this.hideLoading();

@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
 import { Http } from '@capacitor-community/http';
-import { AlertController, ToastController } from '@ionic/angular';
+import { Auth } from '@angular/fire/auth';
+import { AlertController, Platform, ToastController } from '@ionic/angular';
 import { Image } from 'src/app/core/interface/image';
 import { ImageService } from 'src/app/core/services/image.service';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
 @Component({
   selector: 'app-image',
@@ -17,8 +18,10 @@ export class ImageComponent implements OnInit {
   constructor(
     private auth: Auth,
     private imageService: ImageService,
+    private platform: Platform,
+    private androidPermissions: AndroidPermissions,
     private alertCtrl: AlertController,
-    public toastCtrl: ToastController,
+    public toastCtrl: ToastController
   ) {}
 
   ngOnInit() {}
@@ -69,33 +72,68 @@ export class ImageComponent implements OnInit {
   }
 
   async downloadImage(image: Image): Promise<void> {
-    try {
-      const imageUrl = image.imageUrl; // Use the provided image URL
+    const permissionResult = await this.androidPermissions.checkPermission(
+      this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
+    );
 
-      const fileName = `${image.id}.jpg`; // Set the desired file name
+    if (!permissionResult.hasPermission) {
+      const hasPermission = await this.androidPermissions.requestPermission(
+        this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
+      );
 
-      await Http.downloadFile({
-        url: imageUrl,
-        filePath: `downloads/${fileName}`, // Save in a 'downloads' directory
-      });
-
-      const toast = this.toastCtrl.create({
-        message: "Image downloaded successfully" + fileName,
-        duration: 5000,
-        position: 'bottom',
-        color: 'success',
-      });
-      (await toast).present();
-    } catch (error) {
-      console.error('Error downloading image:', error);
-      const toast = this.toastCtrl.create({
-        message: "Error downloading image:" + error,
-        duration: 5000,
-        position: 'bottom',
-        color: 'danger',
-      });
-      (await toast).present();
+      if (!hasPermission.hasPermission) {
+        const confirm = await this.alertCtrl.create({
+          header: 'Permission Denied',
+          message: 'Storage permission is required to download images.',
+          buttons: [
+            {
+              text: 'OK',
+              role: 'cancel',
+              handler: () => {},
+            },
+          ],
+        });
+        await confirm.present();
+        return;
+      }
     }
+
+    // Download implementation
+    const imageUrl = image.imageUrl;
+    const fileName = `${image.id}.jpg`;
+
+    let filePath: string;
+
+    if (this.platform.is('android')) {
+      filePath =  fileName;
+    } else if (this.platform.is('ios')) {
+      filePath = fileName;
+    } else {
+      throw new Error('Unsupported platform');
+    }
+
+    Http.downloadFile({
+      url: imageUrl,
+      filePath: fileName,
+    })
+      .then(async (data) => {
+        const toast = await this.toastCtrl.create({
+          message: `Image downloaded successfully: ${data.path}`,
+          duration: 5000,
+          position: 'bottom',
+          color: 'success',
+        });
+        await toast.present();
+      })
+      .catch(async (error) => {
+        const toast = await this.toastCtrl.create({
+          message: `Error downloading image: ${error.error}`,
+          duration: 5000,
+          position: 'bottom',
+          color: 'danger',
+        });
+        await toast.present();
+      });
   }
 
   bookmarkImage(image: Image) {
