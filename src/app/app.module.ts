@@ -12,6 +12,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { OnlineStatusModule } from 'ngx-online-status';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { environment } from 'src/enviroments/enviroment';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,6 +27,7 @@ import { environment } from 'src/enviroments/enviroment';
   ],
   providers: [
     AndroidPermissions,
+    InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],
   bootstrap: [AppComponent],

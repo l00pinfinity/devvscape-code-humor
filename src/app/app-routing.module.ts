@@ -51,6 +51,13 @@ const routes: Routes = [
         './components/auth/pages/reset-password/reset-password.module'
       ).then((m) => m.ResetPasswordPageModule),
   },
+  {
+    path: 'settings',
+    loadChildren: () =>
+      import('./components/settings/settings.module').then(
+        (m) => m.SettingsPageModule
+      ),
+  },
 ];
 
 @NgModule({

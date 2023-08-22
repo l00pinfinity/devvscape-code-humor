@@ -1,16 +1,26 @@
-<ion-item *ngIf="image" [detail]="false">
+<ion-item [detail]="false">
   <ion-card>
     <ion-item>
       <!-- <ion-avatar slot="start" (click)="openProfile(image.postedBy)">
-        <img
-          alt="DP"
-          src="https://ionicframework.com/docs/img/demos/avatar.svg"
-        />
-      </ion-avatar> -->
+      <img
+        alt="DP"
+        src="https://ionicframework.com/docs/img/demos/avatar.svg"
+      />
+    </ion-avatar> -->
+      <!-- <ion-icon
+        slot="end"
+        [name]="image.likedBy.includes(currentUser) ? 'star' : 'star-outline'"
+        (click)="likeImage(image)"
+      ></ion-icon> -->
       <ion-icon
         slot="end"
         name="cloud-download-outline"
         (click)="downloadImage(image)"
+      ></ion-icon>
+      <ion-icon
+        slot="end"
+        name="ellipsis-vertical-outline"
+        (click)="imageDropdown(image)"
       ></ion-icon>
       <ion-label>
         <h2>{{ image.displayName || "devvscape_user" }}</h2>
@@ -31,24 +41,28 @@
 
     <ion-card-header>
       <!-- <ion-card-subtitle *ngIf="image.stars > 0">
-        <ng-container *ngIf="image.stars > 1; else singleLiker">
-          Starred by {{ image.stars }} others
-        </ng-container>
-        <ng-template #singleLiker>
-          Starred by {{ image.stars }} person
-        </ng-template>
-      </ion-card-subtitle>
-      <ion-card-subtitle *ngIf="!image.stars">
-        Be the first to star this
-      </ion-card-subtitle>
-      
-      <ion-item lines="none">
-        <ion-icon slot="start" name="star-outline" (click)="likeImage(image)">Star</ion-icon>
-        <ion-icon slot="end" name="warning-outline" (click)="reportImage(image)"></ion-icon>
-      </ion-item> -->
-      
-      <ion-card-subtitle *ngIf="image.postText" [innerHTML]="formatCardSubtitle(image)"></ion-card-subtitle>
+      <ng-container *ngIf="image.stars > 1; else singleLiker">
+        {{ image.stars }} stars
+      </ng-container>
+      <ng-template #singleLiker>
+        {{ image.stars }} star
+      </ng-template>
+    </ion-card-subtitle>
+    <ion-card-subtitle *ngIf="!image.stars">
+      Be the first to star this
+    </ion-card-subtitle> -->
+
+      <ion-card-subtitle
+        *ngIf="image.postText"
+        [innerHTML]="formatCardSubtitle(image)"
+      ></ion-card-subtitle>
+      <a
+        *ngIf="image.postText.length > 200"
+        class="read-more"
+        style="color: blue; text-decoration: none; cursor: pointer"
+        (click)="toggleText()"
+        >{{ isTextTruncated ? "Read More" : "Show Less" }}</a
+      >
     </ion-card-header>
-    
   </ion-card>
 </ion-item>

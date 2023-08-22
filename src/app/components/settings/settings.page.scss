@@ -1,0 +1,54 @@
+ion-content {
+  --padding-top: 40px;
+}
+
+.section-header {
+  font-weight: bold;
+  margin-left: 20px;
+  margin-bottom: 30px;
+}
+
+.top-right-button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 25px;
+  font-family: "Spotify";
+  font-weight: bold;
+  float: right;
+  margin-right: 10px;
+  margin-bottom: 30px;
+  margin-top: 18px;
+}
+
+ion-footer {
+  margin: auto;
+  padding: 10px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+}
+
+ion-text {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  display: inline;
+  margin: 1em;
+}
+
+ion-icon {
+  width: 30px;
+  height: 30px;
+}

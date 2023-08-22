@@ -42,7 +42,7 @@ ion-modal {
   position: absolute;
   top: 10px;
   right: 10px;
-  color: gold; 
+  color: gold;
 }
 
 .shimmer {
@@ -57,4 +57,10 @@ ion-modal {
     #e2e3e4 100%
   );
   background-repeat: no-repeat;
+}
+
+.read-more {
+  font-weight: bold;
+  margin-top: 5px;
+  display: block;
 }

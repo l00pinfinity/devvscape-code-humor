@@ -117,4 +117,37 @@ export class ProfileService {
       })
     );
   }
+
+  closeAccount(password: string): Observable<unknown> {
+    return forkJoin([
+      this.getUserProfile().pipe(first()),
+      this.authService.getUser().pipe(first()),
+    ]).pipe(
+      concatMap(([userProfile, user]) => {
+        const credential = EmailAuthProvider.credential(
+          userProfile.email,
+          password
+        );
+        return from(reauthenticateWithCredential(user, credential)).pipe(
+          switchMap(() =>
+             from(user.delete()).pipe(
+              concatMap(() =>
+                 this.getUserProfileReference().pipe(
+                  switchMap((userProfileReference) => setDoc(userProfileReference, { deleted: true }, { merge: true }))
+                )
+              ),
+              catchError((error) => {
+                console.error('Error deleting account:', error);
+                throw error;
+              })
+            )
+          ),
+          catchError((error) => {
+            console.error('Error reauthenticating:', error);
+            throw error;
+          })
+        );
+      })
+    );
+  }
 }

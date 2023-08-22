@@ -19,14 +19,12 @@
     </ion-col>
   </ion-row>
   <ion-progress-bar
-    *ngIf="images.length === 0 && !errorOccurred"
+    *ngIf="images?.length === 0 && !errorOccurred"
     type="indeterminate"
   ></ion-progress-bar>
 
   <ng-container *ngIf="errorOccurred" class="error-message">
-    <div class="error">
-      An error occurred: {{ errorMessage }}
-    </div>
+    <div class="error">An error occurred: {{ errorMessage }}</div>
   </ng-container>
 
   <ion-list>
@@ -50,52 +48,52 @@
             </button>
           </ion-col>
         </ion-row>
-          <div class="image-card" *ngIf="!imageFile">
-            <label for="imageInput" class="card-label">
-              <div class="card-content">
-                <i class="fas fa-upload"></i>
-                <p>Click to select an image</p>
-              </div>
-            </label>
-            <input
-              type="file"
-              id="imageInput"
-              (change)="onFileSelected($event)"
-              accept="image/*"
-            />
-          </div>
+        <div class="image-card" *ngIf="!imageFile">
+          <label for="imageInput" class="card-label">
+            <div class="card-content">
+              <i class="fas fa-upload"></i>
+              <p>Click to select an image</p>
+            </div>
+          </label>
+          <input
+            type="file"
+            id="imageInput"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+          />
+        </div>
 
-          <ion-button
-            *ngIf="imageFile"
-            class="cancel-button"
-            fill="clear"
-            (click)="cancelImageSelection()">
-            <ion-icon name="trash"></ion-icon>
-          </ion-button>
-          <br />
-          <div *ngIf="imageFile">
-            <img
-              [src]="imageSrc"
-              [alt]="imageFile.name"
-              class="selected-image"
-            />
-          </div>
-          <ion-item-divider *ngIf="imageFile"></ion-item-divider>
-          <ion-textarea
-            *ngIf="imageFile"
-            class="full-width-textarea"
-            [(ngModel)]="postText"
-            placeholder="Say something about the meme..."
-            [autoGrow]="true"
-          ></ion-textarea>
-          <br /><br />
-          <ion-button
-            *ngIf="imageFile"
-            expand="block"
-            class="post-button"
-            (click)="uploadImageAndPostText()"
-            >Post</ion-button
-          >
+        <ion-button
+          *ngIf="imageFile"
+          class="cancel-button"
+          fill="clear"
+          (click)="cancelImageSelection()"
+        >
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+        <br />
+        <div *ngIf="imageFile">
+          <img [src]="imageSrc" [alt]="imageFile.name" class="selected-image" />
+        </div>
+        <ion-item-divider *ngIf="imageFile"></ion-item-divider>
+        <ion-textarea
+          *ngIf="imageFile"
+          class="full-width-input"
+          [(ngModel)]="postText"
+          placeholder="Say something about the meme..."
+          [maxlength]="300"
+          [autoGrow]="true"
+        ></ion-textarea>
+        <div class="input-counter" *ngIf="imageFile">{{ postText.length }} / 300</div>
+        <br /><br />
+        <ion-button
+          *ngIf="imageFile"
+          expand="block"
+          class="post-button"
+          (click)="uploadImageAndPostText()"
+        >
+          Post
+        </ion-button>
       </ion-content>
     </ng-template>
   </ion-modal>

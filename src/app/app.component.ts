@@ -1,15 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { App } from '@capacitor/app';
+import { SplashScreen } from '@capacitor/splash-screen';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Platform, AlertController, ToastController } from '@ionic/angular';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  backButtonSubscription: any;
+  onlineStatusSubscription: Subscription;
+
   constructor(
     private platform: Platform,
     private androidPermissions: AndroidPermissions,
@@ -17,11 +22,21 @@ export class AppComponent implements OnInit {
     private toastCtrl: ToastController,
     private onlineStatusService: OnlineStatusService
   ) {
-    this.platform.backButton.subscribeWithPriority(10, () => {
+    this.initializeApp();
+  }
+
+  async ngOnInit() {
+    await SplashScreen.hide();
+    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, () => {
       this.exitConfirm();
     });
 
-    this.initializeApp();
+    this.checkOnlineStatus();
+  }
+
+  ngOnDestroy() {
+    this.backButtonSubscription.unsubscribe();
+    this.onlineStatusSubscription.unsubscribe();
   }
 
   async initializeApp() {
@@ -30,29 +45,33 @@ export class AppComponent implements OnInit {
       .then(
         (result) => console.log('Has permission?', result.hasPermission),
         async () => {
-          const hasPermission = await this.androidPermissions.requestPermission(
-            this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
-          );
-          if (!hasPermission.hasPermission) {
-            const confirm = this.alertCtrl.create({
-              header: 'Permission Denied',
-              message: 'Storage permission is required to upload images.',
-              buttons: [
-                {
-                  text: 'OK',
-                  role: 'cancel',
-                  handler: () => {},
-                },
-              ],
-            });
-            (await confirm).present();
+          try {
+            const hasPermission = await this.androidPermissions.requestPermission(
+              this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
+            );
+            if (!hasPermission.hasPermission) {
+              const confirm = await this.alertCtrl.create({
+                header: 'Permission Denied',
+                message: 'Storage permission is required to upload images.',
+                buttons: [
+                  {
+                    text: 'OK',
+                    role: 'cancel',
+                    handler: () => {},
+                  },
+                ],
+              });
+              await confirm.present();
+            }
+          } catch (error) {
+            console.error('Error requesting permission:', error);
           }
         }
       );
   }
 
   async exitConfirm() {
-    const confirm = this.alertCtrl.create({
+    const confirm = await this.alertCtrl.create({
       header: 'Code Escape Portal',
       message:
         'Ready to close the coding dimension and face reality? Choose your destiny.',
@@ -71,26 +90,22 @@ export class AppComponent implements OnInit {
         },
       ],
     });
-    (await confirm).present();
-  }
-
-  ngOnInit(): void {
-    this.checkOnlineStatus();
+    await confirm.present();
   }
 
   checkOnlineStatus() {
-    this.onlineStatusService.status.subscribe(
+    this.onlineStatusSubscription = this.onlineStatusService.status.subscribe(
       async (status: OnlineStatusType) => {
         if (status === OnlineStatusType.OFFLINE) {
-          const toast = this.toastCtrl.create({
+          const toast = await this.toastCtrl.create({
             message: 'Looks like you are in the land of offline adventures!',
             duration: 5000,
             position: 'bottom',
             color: 'danger',
           });
-          await (await toast).present();
+          await toast.present();
           setTimeout(async () => {
-            (await toast).dismiss();
+            await toast.dismiss();
           }, 3000);
         }
       }
