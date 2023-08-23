@@ -55,7 +55,9 @@ export class ImageService {
     const hashtags = postText.match(/#(\w+)/g) || [];
 
     // Check for common programming words in postText
-    const tags = this.words.filter((word) => postText.toLocaleLowerCase().includes(word));
+    const tags = this.words.filter((word) =>
+      postText.toLocaleLowerCase().includes(word)
+    );
 
     // Save image URL and postText to Firestore
     try {
@@ -66,11 +68,13 @@ export class ImageService {
         postText,
         postedBy: userId,
         stars: 0,
+        downloads: 0,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
         displayName,
         comments: [],
         likedBy: [],
+        downloadedBy:[],
         tags,
         hashtags,
       });
@@ -188,6 +192,38 @@ export class ImageService {
       }
     } catch (error) {
       console.error('Error updating stars:', error);
+      throw error;
+    }
+  }
+
+  async downloads(imageId: string, userId: string): Promise<void> {
+    try {
+      const firestore = getFirestore();
+      const postsCollection = collection(firestore, 'posts');
+      const postRef = doc(postsCollection, imageId);
+      const postSnapshot: DocumentSnapshot<unknown> = await getDoc(postRef);
+
+      if (postSnapshot.exists()) {
+        const data = postSnapshot.data() as Image;
+        const downloadedBy = data.downloadedBy || [];
+
+        const userDownloaded = downloadedBy.includes(userId);
+
+        if (!userDownloaded) {
+          const newDownloads = data.downloads + 1;
+          await updateDoc(postRef, {
+            downloads: newDownloads,
+            downloadedBy: [...downloadedBy, userId],
+          });
+          console.log('Image downloaded and recorded.');
+        } else {
+          console.log('Image has already been downloaded by this user.');
+        }
+      } else {
+        console.error('Image not found');
+      }
+    } catch (error) {
+      console.error('Error updating image downloads:', error);
       throw error;
     }
   }

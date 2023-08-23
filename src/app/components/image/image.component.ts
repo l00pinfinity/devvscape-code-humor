@@ -152,6 +152,7 @@ export class ImageComponent implements OnInit, OnDestroy {
         await this.presentSuccessToast(
           `Image downloaded successfully: ${data.path}`
         );
+        await this.imageService.downloads(image.id, this.currentUser);
       })
       .catch(async (error) => {
         await this.presentErrorToast(`Error downloading image: ${error.error}`);
