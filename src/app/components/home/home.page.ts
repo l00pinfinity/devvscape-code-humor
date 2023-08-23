@@ -41,8 +41,6 @@ export class HomePage implements OnInit, OnDestroy {
     private imageService: ImageService,
     private navCtrl: NavController,
     private androidPermissions: AndroidPermissions,
-    private router: Router,
-    private route: ActivatedRoute,
     private modalController: ModalController,
     private loadingCtrl: LoadingController,
     public toastCtrl: ToastController,
