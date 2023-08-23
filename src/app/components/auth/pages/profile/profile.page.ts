@@ -27,7 +27,6 @@ import {
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnDestroy, OnInit {
-
   maxLength = 200;
   isTextTruncated = true;
   public userProfile$: Observable<UserProfile> = this.profileStore.userProfile$;
@@ -135,8 +134,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     if (user) {
       try {
         await updateProfile(user, { displayName: newDisplayName });
-      } catch (error) {
-      }
+      } catch (error) {}
     }
   }
 

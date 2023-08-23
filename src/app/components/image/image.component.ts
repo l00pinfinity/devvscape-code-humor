@@ -6,6 +6,7 @@ import { Image } from 'src/app/core/interface/image';
 import { ImageService } from 'src/app/core/services/image.service';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Subscription } from 'rxjs';
+import { Firestore, collection, doc, getDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-image',
@@ -23,6 +24,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   constructor(
     private auth: Auth,
     private imageService: ImageService,
+    private firestore: Firestore,
     private platform: Platform,
     private androidPermissions: AndroidPermissions,
     private alertCtrl: AlertController,
@@ -31,10 +33,27 @@ export class ImageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.currentUser = this.auth.currentUser.uid;
+    this.fetchUserData();
   }
 
   ngOnDestroy() {
-    this.permissionSubscription.unsubscribe();
+  }
+
+  async fetchUserData() {
+    const usersCollectionRef = collection(this.firestore, 'users');
+    const userDocRef = doc(usersCollectionRef, this.image.postedBy);
+
+    try {
+      const userSnapshot = await getDoc(userDocRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        if (userData) {
+          this.image.displayName = userData.fullName || 'devvscape_user';
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
   }
 
   async presentPermissionDeniedAlert() {
