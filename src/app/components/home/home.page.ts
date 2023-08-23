@@ -13,6 +13,8 @@ import { Auth } from '@angular/fire/auth';
 import { DocumentSnapshot } from '@angular/fire/firestore';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 import { Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -31,6 +33,7 @@ export class HomePage implements OnInit, OnDestroy {
   errorOccurred = false;
   errorMessage = '';
   onlineStatusSubscription: Subscription;
+  ngUnsubscribe: Subscription;
   private modalInstance: HTMLIonModalElement;
 
   constructor(
@@ -57,7 +60,7 @@ export class HomePage implements OnInit, OnDestroy {
     this.onlineStatusSubscription.unsubscribe();
   }
 
-  async fetchImagePosts() {
+  async fetchImagePosts(): Promise<void> {
     try {
       this.images = await this.imageService.getImagePosts();
       this.errorOccurred = false;
@@ -164,7 +167,7 @@ export class HomePage implements OnInit, OnDestroy {
 
         this.fetchImagePosts();
       } catch (error) {
-        console.error('Error uploading image and post:', error);
+        //console.error('Error uploading image and post:', error);
 
         this.hideLoading();
 
@@ -232,22 +235,28 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   checkOnlineStatus() {
-    this.onlineStatusSubscription = this.onlineStatusService.status.subscribe(
-      async (status: OnlineStatusType) => {
-        if (status === OnlineStatusType.OFFLINE) {
-          const toast = await this.toastCtrl.create({
-            message: 'Looks like you are in the land of offline adventures!',
-            duration: 5000,
-            position: 'bottom',
-            color: 'danger',
-            icon: 'alert',
-          });
+    this.onlineStatusSubscription = this.onlineStatusService.status
+      .pipe(
+        switchMap((status) => {
+          if (status === OnlineStatusType.OFFLINE) {
+            return this.toastCtrl.create({
+              message: 'Looks like you are in the land of offline adventures!',
+              duration: 5000,
+              position: 'bottom',
+              color: 'danger',
+              icon: 'alert',
+            });
+          }
+          return null;
+        })
+      )
+      .subscribe(async (toast) => {
+        if (toast) {
           await toast.present();
           setTimeout(async () => {
             await toast.dismiss();
           }, 3000);
         }
-      }
-    );
+      });
   }
 }

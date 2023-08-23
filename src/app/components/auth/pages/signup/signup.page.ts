@@ -23,7 +23,6 @@ export class SignupPage implements OnInit {
         credentials.password
       );
       this.authService.userId = user.uid;
-      console.log('Logged in user',user);
       await this.signupForm.hideLoading();
       this.router.navigateByUrl('home');
     } catch (error) {

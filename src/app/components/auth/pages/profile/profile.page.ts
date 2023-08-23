@@ -27,9 +27,9 @@ import {
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnDestroy, OnInit {
-
   maxLength = 200;
   isTextTruncated = true;
+  fullNames: string;
   public userProfile$: Observable<UserProfile> = this.profileStore.userProfile$;
   private userProfileSubscription: Subscription;
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -54,10 +54,11 @@ export class ProfilePage implements OnDestroy, OnInit {
   ngOnInit(): void {
     this.userProfileSubscription = this.profileService
       .getUserProfile()
-      .subscribe((userProfile: UserProfile) =>
-        this.profileStore.setState(userProfile)
-      );
-    this.fetchImages();
+      .subscribe((userProfile: UserProfile) => {
+        this.profileStore.setState(userProfile);
+        this.fullNames = userProfile.fullName;
+        this.fetchImages();
+      });
   }
 
   ngOnDestroy(): void {
@@ -119,8 +120,18 @@ export class ProfilePage implements OnDestroy, OnInit {
               text: 'Save',
               handler: async (data) => {
                 const updatedFullName = data.fullName;
-                this.profileStore.updateUserName(updatedFullName);
 
+                if (updatedFullName.length > 25) {
+                  const toast = await this.toastCtrl.create({
+                    message: 'Username cannot exceed 25 characters.',
+                    duration: 3000,
+                    position: 'bottom',
+                  });
+                  await toast.present();
+                  return false;
+                }
+
+                this.profileStore.updateUserName(updatedFullName);
                 await this.updateDisplayName(updatedFullName);
               },
             },
@@ -135,8 +146,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     if (user) {
       try {
         await updateProfile(user, { displayName: newDisplayName });
-      } catch (error) {
-      }
+      } catch (error) {}
     }
   }
 
@@ -198,7 +208,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     const confirm = this.alertCtrl.create({
       header: 'Delete',
       message:
-        'About to delete a post? Don\'t worry, reality bites less when it\'s not in binary!',
+        'About to delete a post. 🤠 Ready to hit `delete` on that post?',
       buttons: [
         {
           text: 'Cancel',
@@ -229,9 +239,9 @@ export class ProfilePage implements OnDestroy, OnInit {
                 });
                 (await toast).present();
 
-                console.log(`Post with ID ${image.id} deleted`);
+                //console.log(`Post with ID ${image.id} deleted`);
               } else {
-                console.error('You are not authorized to delete this post.');
+                //console.error('You are not authorized to delete this post.');
               }
             } catch (error) {
               console.error('Error deleting post:', error);
@@ -245,7 +255,7 @@ export class ProfilePage implements OnDestroy, OnInit {
   }
 
   formatCardSubtitle(image: any): string {
-    const displayName = image.displayName || 'devvscape_user';
+    const displayName = this.fullNames || 'devvscape_user';
 
     let formattedText = image.postText;
 
@@ -268,7 +278,7 @@ export class ProfilePage implements OnDestroy, OnInit {
   }
 
   toggleText(): void {
-    console.log('Working clicked');
+    //console.log('Working clicked');
     this.isTextTruncated = !this.isTextTruncated;
   }
 }

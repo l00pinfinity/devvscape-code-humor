@@ -1,20 +1,20 @@
 .auth-form {
   padding: 20px;
-}
 
-.input-item {
-  margin-bottom: 15px;
-}
+  .input-item {
+    margin-bottom: 15px;
+  }
 
-.error-message {
-  color: red;
-  font-size: 14px;
-}
+  .error-message {
+    color: red;
+    font-size: 14px;
+  }
 
-.invalid {
-  border-color: red;
-}
+  &.invalid {
+    border-color: red;
+  }
 
-.submit-button {
-  margin-top: 20px;
+  .submit-button {
+    margin-top: 20px;
+  }
 }
