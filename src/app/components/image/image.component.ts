@@ -1,27 +1,55 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Http } from '@capacitor-community/http';
-import { AlertController, ToastController } from '@ionic/angular';
+import { Auth } from '@angular/fire/auth';
+import { AlertController, Platform, ToastController } from '@ionic/angular';
 import { Image } from 'src/app/core/interface/image';
 import { ImageService } from 'src/app/core/services/image.service';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-image',
   templateUrl: './image.component.html',
   styleUrls: ['./image.component.scss'],
 })
-export class ImageComponent implements OnInit {
+export class ImageComponent implements OnInit, OnDestroy {
   @Input() image: Image;
   imageLoaded = false;
+  maxLength = 200;
+  isTextTruncated = true;
+  currentUser: any;
+  permissionSubscription: Subscription;
 
   constructor(
     private auth: Auth,
     private imageService: ImageService,
+    private platform: Platform,
+    private androidPermissions: AndroidPermissions,
     private alertCtrl: AlertController,
-    public toastCtrl: ToastController,
+    public toastCtrl: ToastController
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.currentUser = this.auth.currentUser.uid;
+  }
+
+  ngOnDestroy() {
+    this.permissionSubscription.unsubscribe();
+  }
+
+  async presentPermissionDeniedAlert() {
+    const confirm = await this.alertCtrl.create({
+      header: 'Permission Denied',
+      message: 'Storage permission is required to perform this action.',
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel',
+        },
+      ],
+    });
+    await confirm.present();
+  }
 
   isIos() {
     const win = window as any;
@@ -34,7 +62,14 @@ export class ImageComponent implements OnInit {
 
   formatCardSubtitle(image: any): string {
     const displayName = image.displayName || 'devvscape_user';
-    const formattedText = image.postText.replace(
+
+    let formattedText = image.postText;
+
+    if (this.isTextTruncated && image.postText.length > this.maxLength) {
+      formattedText = image.postText.substring(0, this.maxLength) + '...';
+    }
+
+    formattedText = formattedText.replace(
       /#(\w+)/g,
       `<a class="hashtag" style="
         color: blue;
@@ -43,12 +78,18 @@ export class ImageComponent implements OnInit {
       ">#$1</a>`
     );
 
-    return `<b>${displayName}</b> ${formattedText}`;
+    const formattedTextWithLineBreaks = formattedText.replace(/\\n/g, '<br>');
+
+    return `<b>${displayName}</b> ${formattedTextWithLineBreaks}`;
   }
 
-  likeImage(image: Image) {
-    const user = this.auth.currentUser; // You might need to make 'auth' public in your ImageService
-    console.log(image.id);
+  toggleText(): void {
+    console.log('Working clicked');
+    this.isTextTruncated = !this.isTextTruncated;
+  }
+
+  async likeImage(image: Image) {
+    const user = this.auth.currentUser;
 
     if (user) {
       // Call the likeImage method from ImageService
@@ -58,9 +99,9 @@ export class ImageComponent implements OnInit {
           // Handle any success logic here if needed
           console.log(`${image.id}` + 'has been liked by' + `${user.uid}`);
         })
-        .catch((error) => {
+        .catch(async (error) => {
           // Handle error here
-          console.error('Error liking image:', error);
+          await this.presentErrorToast(`Error liking image: ${error.error}`);
         });
     } else {
       // Handle the case when user is not authenticated
@@ -69,41 +110,116 @@ export class ImageComponent implements OnInit {
   }
 
   async downloadImage(image: Image): Promise<void> {
-    try {
-      const imageUrl = image.imageUrl; // Use the provided image URL
+    const permissionResult = await this.androidPermissions.checkPermission(
+      this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
+    );
 
-      const fileName = `${image.id}.jpg`; // Set the desired file name
+    if (!permissionResult.hasPermission) {
+      const hasPermission = await this.androidPermissions.requestPermission(
+        this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
+      );
 
-      await Http.downloadFile({
-        url: imageUrl,
-        filePath: `downloads/${fileName}`, // Save in a 'downloads' directory
-      });
-
-      const toast = this.toastCtrl.create({
-        message: "Image downloaded successfully" + fileName,
-        duration: 5000,
-        position: 'bottom',
-        color: 'success',
-      });
-      (await toast).present();
-    } catch (error) {
-      console.error('Error downloading image:', error);
-      const toast = this.toastCtrl.create({
-        message: "Error downloading image:" + error,
-        duration: 5000,
-        position: 'bottom',
-        color: 'danger',
-      });
-      (await toast).present();
+      if (!hasPermission.hasPermission) {
+        const confirm = await this.alertCtrl.create({
+          header: 'Permission Denied',
+          message: 'Storage permission is required to download images.',
+          buttons: [
+            {
+              text: 'OK',
+              role: 'cancel',
+              handler: () => {},
+            },
+          ],
+        });
+        await confirm.present();
+        return;
+      }
     }
+    const imageUrl = image.imageUrl;
+    const fileName = `${image.id}.jpg`;
+
+    if (this.platform.is('android')) {
+    } else if (this.platform.is('ios')) {
+    } else {
+      throw new Error('Unsupported platform');
+    }
+
+    Http.downloadFile({
+      url: imageUrl,
+      filePath: fileName,
+    })
+      .then(async (data) => {
+        await this.presentSuccessToast(
+          `Image downloaded successfully: ${data.path}`
+        );
+      })
+      .catch(async (error) => {
+        await this.presentErrorToast(`Error downloading image: ${error.error}`);
+      });
   }
 
   bookmarkImage(image: Image) {
     console.log('Bookmarked');
   }
 
-  reportImage(image: Image) {
-    console.log('Reported');
+  async reportImage(image: Image) {
+    this.alertCtrl
+      .create({
+        header: 'Report Image',
+        message: 'Please provide a reason for reporting this image:',
+        inputs: [
+          {
+            name: 'reason',
+            type: 'text',
+            placeholder: 'Reason...',
+          },
+        ],
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+          },
+          {
+            text: 'Report',
+            role: 'danger',
+            handler: async (data) => {
+              if (data && data.reason) {
+                const currentUserUid = this.currentUser;
+                const imageId = image.id;
+                const reason = data.reason;
+
+                console.log(
+                  'CurrentUid:' + currentUserUid,
+                  'imageId' + imageId,
+                  'reason' + reason
+                );
+
+                try {
+                  await this.imageService.reportImage(
+                    imageId,
+                    currentUserUid,
+                    reason
+                  );
+                  await this.presentSuccessToast(
+                    'Image reported successfully. Your report is being reviewed by the team.'
+                  );
+                } catch (error) {
+                  await this.presentErrorToast(
+                    `Error reporting image: ${error}`
+                  );
+                }
+              } else {
+                await this.presentErrorToast(
+                  'You need to enter a brief description on your report issue'
+                );
+              }
+            },
+          },
+        ],
+      })
+      .then((alert) => {
+        alert.present();
+      });
   }
 
   async imageDropdown(image: Image) {
@@ -114,15 +230,37 @@ export class ImageComponent implements OnInit {
         {
           text: 'Report',
           role: 'danger',
-          handler: () => {},
+          handler: () => {
+            this.reportImage(image);
+          },
         },
         {
-          text: 'Cancel',
+          text: 'Close',
           role: 'cancel',
         },
       ],
     });
 
     await alert.present();
+  }
+
+  private async presentErrorToast(message: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 5000,
+      position: 'bottom',
+      color: 'danger',
+    });
+    await toast.present();
+  }
+
+  private async presentSuccessToast(message: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 5000,
+      position: 'bottom',
+      color: 'success',
+    });
+    await toast.present();
   }
 }

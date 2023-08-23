@@ -25,6 +25,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { Auth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +33,11 @@ import { Auth } from '@angular/fire/auth';
 export class ImageService {
   // eslint-disable-next-line @typescript-eslint/member-ordering
   images: Observable<Image[]>;
-  constructor(private auth: Auth, private firestore: Firestore) {}
+  constructor(
+    private auth: Auth,
+    private firestore: Firestore,
+    private router: Router
+  ) {}
 
   async uploadImageAndPostText(
     imageFile: File,
@@ -45,13 +50,12 @@ export class ImageService {
 
     await uploadTask;
     const imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
-    console.log('Upload image URL ' + imageUrl);
 
     // Extract hashtags from postText
     const hashtags = postText.match(/#(\w+)/g) || [];
 
     // Check for common programming words in postText
-    const tags = this.words.filter((word) => postText.includes(word));
+    const tags = this.words.filter((word) => postText.toLocaleLowerCase().includes(word));
 
     // Save image URL and postText to Firestore
     try {
@@ -66,13 +70,40 @@ export class ImageService {
         updatedAt: serverTimestamp(),
         displayName,
         comments: [],
-        likedBy:[],
+        likedBy: [],
         tags,
         hashtags,
       });
-      //console.log('Post saved to Firestore');
     } catch (error) {
       throw new Error('Error saving post to Firestore:');
+    }
+  }
+
+  async reportImage(imageId: string, userId: string, reason: string) {
+    try {
+      const reportsRef = collection(this.firestore, 'reports');
+      const querySnapshot = await getDocs(
+        query(
+          reportsRef,
+          where('imageId', '==', imageId),
+          where('reportedBy', '==', userId)
+        )
+      );
+
+      if (!querySnapshot.empty) {
+        throw new Error('Image already reported');
+      }
+
+      const reportCollection = collection(this.firestore, 'reports');
+      await addDoc(reportCollection, {
+        imageId,
+        reason,
+        reportedBy: userId,
+        createdAt: serverTimestamp(),
+        resolved: false,
+      });
+    } catch (error) {
+      throw new Error(`Error saving report: ${error}`);
     }
   }
 
@@ -107,14 +138,13 @@ export class ImageService {
         const userPosts = querySnapshot.docs.map((document) => {
           const data = document.data() as Image;
           const id = document.id;
-          return {id,...data};
+          return { id, ...data };
         });
         return userPosts;
       } else {
         return [];
       }
     } catch (error) {
-      console.error('Error fetching user posts:', error);
       throw error;
     }
   }
@@ -146,11 +176,13 @@ export class ImageService {
             : [...likedBy, userId], // Add user ID to likedBy array
         });
 
-        console.log(
-          `Stars ${
-            userLiked ? 'decremented' : 'incremented'
-          } for post ${postId}`
-        );
+        // Refresh the current route by navigating to the same route
+        const currentRoute = this.router.url;
+        this.router
+          .navigateByUrl('/home', { skipLocationChange: true })
+          .then(() => {
+            this.router.navigate([currentRoute]);
+          });
       } else {
         console.error('Post not found');
       }
@@ -160,150 +192,103 @@ export class ImageService {
     }
   }
 
-  //need to confirm arrayUnion
-  // async addComment(postId: string, comment: string): Promise<void> {
-  //   const firestore = getFirestore();
-  //   const postsCollection = collection(firestore, 'posts');
-  //   const postRef = doc(postsCollection, postId);
-
-  //   await updateDoc(postRef, {comments: comment});
-  // }
+  async addComment() {}
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   public words: string[] = [
-    'abstract',
-    'array',
-    'boolean',
-    'break',
-    'class',
-    'const',
-    'continue',
-    'debug',
-    'declare',
-    'define',
-    'delete',
-    'do',
-    'else',
-    'enum',
-    'exception',
-    'export',
-    'extends',
-    'false',
-    'final',
-    'finally',
-    'float',
-    'for',
-    'function',
-    'if',
-    'implements',
-    'import',
-    'instanceof',
-    'int',
-    'interface',
-    'let',
-    'long',
-    'module',
-    'new',
-    'null',
-    'number',
-    'object',
-    'package',
-    'private',
-    'protected',
-    'public',
-    'return',
-    'short',
-    'static',
-    'string',
-    'super',
-    'switch',
-    'this',
-    'throw',
-    'throws',
-    'true',
-    'try',
-    'typeof',
-    'undefined',
-    'var',
-    'void',
-    'while',
-    'with',
-    'yield',
-    'async',
-    'await',
-    'await',
-    'catch',
-    'console',
-    'default',
-    'export',
-    'from',
-    'import',
-    'of',
-    'set',
-    'export',
-    'constructor',
-    'get',
-    'implements',
-    'interface',
-    'let',
-    'package',
-    'private',
-    'protected',
-    'public',
-    'static',
-    'yield',
-    'Promise',
-    'async',
-    'await',
-    'resolve',
-    'reject',
-    'then',
-    'catch',
-    'throw',
-    'try',
-    'instanceof',
-    'typeof',
-    'undefined',
-    'null',
-    'NaN',
-    'Infinity',
-    'debugger',
-    'Java',
-    'Python',
-    'C',
-    'C++',
-    'C#',
-    'JavaScript',
-    'Ruby',
-    'Swift',
-    'Kotlin',
-    'Go',
-    'Rust',
-    'PHP',
-    'Perl',
-    'HTML',
-    'CSS',
-    'React',
-    'Angular',
-    'Vue',
-    'Node.js',
-    'Express.js',
-    'Django',
-    'Flask',
-    'Spring',
-    'Ruby on Rails',
-    'ASP.NET',
-    'MySQL',
-    'PostgreSQL',
-    'MongoDB',
-    'SQLite',
-    'Redis',
-    'Git',
-    'GitHub',
-    'Docker',
-    'Kubernetes',
-    'AWS',
-    'Azure',
-    'Google Cloud',
+    'java',
+    'python',
+    'c',
+    'c++',
+    'c#',
+    'javascript',
+    'ruby',
+    'swift',
+    'kotlin',
+    'go',
+    'rust',
+    'php',
+    'perl',
+    'html',
+    'css',
+    'react',
+    'angular',
+    'vue',
+    'node.js',
+    'express.js',
+    'django',
+    'flask',
+    'spring',
+    'ruby on rails',
+    'asp.net',
+    'typescript',
+    'html5',
+    'css3',
+    'sass',
+    'less',
+    'bootstrap',
+    'tailwind css',
+    'jquery',
+    'vue.js',
+    'react native',
+    'ionic',
+    'electron',
+    'flutter',
+    'dart',
+    'android',
+    'ios',
+    'xamarin',
+    'tensorflow',
+    'pytorch',
+    'keras',
+    'opencv',
+    'unity',
+    'unreal engine',
+    'opengl',
+    'vulkan',
+    'qt',
+    'swiftui',
+    'xcode',
+    'android studio',
+    'visual studio',
+    'intellij idea',
+    'eclipse',
+    'netbeans',
+    'git',
+    'github',
+    'bitbucket',
+    'gitlab',
+    'mercurial',
+    'docker',
+    'kubernetes',
+    'aws',
+    'azure',
+    'google cloud',
+    'firebase',
+    'heroku',
+    'digitalocean',
+    'jenkins',
+    'travis ci',
+    'circleci',
+    'ansible',
+    'puppet',
+    'chef',
+    'terraform',
+    'nginx',
+    'apache',
+    'rest api',
+    'graphql',
+    'websocket',
+    'oauth',
+    'jwt',
+    'microservices',
+    'serverless',
+    'big data',
+    'machine learning',
+    'artificial intelligence',
+    'blockchain',
+    'cryptocurrency',
+    'ar/vr',
+    'iot',
   ];
 }

@@ -6,11 +6,10 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { ImageComponent } from './image.component';
-import { NgxShimmerLoadingModule } from  'ngx-shimmer-loading';
 import { SharedModule } from 'src/app/core/modules/shared.module';
 
 @NgModule({
-  imports: [ CommonModule, FormsModule, IonicModule, RouterModule, NgxShimmerLoadingModule, SharedModule],
+  imports: [ CommonModule, FormsModule, IonicModule, RouterModule, SharedModule],
   declarations: [ImageComponent],
   exports: [ImageComponent]
 })

@@ -56,3 +56,17 @@ ion-avatar {
   height: 20%;
   margin: auto;
 }
+
+.shimmer {
+  width: 100%;
+  height: 350px;
+  background: #e2e3e4;
+  background-image: linear-gradient(
+    to right,
+    #e2e3e4 0%,
+    #f6f7f8 20%,
+    #e2e3e4 40%,
+    #e2e3e4 100%
+  );
+  background-repeat: no-repeat;
+}

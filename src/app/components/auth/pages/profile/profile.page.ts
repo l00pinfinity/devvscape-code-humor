@@ -1,6 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, ToastController } from '@ionic/angular';
+import {
+  AlertController,
+  NavController,
+  ToastController,
+} from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { UserProfile } from 'src/app/core/interface/user';
@@ -23,6 +27,9 @@ import {
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnDestroy, OnInit {
+
+  maxLength = 200;
+  isTextTruncated = true;
   public userProfile$: Observable<UserProfile> = this.profileStore.userProfile$;
   private userProfileSubscription: Subscription;
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -37,6 +44,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     private authService: AuthService,
     private imageService: ImageService,
     private router: Router,
+    private navCtrl: NavController,
     private profileService: ProfileService,
     private alertCtrl: AlertController,
     public toastCtrl: ToastController,
@@ -61,6 +69,10 @@ export class ProfilePage implements OnDestroy, OnInit {
     setTimeout(() => {
       ev.detail.complete();
     }, 3000);
+  }
+
+  async openSettings() {
+    this.navCtrl.navigateForward('/settings');
   }
 
   async logOut(): Promise<void> {
@@ -109,7 +121,6 @@ export class ProfilePage implements OnDestroy, OnInit {
                 const updatedFullName = data.fullName;
                 this.profileStore.updateUserName(updatedFullName);
 
-                // Update the displayName in Firebase Authentication
                 await this.updateDisplayName(updatedFullName);
               },
             },
@@ -124,9 +135,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     if (user) {
       try {
         await updateProfile(user, { displayName: newDisplayName });
-        //console.log('Display name updated in auth:', newDisplayName);
       } catch (error) {
-        //console.error('Error updating display name in auth:', error);
       }
     }
   }
@@ -233,5 +242,33 @@ export class ProfilePage implements OnDestroy, OnInit {
       ],
     });
     (await confirm).present();
+  }
+
+  formatCardSubtitle(image: any): string {
+    const displayName = image.displayName || 'devvscape_user';
+
+    let formattedText = image.postText;
+
+    if (this.isTextTruncated && image.postText.length > this.maxLength) {
+      formattedText = image.postText.substring(0, this.maxLength) + '...';
+    }
+
+    formattedText = formattedText.replace(
+      /#(\w+)/g,
+      `<a class="hashtag" style="
+        color: blue;
+        text-decoration: none;
+        cursor: pointer;
+      ">#$1</a>`
+    );
+
+    const formattedTextWithLineBreaks = formattedText.replace(/\\n/g, '<br>');
+
+    return `<b>${displayName}</b> ${formattedTextWithLineBreaks}`;
+  }
+
+  toggleText(): void {
+    console.log('Working clicked');
+    this.isTextTruncated = !this.isTextTruncated;
   }
 }

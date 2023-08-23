@@ -15,7 +15,10 @@
     </ion-col>
     <ion-col size="4">
       <button class="top-right-button" (click)="logOut()">
-        <ion-icon name="log-out"></ion-icon>
+        <ion-icon name="log-out-outline"></ion-icon>
+      </button>
+      <button class="top-right-button" (click)="openSettings()">
+        <ion-icon name="settings-outline"></ion-icon>
       </button>
     </ion-col>
   </ion-row>
@@ -78,14 +81,14 @@
       <ion-label>
         <ion-grid>
           <ion-row>
-            <ion-col class="text-left" size="5"> Password </ion-col>
-            <ion-col class="text-center" size="7" class="placeholder-profile">
+            <ion-col class="text-left" size="3"> Password: </ion-col>
+            <ion-col class="text-center" size="9" class="placeholder-profile">
               <span> Tap here to edit. </span>
             </ion-col>
           </ion-row>
         </ion-grid>
       </ion-label>
-    </ion-item> -->
+    </ion-item>  -->
   </ion-item-group>
   <br />
 
@@ -96,15 +99,15 @@
     <ion-segment-button value="posts">
       <ion-label>Posts</ion-label>
     </ion-segment-button>
-    <!-- <ion-segment-button value="comments">
+    <ion-segment-button value="comments">
       <ion-label>Comments</ion-label>
-    </ion-segment-button> -->
+    </ion-segment-button> 
     <ion-segment-button value="stars">
       <ion-label>Stars</ion-label>
     </ion-segment-button>
     <!-- <ion-segment-button value="bookmarks">
       <ion-label>Bookmarks</ion-label>
-    </ion-segment-button> -->
+    </ion-segment-button>  -->
   </ion-segment>
 
   <ng-container *ngIf="selectedSegment === 'posts'">
@@ -130,33 +133,40 @@
         </ion-item>
     
         <div class="card" *ngIf="!imageLoaded">
-          <ngx-shimmer-loading
-            [width]="'100%'"
-            [height]="'350px'"
-          ></ngx-shimmer-loading>
+          <div class="shimmer shimmer_large_para"></div>
         </div>
     
         <img
           [src]="image.imageUrl"
           [alt]="image.postText"
           (load)="imageLoaded = true"
+          style="position: relative"
         />
     
         <ion-card-header>
           <!-- <ion-card-subtitle *ngIf="image.stars > 0">
-            <ng-container *ngIf="image.stars > 1; else singleLiker">
-              Starred by {{ image.stars }} others
-            </ng-container>
-            <ng-template #singleLiker>
-              Starred by {{ image.stars }} person
-            </ng-template>
-          </ion-card-subtitle>
-          <ion-card-subtitle *ngIf="!image.stars">
-            Be the first to star this
-          </ion-card-subtitle> -->
-          <ion-card-subtitle *ngIf="image.postText">
-            <b>{{ image.displayName || "devvscape_user" }}</b> {{ image.postText }}
-          </ion-card-subtitle>
+          <ng-container *ngIf="image.stars > 1; else singleLiker">
+            {{ image.stars }} stars
+          </ng-container>
+          <ng-template #singleLiker>
+            {{ image.stars }} star
+          </ng-template>
+        </ion-card-subtitle>
+        <ion-card-subtitle *ngIf="!image.stars">
+          Be the first to star this
+        </ion-card-subtitle> -->
+    
+          <ion-card-subtitle
+            *ngIf="image.postText"
+            [innerHTML]="formatCardSubtitle(image)"
+          ></ion-card-subtitle>
+          <a
+            *ngIf="image.postText.length > 200"
+            class="read-more"
+            style="color: blue; text-decoration: none; cursor: pointer"
+            (click)="toggleText()"
+            >{{ isTextTruncated ? "Read More" : "Show Less" }}</a
+          >
         </ion-card-header>
       </ion-card>
     </ion-item>
@@ -165,15 +175,15 @@
     </div>
   </ng-container>
 
-  <!-- <ng-container *ngIf="selectedSegment === 'comments'">
+  <ng-container *ngIf="selectedSegment === 'comments'">
     <div class="no-comments">
-      Comment on some memes in the app repository to have them here
+      Coming soon. Comment on some memes in the app repository to have them here.
     </div>
-  </ng-container> -->
+  </ng-container>
 
   <ng-container *ngIf="selectedSegment === 'stars'">
     <div class="no-stars">
-      Star on some memes in the app repository to have them here
+      Coming soon. Star on some memes in the app repository to have them here.
     </div>
   </ng-container>
 

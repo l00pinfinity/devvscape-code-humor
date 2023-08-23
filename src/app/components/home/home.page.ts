@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import {
   AlertController,
@@ -12,13 +12,14 @@ import { Image } from '../../core/interface/image';
 import { Auth } from '@angular/fire/auth';
 import { DocumentSnapshot } from '@angular/fire/firestore';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   public welcomeMessage = '';
   presentingElement = undefined;
   imageFile: File | null = null;
@@ -26,9 +27,11 @@ export class HomePage implements OnInit {
   imageSrc: string | ArrayBuffer | null = null;
   images: Image[] = [];
   lastDocument: DocumentSnapshot | undefined;
-  public loading: HTMLIonLoadingElement;
+  loading: HTMLIonLoadingElement;
   errorOccurred = false;
   errorMessage = '';
+  onlineStatusSubscription: Subscription;
+  private modalInstance: HTMLIonModalElement;
 
   constructor(
     private auth: Auth,
@@ -49,24 +52,17 @@ export class HomePage implements OnInit {
     this.presentingElement = document.querySelector('.ion-page');
     this.fetchImagePosts();
   }
+
+  ngOnDestroy() {
+    this.onlineStatusSubscription.unsubscribe();
+  }
+
   async fetchImagePosts() {
     try {
       this.images = await this.imageService.getImagePosts();
-      console.log(this.images);
       this.errorOccurred = false;
     } catch (error) {
-      this.errorOccurred = true;
-      this.errorMessage = 'Something went wrong, try again later';
-
-      const toast = await this.toastCtrl.create({
-        message: this.errorMessage,
-        duration: 5000,
-        position: 'bottom',
-        color: 'danger',
-        icon: 'alert',
-      });
-
-      await toast.present();
+      this.handleError(error, 'Something went wrong, try again later');
     }
   }
 
@@ -91,37 +87,41 @@ export class HomePage implements OnInit {
   }
 
   async openModal() {
-    this.androidPermissions
-      .checkPermission(this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE)
-      .then(
-        (result) => console.log('Has permission?', result.hasPermission),
-        async () => {
-          const hasPermission = await this.androidPermissions.requestPermission(
-            this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
-          );
-          if (!hasPermission.hasPermission) {
-            const confirm = this.alertCtrl.create({
-              header: 'Permission Denied',
-              message: 'Storage permission is required to upload images.',
-              buttons: [
-                {
-                  text: 'OK',
-                  role: 'cancel',
-                  handler: () => {},
-                },
-              ],
-            });
-            (await confirm).present();
-          }
-        }
+    const permissionResult = await this.androidPermissions.checkPermission(
+      this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
+    );
+
+    if (!permissionResult.hasPermission) {
+      const hasPermission = await this.androidPermissions.requestPermission(
+        this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
       );
 
+      if (!hasPermission.hasPermission) {
+        const confirm = await this.alertCtrl.create({
+          header: 'Permission Denied',
+          message: 'Storage permission is required to upload images.',
+          buttons: [
+            {
+              text: 'OK',
+              role: 'cancel',
+              handler: async () => {
+                if (this.modalInstance) {
+                  await this.modalInstance.dismiss();
+                }
+              },
+            },
+          ],
+        });
+        await confirm.present();
+        return;
+      }
+    }
+
     const modalElement = document.getElementById('open-modal');
-    const modal = await this.modalCtrl.create({
+    this.modalInstance = await this.modalCtrl.create({
       component: modalElement,
     });
-
-    await modal.present();
+    await this.modalInstance.present();
   }
 
   openProfile() {
@@ -134,33 +134,49 @@ export class HomePage implements OnInit {
 
   async uploadImageAndPostText() {
     const user = this.auth.currentUser;
-    console.log('Clicked upload with text ' + this.postText + '.');
+
     if (this.imageFile) {
       this.showLoading();
-      await this.imageService.uploadImageAndPostText(
-        this.imageFile,
-        this.postText,
-        user.uid,
-        user.displayName,
-      );
 
-      this.hideLoading();
-      // Dismiss the modal after successful upload
-      this.modalController.dismiss();
+      try {
+        await this.imageService.uploadImageAndPostText(
+          this.imageFile,
+          this.postText.replace(/\n/g, '\\n'),
+          user.uid,
+          user.displayName
+        );
 
-      const toast = this.toastCtrl.create({
-        message: 'Your post has been committed to the app repository!',
-        duration: 5000,
-        position: 'bottom',
-        color: 'success',
-      });
-      (await toast).present();
+        this.hideLoading();
 
-      this.imageFile = null;
-      this.postText = '';
-      this.imageSrc = null;
+        this.modalController.dismiss();
 
-      this.fetchImagePosts();
+        const toast = await this.toastCtrl.create({
+          message: 'Your post has been committed to the app repository!',
+          duration: 5000,
+          position: 'bottom',
+          color: 'success',
+        });
+        await toast.present();
+
+        this.imageFile = null;
+        this.postText = '';
+        this.imageSrc = null;
+
+        this.fetchImagePosts();
+      } catch (error) {
+        console.error('Error uploading image and post:', error);
+
+        this.hideLoading();
+
+        const errorToast = await this.toastCtrl.create({
+          message:
+            'An error occurred while uploading your post. Please try again.',
+          duration: 5000,
+          position: 'bottom',
+          color: 'danger',
+        });
+        await errorToast.present();
+      }
     }
   }
 
@@ -197,34 +213,38 @@ export class HomePage implements OnInit {
     }
   }
 
-  hideLoading(): Promise<boolean> {
-    return this.loading.dismiss();
+  async hideLoading(): Promise<boolean> {
+    if (this.loading) {
+      return this.loading.dismiss();
+    }
+    return false;
   }
 
-  async handleError(error: { message: any }): Promise<void> {
-    const toast = this.toastCtrl.create({
-      message: `${error.message}`,
+  async handleError(error: any, customMessage?: string): Promise<void> {
+    const errorMessage = customMessage || error.message || 'An error occurred';
+    const toast = await this.toastCtrl.create({
+      message: errorMessage,
       duration: 5000,
       position: 'bottom',
       color: 'danger',
     });
-    (await toast).present();
+    await toast.present();
   }
 
   checkOnlineStatus() {
-    this.onlineStatusService.status.subscribe(
+    this.onlineStatusSubscription = this.onlineStatusService.status.subscribe(
       async (status: OnlineStatusType) => {
         if (status === OnlineStatusType.OFFLINE) {
-          const toast = this.toastCtrl.create({
+          const toast = await this.toastCtrl.create({
             message: 'Looks like you are in the land of offline adventures!',
             duration: 5000,
             position: 'bottom',
             color: 'danger',
             icon: 'alert',
           });
-          await (await toast).present();
+          await toast.present();
           setTimeout(async () => {
-            (await toast).dismiss();
+            await toast.dismiss();
           }, 3000);
         }
       }
