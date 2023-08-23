@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import {
   InAppBrowser,
   InAppBrowserOptions,
 } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { AlertController, ToastController } from '@ionic/angular';
+import {
+  AlertController,
+  LoadingController,
+  ToastController,
+} from '@ionic/angular';
+import { ImageService } from 'src/app/core/services/image.service';
 import { ProfileService } from 'src/app/core/services/profile.service';
 import { VersionService } from 'src/app/core/services/version.service';
 
@@ -15,6 +21,8 @@ import { VersionService } from 'src/app/core/services/version.service';
 })
 export class SettingsPage implements OnInit {
   currentVersion: string;
+  currentUser: any;
+  loading: HTMLIonLoadingElement;
   options: InAppBrowserOptions = {
     location: 'yes', //Or 'no'
     hidden: 'no', //Or  'yes'
@@ -34,16 +42,20 @@ export class SettingsPage implements OnInit {
   };
 
   constructor(
+    private auth: Auth,
     private profileService: ProfileService,
+    private imageService: ImageService,
     private router: Router,
     private version: VersionService,
     public toastCtrl: ToastController,
     private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
     private iab: InAppBrowser
   ) {}
 
   ngOnInit() {
     this.currentVersion = this.version.getCurrentVersion();
+    this.currentUser = this.auth.currentUser.uid;
   }
 
   openWithSystemBrowser(url: string) {
@@ -59,7 +71,8 @@ export class SettingsPage implements OnInit {
   async closeAccount() {
     const alert = await this.alertCtrl.create({
       header: 'Delete account',
-      message: 'About to close account? Enter your password to confirm account deletion:',
+      message:
+        'About to close account? Enter your password to confirm account deletion:',
       inputs: [
         {
           name: 'password',
@@ -77,42 +90,83 @@ export class SettingsPage implements OnInit {
           text: 'Delete',
           role: 'exit',
           handler: async (data) => {
-            if (data && data.password) {
-              const password = data.password;
-              this.profileService.closeAccount(password).subscribe(
-                async () => {
-                  const toast = this.toastCtrl.create({
-                    message:'Your account has been deleted',
-                    duration: 5000,
-                    position: 'bottom',
-                    color: 'success',
-                  });
-                  (await toast).present();
-                  this.router.navigateByUrl('signup');
-                },
-                async (error) => {
-                  const toast = this.toastCtrl.create({
-                    message: `${error}`,
-                    duration: 5000,
-                    position: 'bottom',
-                    color: 'danger',
-                  });
-                  (await toast).present();
+            try {
+              await this.showLoading();
+
+              if (data && data.password) {
+                const password = data.password;
+
+                try {
+                  const postsDeleted = await this.imageService.deleteUserPosts(
+                    this.currentUser
+                  );
+                  if (postsDeleted) {
+                    try {
+                      await this.profileService
+                        .closeAccount(password)
+                        .toPromise();
+
+                      const toast = await this.toastCtrl.create({
+                        message:
+                          '🚀 Your account and posts have been successfully deleted',
+                        duration: 5000,
+                        position: 'bottom',
+                        color: 'success',
+                      });
+                      await toast.present();
+                    } catch (error) {
+                      await this.handleError(error);
+                    }
+                  } else {
+                    // Handle the case where no posts were found for deletion
+                  }
+                } catch (error) {
+                  console.error('Error deleting posts:', error);
                 }
-              );
-            }else{
-              const toast = this.toastCtrl.create({
-                message: 'You need to confirm account deletion by inputing your password',
-                duration: 5000,
-                position: 'bottom',
-                color: 'danger',
-              });
-              (await toast).present();
+              } else {
+                await this.handleError(
+                  'You need to confirm account deletion by inputting your password'
+                );
+              }
+            } catch (error) {
+              console.error(error);
+            } finally {
+              await this.hideLoading();
             }
           },
         },
       ],
     });
     await alert.present();
+  }
+
+  async showLoading(): Promise<void> {
+    try {
+      this.loading = await this.loadingCtrl.create({
+        message: 'Closing account...',
+        cssClass: 'custom-loading',
+      });
+      await this.loading.present();
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async hideLoading(): Promise<boolean> {
+    if (this.loading) {
+      return this.loading.dismiss();
+    }
+    return false;
+  }
+
+  async handleError(error: any, customMessage?: string): Promise<void> {
+    const errorMessage = customMessage || error.message || 'An error occurred';
+    const toast = await this.toastCtrl.create({
+      message: errorMessage,
+      duration: 5000,
+      position: 'bottom',
+      color: 'danger',
+    });
+    await toast.present();
   }
 }

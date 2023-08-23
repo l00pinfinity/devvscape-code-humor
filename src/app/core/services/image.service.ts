@@ -11,6 +11,8 @@ import {
   collection,
   addDoc,
   serverTimestamp,
+  orderBy,
+  writeBatch,
 } from '@angular/fire/firestore';
 import { Image } from '../interface/image';
 import { Observable } from 'rxjs';
@@ -74,7 +76,7 @@ export class ImageService {
         displayName,
         comments: [],
         likedBy: [],
-        downloadedBy:[],
+        downloadedBy: [],
         tags,
         hashtags,
       });
@@ -134,7 +136,8 @@ export class ImageService {
       if (user) {
         const q = query(
           collection(this.firestore, 'posts'),
-          where('postedBy', '==', user.uid)
+          where('postedBy', '==', user.uid),
+          orderBy('createdAt', 'desc')
         );
 
         const querySnapshot = await getDocs(q);
@@ -147,6 +150,32 @@ export class ImageService {
         return userPosts;
       } else {
         return [];
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteUserPosts(userUid: any) {
+    try {
+      const q = query(
+        collection(this.firestore, 'posts'),
+        where('postedBy', '==', userUid)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const batch = writeBatch(this.firestore);
+        querySnapshot.forEach((document) => {
+          batch.delete(document.ref);
+        });
+
+        await batch.commit();
+
+        return true;
+      } else {
+        return false;
       }
     } catch (error) {
       throw error;
@@ -166,21 +195,17 @@ export class ImageService {
         const data = postSnapshot.data() as Image;
         const likedBy = data.likedBy || [];
 
-        // Check if the user has already liked the post
         const userLiked = likedBy.includes(userId);
 
-        // Calculate the new stars count based on the user's previous like status
         const newStars = data.stars + (userLiked ? -1 : 1);
 
-        // Update the stars and likedBy fields of the post
         await updateDoc(postRef, {
           stars: newStars,
           likedBy: userLiked
-            ? likedBy.filter((id) => id !== userId) // Remove user ID from likedBy array
-            : [...likedBy, userId], // Add user ID to likedBy array
+            ? likedBy.filter((id) => id !== userId)
+            : [...likedBy, userId],
         });
 
-        // Refresh the current route by navigating to the same route
         const currentRoute = this.router.url;
         this.router
           .navigateByUrl('/home', { skipLocationChange: true })

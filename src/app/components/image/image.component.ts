@@ -111,20 +111,16 @@ export class ImageComponent implements OnInit, OnDestroy {
     const user = this.auth.currentUser;
 
     if (user) {
-      // Call the likeImage method from ImageService
       this.imageService
         .likeImage(image.id, user.uid)
         .then(() => {
-          // Handle any success logic here if needed
-          console.log(`${image.id}` + 'has been liked by' + `${user.uid}`);
+          //console.log(`${image.id}` + 'has been liked by' + `${user.uid}`);
         })
         .catch(async (error) => {
-          // Handle error here
           await this.presentErrorToast(`Error liking image: ${error.error}`);
         });
     } else {
-      // Handle the case when user is not authenticated
-      console.warn('User is not authenticated.');
+      //console.warn('User is not authenticated.');
     }
   }
 
@@ -141,7 +137,7 @@ export class ImageComponent implements OnInit, OnDestroy {
       if (!hasPermission.hasPermission) {
         const confirm = await this.alertCtrl.create({
           header: 'Permission Denied',
-          message: 'Storage permission is required to download images.',
+          message: 'Time to unleash the memes! Storage access needed for some pixel partying',
           buttons: [
             {
               text: 'OK',
@@ -179,14 +175,14 @@ export class ImageComponent implements OnInit, OnDestroy {
   }
 
   bookmarkImage(image: Image) {
-    console.log('Bookmarked');
+    //console.log('Bookmarked');
   }
 
   async reportImage(image: Image) {
     this.alertCtrl
       .create({
-        header: 'Report Image',
-        message: 'Please provide a reason for reporting this image:',
+        header: 'Report Post',
+        message: 'Please provide a reason for reporting this post',
         inputs: [
           {
             name: 'reason',
@@ -221,7 +217,7 @@ export class ImageComponent implements OnInit, OnDestroy {
                     reason
                   );
                   await this.presentSuccessToast(
-                    'Image reported successfully. Your report is being reviewed by the team.'
+                    'Report sent! Our team is now in `code review` mode.'
                   );
                 } catch (error) {
                   await this.presentErrorToast(
@@ -230,7 +226,7 @@ export class ImageComponent implements OnInit, OnDestroy {
                 }
               } else {
                 await this.presentErrorToast(
-                  'You need to enter a brief description on your report issue'
+                  'Looks like you forgot to `commit` a brief description of the issue in the report.'
                 );
               }
             },

@@ -31,7 +31,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class ProfileService {
-  private currentUser: User;
+  currentUser: User;
   constructor(private firestore: Firestore, private authService: AuthService) {}
 
   getUserProfileReference(): Observable<DocumentReference<DocumentData>> {

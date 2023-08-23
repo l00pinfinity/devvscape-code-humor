@@ -167,7 +167,7 @@ export class HomePage implements OnInit, OnDestroy {
 
         this.fetchImagePosts();
       } catch (error) {
-        console.error('Error uploading image and post:', error);
+        //console.error('Error uploading image and post:', error);
 
         this.hideLoading();
 

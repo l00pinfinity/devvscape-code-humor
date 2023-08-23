@@ -57,6 +57,7 @@ const routes: Routes = [
       import('./components/settings/settings.module').then(
         (m) => m.SettingsPageModule
       ),
+    canActivate: [AuthGuard],
   },
 ];
 

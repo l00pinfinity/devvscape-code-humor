@@ -127,7 +127,7 @@
           (click)="deleteImage(image)"
         ></ion-icon>
           <ion-label>
-            <h2>{{ image.displayName || "devvscape_user" }}</h2>
+            <h2>{{ fullNames || "devvscape_user" }}</h2>
             <p>{{ image.createdAt | dateAgo }}</p>
           </ion-label>
         </ion-item>

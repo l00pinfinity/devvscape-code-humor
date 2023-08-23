@@ -56,11 +56,15 @@ export class AuthFormComponent implements OnInit {
     }
   }
 
-  hideLoading(): Promise<boolean> {
-    return this.loading.dismiss();
+  async hideLoading(): Promise<boolean> {
+    if (this.loading) {
+      return this.loading.dismiss();
+    }
+    return false;
   }
 
   async handleError(error: { message: any }): Promise<void> {
+    this.hideLoading();
     const toast = this.toastCtrl.create({
       message: `${error.message}`,
       duration: 5000,
