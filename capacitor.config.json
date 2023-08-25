@@ -4,8 +4,13 @@
 	"webDir": "www",
 	"bundledWebRuntime": false,
 	"plugins": {
-		"@capacitor-community/http": {}
-	  }
+		"@capacitor-community/http": {},
+		"PushNotifications": {
+			"presentationOptions": [
+				"badge",
+				"sound",
+				"alert"
+			]
+		}
+	}
 }
-
-  

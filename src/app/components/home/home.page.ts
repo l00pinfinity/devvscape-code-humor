@@ -5,6 +5,7 @@ import {
   LoadingController,
   ModalController,
   NavController,
+  Platform,
   ToastController,
 } from '@ionic/angular';
 import { ImageService } from 'src/app/core/services/image.service';
@@ -14,7 +15,12 @@ import { DocumentSnapshot } from '@angular/fire/firestore';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
+import {
+  ActionPerformed,
+  PushNotificationSchema,
+  PushNotifications,
+  Token,
+} from '@capacitor/push-notifications';
 
 @Component({
   selector: 'app-home',
@@ -38,6 +44,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   constructor(
     private auth: Auth,
+    private platform: Platform,
     private imageService: ImageService,
     private navCtrl: NavController,
     private androidPermissions: AndroidPermissions,
@@ -54,10 +61,75 @@ export class HomePage implements OnInit, OnDestroy {
     this.checkOnlineStatus();
     this.presentingElement = document.querySelector('.ion-page');
     this.fetchImagePosts();
+    this.notificationStatus();
+  }
+
+  async notificationStatus() {
+    const permissionResult = await this.androidPermissions.checkPermission(
+      this.androidPermissions.PERMISSION.POST_NOTIFICATIONS
+    );
+
+    if (!permissionResult.hasPermission) {
+      const hasPermission = await this.androidPermissions.requestPermission(
+        this.androidPermissions.PERMISSION.POST_NOTIFICATIONS
+      );
+
+      if (!hasPermission.hasPermission) {
+        return;
+      }
+    }
+
+    PushNotifications.requestPermissions().then(async (result) => {
+      if (result.receive === 'granted') {
+        PushNotifications.register();
+      } else {
+        const confirm = await this.alertCtrl.create({
+          header: 'Stay in the Loop!',
+          message:
+            'Unlock the magic of timely updates and stay connected. Allow notifications to receive the latest happenings!',
+          buttons: [
+            {
+              text: 'Ok',
+              role: 'cancel',
+              handler: async () => {
+                this.openAppSettings();
+              },
+            },
+          ],
+        });
+        await confirm.present();
+      }
+    });
+
+    // On success, we should be able to receive notifications
+    PushNotifications.addListener('registration', (token: Token) => {});
+
+    // Some issue with our setup and push will not work
+    PushNotifications.addListener('registrationError', (error: any) => {});
+
+    // Show us the notification payload if the app is open on our device
+    PushNotifications.addListener(
+      'pushNotificationReceived',
+      (notification: PushNotificationSchema) => {}
+    );
+
+    // Method called when tapping on a notification
+    PushNotifications.addListener(
+      'pushNotificationActionPerformed',
+      (notification: ActionPerformed) => {}
+    );
   }
 
   ngOnDestroy() {
     this.onlineStatusSubscription.unsubscribe();
+  }
+
+  async openAppSettings() {
+    if (this.platform.is('android')) {
+      const packageName = 'com.silkwebhq.devvscapecode';
+      const intentUri = 'package:' + packageName;
+      window.open('intent:' + intentUri + '#Intent;end;');
+    }
   }
 
   async fetchImagePosts(): Promise<void> {
