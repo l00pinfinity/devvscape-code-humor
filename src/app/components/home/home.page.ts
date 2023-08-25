@@ -14,7 +14,12 @@ import { DocumentSnapshot } from '@angular/fire/firestore';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
+import {
+  ActionPerformed,
+  PushNotificationSchema,
+  PushNotifications,
+  Token,
+} from '@capacitor/push-notifications';
 
 @Component({
   selector: 'app-home',
@@ -54,6 +59,36 @@ export class HomePage implements OnInit, OnDestroy {
     this.checkOnlineStatus();
     this.presentingElement = document.querySelector('.ion-page');
     this.fetchImagePosts();
+    this.notificationStatus();
+  }
+
+  notificationStatus() {
+    PushNotifications.requestPermissions().then((result) => {
+      if (result.receive === 'granted') {
+        PushNotifications.register();
+      } else {
+
+      }
+    });
+
+    // On success, we should be able to receive notifications
+    PushNotifications.addListener('registration', (token: Token) => {
+    });
+
+    // Some issue with our setup and push will not work
+    PushNotifications.addListener('registrationError', (error: any) => {});
+
+    // Show us the notification payload if the app is open on our device
+    PushNotifications.addListener(
+      'pushNotificationReceived',
+      (notification: PushNotificationSchema) => {}
+    );
+
+    // Method called when tapping on a notification
+    PushNotifications.addListener(
+      'pushNotificationActionPerformed',
+      (notification: ActionPerformed) => {}
+    );
   }
 
   ngOnDestroy() {
