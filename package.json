@@ -5,11 +5,11 @@
   "homepage": "https://devvscape.com/",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "start": "nx serve",
+    "build": "nx build",
+    "test": "nx test",
+    "lint": "nx lint",
+    "e2e": "nx e2e"
   },
   "private": true,
   "dependencies": {
@@ -17,6 +17,7 @@
     "@angular/core": "^14.0.0",
     "@angular/fire": "^7.4.1",
     "@angular/forms": "^14.0.0",
+    "@angular/localize": "^14.3.0",
     "@angular/platform-browser": "^14.0.0",
     "@angular/platform-browser-dynamic": "^14.0.0",
     "@angular/pwa": "^0.5.3",
@@ -51,6 +52,8 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.0.0",
+    "@angular-devkit/core": "^14.0.0",
+    "@angular-devkit/schematics": "^14.0.0",
     "@angular-eslint/builder": "~13.0.1",
     "@angular-eslint/eslint-plugin": "~13.0.1",
     "@angular-eslint/eslint-plugin-template": "~13.0.1",
@@ -61,6 +64,10 @@
     "@angular/language-service": "^14.0.0",
     "@capacitor/cli": "4.3.0",
     "@ionic/angular-toolkit": "^6.0.0",
+    "@nrwl/angular": "15.9.3",
+    "@nrwl/nx-cloud": "latest",
+    "@nrwl/workspace": "15.9.3",
+    "@schematics/angular": "^14.0.0",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
@@ -78,6 +85,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "nx": "15.9.3",
     "ts-node": "~8.3.0",
     "typescript": "~4.7.3"
   },
