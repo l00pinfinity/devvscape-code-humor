@@ -49,7 +49,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     private alertCtrl: AlertController,
     public toastCtrl: ToastController,
     private readonly profileStore: ProfileStore
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.userProfileSubscription = this.profileService
@@ -76,6 +76,10 @@ export class ProfilePage implements OnDestroy, OnInit {
     this.navCtrl.navigateForward('/settings');
   }
 
+  openImage(id: string): void {
+    this.router.navigate(['image', id]);
+  }
+
   async logOut(): Promise<void> {
     const confirm = this.alertCtrl.create({
       header: 'Logout',
@@ -85,7 +89,7 @@ export class ProfilePage implements OnDestroy, OnInit {
         {
           text: 'Cancel',
           role: 'cancel',
-          handler: () => {},
+          handler: () => { },
         },
         {
           text: 'Logout',
@@ -146,7 +150,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     if (user) {
       try {
         await updateProfile(user, { displayName: newDisplayName });
-      } catch (error) {}
+      } catch (error) { }
     }
   }
 
@@ -194,7 +198,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     return await alert.present();
   }
 
-  segmentChanged() {}
+  segmentChanged() { }
 
   async fetchImages() {
     if (this.selectedSegment === 'posts') {
@@ -213,7 +217,7 @@ export class ProfilePage implements OnDestroy, OnInit {
         {
           text: 'Cancel',
           role: 'cancel',
-          handler: () => {},
+          handler: () => { },
         },
         {
           text: 'Delete',

@@ -1,0 +1,117 @@
+<ion-content [fullscreen]="true" class="ion-padding bg-primary">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-row>
+    <ion-col size="2">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/"></ion-back-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-col>
+    <ion-col size="6"></ion-col>
+    <ion-col size="4">
+      <button class="top-right-button" (click)="imageDropdown(image)">
+        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+      </button>
+      <button class="top-right-button" (click)="downloadImage(image)">
+        <ion-icon name="cloud-download-outline"></ion-icon>
+      </button>
+    </ion-col>
+  </ion-row>
+  <ion-item [detail]="false" *ngIf="!errorMessage">
+    <ion-card>
+      <ion-item>
+        <ion-label>
+          <h2>{{ image?.displayName || "devvscape_user" }}</h2>
+          <p>{{ image?.createdAt | dateAgo }}</p>
+        </ion-label>
+      </ion-item>
+
+      <div class="card" *ngIf="!imageLoaded">
+        <div class="shimmer shimmer_large_para"></div>
+      </div>
+
+      <img
+        [src]="image?.imageUrl"
+        [alt]="image?.postText"
+        (load)="imageLoaded = true"
+        style="position: relative"
+      />
+
+      <ion-card-header>
+        <ion-card-subtitle
+          *ngIf="image?.postText"
+          [innerHTML]="formatCardSubtitle(image)"
+        ></ion-card-subtitle>
+        <a
+          *ngIf="image?.postText.length > 200"
+          class="read-more"
+          style="color: blue; text-decoration: none; cursor: pointer"
+          (click)="toggleText()"
+          >{{ isTextTruncated ? "Read More" : "Show Less" }}</a
+        >
+      </ion-card-header>
+    </ion-card>
+  </ion-item>
+  <ion-item>
+    <ion-card *ngIf="image?.comments">
+      <h6>Comments</h6>
+      <ion-card-subtitle *ngIf="image?.comments.length === 0">
+        Be the first to comment this
+      </ion-card-subtitle>
+    </ion-card>
+  </ion-item>
+  <ion-item-sliding *ngFor="let comment of image?.comments">
+    <!-- <ion-item-options side="start">
+      <ion-item-option color="success">
+        <ion-icon slot="icon-only" name="star"></ion-icon>
+      </ion-item-option>
+    </ion-item-options> -->
+
+    <ion-item>
+      <ion-card *ngIf="comment.text">
+        <p>
+          <b>{{ comment?.postedBy || "devvscape_user" }}</b>
+          {{ comment?.createdAt | dateAgo }}
+          <br />
+          <span [innerHTML]="formatCommentCard(comment)"></span>
+        </p>
+      </ion-card>
+    </ion-item>
+
+    <ion-item-options side="end" *ngIf="this.currentUser === comment.postedBy">
+      <!-- <ion-item-option color="success">
+        <ion-icon slot="icon-only" name="archive"></ion-icon>
+      </ion-item-option> -->
+      <ion-item-option color="danger">
+        <ion-icon
+          slot="icon-only"
+          name="trash-outline"
+          (click)="deleteComment(comment)"
+        ></ion-icon>
+      </ion-item-option>
+    </ion-item-options>
+  </ion-item-sliding>
+</ion-content>
+<ion-footer collapse="fade">
+  <ion-toolbar>
+    <ion-textarea
+      *ngIf="image"
+      class="full-width-input"
+      [(ngModel)]="commentText"
+      placeholder="Comment something about the meme..."
+      [maxlength]="150"
+      [autoGrow]="false"
+    ></ion-textarea>
+  </ion-toolbar>
+  <ion-button
+    *ngIf="image"
+    expand="block"
+    class="post-button"
+    (click)="imagePostComment(image)"
+  >
+    Comment
+  </ion-button>
+</ion-footer>

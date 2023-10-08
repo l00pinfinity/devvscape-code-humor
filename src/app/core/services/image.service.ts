@@ -14,7 +14,7 @@ import {
   orderBy,
   writeBatch,
 } from '@angular/fire/firestore';
-import { Image } from '../interface/image';
+import { Comment, Image } from '../interface/image';
 import { Observable } from 'rxjs';
 import {
   DocumentSnapshot,
@@ -28,6 +28,7 @@ import {
 } from 'firebase/firestore';
 import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +40,7 @@ export class ImageService {
     private auth: Auth,
     private firestore: Firestore,
     private router: Router
-  ) {}
+  ) { }
 
   async uploadImageAndPostText(
     imageFile: File,
@@ -115,8 +116,11 @@ export class ImageService {
 
   async getImagePosts(): Promise<Image[]> {
     try {
-      const postsCollection = collection(this.firestore, 'posts');
-      const querySnapshot = await getDocs(postsCollection);
+      const q = query(collection(this.firestore, 'posts'),
+        orderBy('createdAt', 'desc')
+      );
+
+      const querySnapshot = await getDocs(q);
 
       return querySnapshot.docs.map((document) => {
         const data = document.data() as Image;
@@ -128,7 +132,21 @@ export class ImageService {
     }
   }
 
-  async getImagePostById(id: string) {}
+  async getImagePostById(id: string): Promise<Image | null> {
+    try {
+      const docRef = doc(this.firestore, 'posts', id);
+      const docSnapshot = await getDoc(docRef);
+
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data() as Image;
+        return { id, ...data };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new Error('Unable to fetch image post by ID');
+    }
+  }
 
   async getUserPosts() {
     try {
@@ -182,7 +200,24 @@ export class ImageService {
     }
   }
 
-  async getStarredImages() {}
+  async getStarredImages(userId: string): Promise<Image[]> {
+    try {
+      const q = query(collection(this.firestore, 'posts'),
+        where('likedBy', 'array-contains', userId),
+        orderBy('createdAt', 'desc')
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      return querySnapshot.docs.map((document) => {
+        const data = document.data() as Image;
+        const id = document.id;
+        return { id, ...data };
+      });
+    } catch (error) {
+      throw new Error('Unable to fetch starred images');
+    }
+  }
 
   async likeImage(postId: string, userId: string): Promise<void> {
     try {
@@ -253,7 +288,79 @@ export class ImageService {
     }
   }
 
-  async addComment() {}
+  async addComment(postId: string, userId: string, commentText: string): Promise<void> {
+    try {
+      const firestore = getFirestore();
+      const postsCollection = collection(firestore, 'posts');
+      const postRef = doc(postsCollection, postId);
+      const postSnapshot: DocumentSnapshot<unknown> = await getDoc(postRef);
+
+      if (postSnapshot.exists()) {
+        const data = postSnapshot.data() as Image;
+        const comments = data.comments || [];
+
+        // Generate a unique ID for the comment
+        const commentId = uuidv4();
+
+        const newComment: Comment = {
+          id: commentId, // Add the id property
+          postedBy: userId,
+          text: commentText,
+          stars: 0,
+          likedBy: [],
+          createdAt: new Date(),
+        };
+
+        // Update the post with the modified comments array
+        await updateDoc(postRef, {
+          comments: [...comments, newComment],
+        });
+
+        console.log('Comment added successfully.');
+      } else {
+        console.error('Post not found');
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      throw error;
+    }
+  }
+
+
+  async deleteComment(imageId: string, commentId: string): Promise<void> {
+    try {
+      const postsCollection = collection(this.firestore, 'posts');
+      const postRef = doc(postsCollection, imageId);
+      const postSnapshot: DocumentSnapshot<unknown> = await getDoc(postRef);
+
+      if (postSnapshot.exists()) {
+        const data = postSnapshot.data() as Image;
+        const comments = data.comments || [];
+
+        // Find the index of the comment to be deleted
+        const commentIndex = comments.findIndex((comment) => comment.id === commentId);
+
+        if (commentIndex !== -1) {
+          // Remove the comment from the comments array
+          comments.splice(commentIndex, 1);
+
+          // Update the post with the modified comments array
+          await updateDoc(postRef, {
+            comments,
+          });
+
+          console.log('Comment deleted successfully.');
+        } else {
+          console.error('Comment not found in the post.');
+        }
+      } else {
+        console.error('Post not found');
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      throw error;
+    }
+  }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   public words: string[] = [
@@ -353,3 +460,5 @@ export class ImageService {
     'iot',
   ];
 }
+
+

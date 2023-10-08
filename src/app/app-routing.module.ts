@@ -4,9 +4,14 @@ import { AuthGuard } from './core/guard/auth.guard';
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: 'images',
     loadChildren: () =>
       import('./components/home/home.module').then((m) => m.HomePageModule),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'image/:id',
+    loadChildren: () => import('./components/image-details/image-details.module').then((m) => m.ImageDetailsComponentModule),
     canActivate: [AuthGuard],
   },
   {
@@ -19,7 +24,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'images',
     pathMatch: 'full',
   },
   {

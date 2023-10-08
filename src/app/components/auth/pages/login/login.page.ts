@@ -25,7 +25,7 @@ export class LoginPage implements OnInit {
       this.authService.userId = userCredential.user.uid;
       console.log('Logged in user',userCredential);
       await this.loginForm.hideLoading();
-      this.router.navigateByUrl('home');
+      this.router.navigateByUrl('images');
     } catch (error) {
       await this.loginForm.hideLoading();
       this.loginForm.handleError(error);

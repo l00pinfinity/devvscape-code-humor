@@ -37,10 +37,10 @@ export const environment = {
 4. Run the app:
 
 ```yaml
-ionic serve
+npx nx run app:serve
 ```
 
-> Open your browser and navigate to http://localhost:8100
+> Open your browser and navigate to http://localhost:4200
 
 # Connect with Us
 Stay updated with the latest news, announcements, and tech discussions. Connect with us on social media:

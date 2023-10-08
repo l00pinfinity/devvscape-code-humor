@@ -7,6 +7,7 @@ import { ImageService } from 'src/app/core/services/image.service';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Subscription } from 'rxjs';
 import { Firestore, collection, doc, getDoc } from '@angular/fire/firestore';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-image',
@@ -26,10 +27,11 @@ export class ImageComponent implements OnInit, OnDestroy {
     private imageService: ImageService,
     private firestore: Firestore,
     private platform: Platform,
+    private router: Router,
     private androidPermissions: AndroidPermissions,
     private alertCtrl: AlertController,
     public toastCtrl: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.currentUser = this.auth.currentUser.uid;
@@ -37,6 +39,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.permissionSubscription.unsubscribe();
   }
 
   async fetchUserData() {
@@ -76,7 +79,11 @@ export class ImageComponent implements OnInit, OnDestroy {
   }
 
   openProfile(author: string) {
-    //console.log(`Opening profile of ${author}`);
+    console.log(`Opening profile of ${author}`);
+  }
+
+  openImage(id: string): void {
+    this.router.navigate(['image', id]);
   }
 
   formatCardSubtitle(image: any): string {
@@ -125,6 +132,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   }
 
   async downloadImage(image: Image): Promise<void> {
+    console.log(image);
     const permissionResult = await this.androidPermissions.checkPermission(
       this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
     );
@@ -142,7 +150,7 @@ export class ImageComponent implements OnInit, OnDestroy {
             {
               text: 'OK',
               role: 'cancel',
-              handler: () => {},
+              handler: () => { },
             },
           ],
         });
