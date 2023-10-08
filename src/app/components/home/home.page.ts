@@ -161,6 +161,17 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
+  trackImage(index: number, image: any): any {
+    return image.id;
+  }
+
+  openImage(selectedImage: any): void {
+    console.log(selectedImage);
+    // Open the selected image in the ImageDetailComponent or navigate to a new route
+    // You can use a router or any other method to display the ImageDetailComponent
+    // Pass the selectedImage data to the ImageDetailComponent
+  }
+
   async openModal() {
     const permissionResult = await this.androidPermissions.checkPermission(
       this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
