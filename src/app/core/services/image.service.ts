@@ -14,10 +14,12 @@ import {
   orderBy,
   writeBatch,
 } from '@angular/fire/firestore';
-import { Comment, Image } from '../interface/image';
+import { Comment, Image } from '../interface/image.interface';
 import { Observable } from 'rxjs';
 import {
   DocumentSnapshot,
+  collectionGroup,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -174,6 +176,35 @@ export class ImageService {
     }
   }
 
+  async getUserPostsComments() {
+    try {
+      const user = this.auth.currentUser;
+      if (user) {
+        const q = query(
+          collectionGroup(this.firestore, 'comments'),
+          where('postedBy', '==', user.uid)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        const userPostsComments = [];
+
+        querySnapshot.forEach((document) => {
+          const data = document.data() as Comment;
+
+          userPostsComments.push({ postId: document.ref.parent.parent.id, ...data });
+        });
+
+        return userPostsComments;
+      } else {
+        return [];
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+
   async deleteUserPosts(userUid: any) {
     try {
       const q = query(
@@ -288,79 +319,72 @@ export class ImageService {
     }
   }
 
-  async addComment(postId: string, userId: string, commentText: string): Promise<void> {
+  async addComment(postId: string, userId: string, displayName: string, commentText: string): Promise<void> {
     try {
-      const firestore = getFirestore();
-      const postsCollection = collection(firestore, 'posts');
-      const postRef = doc(postsCollection, postId);
-      const postSnapshot: DocumentSnapshot<unknown> = await getDoc(postRef);
+      const commentsCollection = collection(this.firestore, `posts/${postId}/comments`);
 
-      if (postSnapshot.exists()) {
-        const data = postSnapshot.data() as Image;
-        const comments = data.comments || [];
+      const newComment: Comment = {
+        postedBy: userId,
+        displayName,
+        text: commentText,
+        stars: 0,
+        likedBy: [],
+        createdAt: new Date(),
+      };
 
-        // Generate a unique ID for the comment
-        const commentId = uuidv4();
+      await addDoc(commentsCollection, newComment);
 
-        const newComment: Comment = {
-          id: commentId, // Add the id property
-          postedBy: userId,
-          text: commentText,
-          stars: 0,
-          likedBy: [],
-          createdAt: new Date(),
-        };
-
-        // Update the post with the modified comments array
-        await updateDoc(postRef, {
-          comments: [...comments, newComment],
-        });
-
-        console.log('Comment added successfully.');
-      } else {
-        console.error('Post not found');
-      }
+      console.log('Comment added successfully.');
     } catch (error) {
       console.error('Error adding comment:', error);
       throw error;
     }
   }
 
+  async getImageComments(imageId: string): Promise<Comment[]> {
+    try {
+      const commentsCollection = collection(this.firestore, `posts/${imageId}/comments`);
+      
+      const q = query(commentsCollection);
+      
+      const querySnapshot = await getDocs(q);
+      
+      const imageComments: Comment[] = [];
+      
+      querySnapshot.forEach((document) => {
+        const data = document.data() as Comment;
+        const id = document.id;
+        
+        imageComments.push({ id, ...data });
+      });
+      
+      return imageComments;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   async deleteComment(imageId: string, commentId: string): Promise<void> {
     try {
-      const postsCollection = collection(this.firestore, 'posts');
-      const postRef = doc(postsCollection, imageId);
-      const postSnapshot: DocumentSnapshot<unknown> = await getDoc(postRef);
+      const commentsCollection = collection(this.firestore, `posts/${imageId}/comments`);
 
-      if (postSnapshot.exists()) {
-        const data = postSnapshot.data() as Image;
-        const comments = data.comments || [];
+      const commentRef = doc(commentsCollection, commentId);
 
-        // Find the index of the comment to be deleted
-        const commentIndex = comments.findIndex((comment) => comment.id === commentId);
+      const commentSnapshot = await getDoc(commentRef);
 
-        if (commentIndex !== -1) {
-          // Remove the comment from the comments array
-          comments.splice(commentIndex, 1);
+      if (commentSnapshot.exists()) {
+        await deleteDoc(commentRef);
 
-          // Update the post with the modified comments array
-          await updateDoc(postRef, {
-            comments,
-          });
-
-          console.log('Comment deleted successfully.');
-        } else {
-          console.error('Comment not found in the post.');
-        }
+        console.log('Comment deleted successfully.');
       } else {
-        console.error('Post not found');
+        console.error('Comment not found in the subcollection.');
       }
     } catch (error) {
       console.error('Error deleting comment:', error);
       throw error;
     }
   }
+
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   public words: string[] = [
