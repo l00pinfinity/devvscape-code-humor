@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoadingController, ToastController } from '@ionic/angular';
-import { UserCredential } from 'src/app/core/interface/user';
+import { ErrorResponse } from 'src/app/core/interface/firebase.interface';
+import { UserCredential } from 'src/app/core/interface/user.interface';
 
 @Component({
   selector: 'app-auth-form',
@@ -29,7 +30,7 @@ export class AuthFormComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   submitCredentials(authForm: FormGroup): void {
     if (!authForm.valid) {
@@ -63,14 +64,31 @@ export class AuthFormComponent implements OnInit {
     return false;
   }
 
-  async handleError(error: { message: any }): Promise<void> {
+  async handleError(error: ErrorResponse): Promise<void> {
     this.hideLoading();
+
+    const errorMessages: Record<string, string> = {
+      'auth/email-already-in-use': 'Account with this email address is already in use. Please login.',
+      'auth/missing-password': 'Please enter a password to continue.',
+      'auth/invalid-email': 'Please enter a valid email address to continue.',
+      'auth/popup-closed-by-user': 'Popup was closed by the user. Please try again.',
+      'auth/popup-blocked': 'Popup window was blocked by your browser. Please allow popups and try again.',
+      'auth/cancelled-popup-request': 'Popup request was cancelled. Please try again.',
+      'auth/network-request-failed': 'Network request failed. Please check your internet connection and try again.',
+      'auth/user-not-found': 'User not found. Please check your email.',
+      'auth/wrong-password': 'Wrong password. Please try again.',
+      'auth/too-many-requests':'Access to this account has been temporarily disable due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.'
+    };
+
+    const errorMessage = errorMessages[error.code] || error.message;
+
     const toast = this.toastCtrl.create({
-      message: `${error.message}`,
+      message: errorMessage,
       duration: 5000,
       position: 'bottom',
       color: 'danger',
     });
+
     (await toast).present();
   }
 }

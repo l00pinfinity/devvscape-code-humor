@@ -73,7 +73,7 @@
     <ion-item>
       <ion-card *ngIf="comment.text">
         <p>
-          <b>{{ comment?.postedBy || "devvscape_user" }}</b>
+          <b>{{ comment?.displayName || "devvscape_user" }}</b>
           {{ comment?.createdAt | dateAgo }}
           <br />
           <span [innerHTML]="formatCommentCard(comment)"></span>

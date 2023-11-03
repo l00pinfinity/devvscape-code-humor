@@ -3,9 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Http } from '@capacitor-community/http';
 import { Platform, AlertController, ToastController, LoadingController } from '@ionic/angular';
-import { Comment, Image } from 'src/app/core/interface/image';
+import { Comment, Image } from 'src/app/core/interface/image.interface';
 import { Auth } from '@angular/fire/auth';
 import { ImageService } from 'src/app/core/services/image.service';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { Firestore } from '@angular/fire/firestore';
+import { Notification } from 'src/app/core/interface/notification.interface';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 @Component({
   selector: 'app-image-details',
@@ -24,7 +28,9 @@ export class ImageDetailsComponent implements OnInit {
 
   constructor(
     private auth: Auth,
+    private firestore: Firestore,
     private imageService: ImageService,
+    private notificationService: NotificationService,
     private platform: Platform,
     private androidPermissions: AndroidPermissions,
     private alertCtrl: AlertController,
@@ -94,12 +100,52 @@ export class ImageDetailsComponent implements OnInit {
     return `${formattedTextWithLineBreaks}`;
   }
 
+  async getUserFullName(uid: string): Promise<string> {
+    try {
+      const userCollection = collection(this.firestore, 'users');
+      const userQuery = query(userCollection, where('uid', '==', uid));
+      const userQuerySnapshot = await getDocs(userQuery);
+
+      if (!userQuerySnapshot.empty) {
+        const userDoc = userQuerySnapshot.docs[0];
+        const userData = userDoc.data();
+
+        if (userData.fullName) {
+          return userData.fullName;
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+
+    return 'devvscape_user';
+  }
+
+  async getImageComments() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      try {
+        const comments = await this.imageService.getImageComments(id);
+        this.image.comments = comments;
+      } catch (error) {
+        const toast = await this.toastCtrl.create({
+          message: 'Error fetching post comments',
+          duration: 5000,
+          position: 'bottom',
+          color: 'danger',
+        });
+        await toast.present();
+      }
+    } else {
+      this.errorMessage = 'ID not provided';
+    }
+  }
+
   async deleteComment(comment: Comment) {
     if (this.currentUser === comment.postedBy) {
       const confirm = await this.alertCtrl.create({
         header: 'Delete',
-        message:
-          'Are you sure you want to delete comment?.',
+        message: 'Are you sure you want to delete this comment?',
         buttons: [
           {
             text: 'Cancel',
@@ -114,29 +160,20 @@ export class ImageDetailsComponent implements OnInit {
                 const imageId = this.image.id;
                 const commentId = comment.id;
 
-                console.log('Post:', imageId + 'Message', commentId);
-
-                // Call the deleteComment method from your image service
                 await this.imageService.deleteComment(imageId, commentId);
 
                 const toast = await this.toastCtrl.create({
                   message: 'Your comment has been deleted from the app repository!',
                   duration: 5000,
                   position: 'bottom',
-                  color: 'success',
+                  color: 'danger',
                 });
                 await toast.present();
 
-                // Refresh the image details after deleting the comment
                 await this.loadImageDetails();
               } catch (error) {
-                const toast = await this.toastCtrl.create({
-                  message: 'Error deleting comment',
-                  duration: 5000,
-                  position: 'bottom',
-                  color: 'success',
-                });
-                await toast.present();
+                console.error('Error deleting comment:', error);
+                await this.presentErrorToast('Error deleting comment');
               }
             },
           },
@@ -148,8 +185,6 @@ export class ImageDetailsComponent implements OnInit {
     }
   }
 
-
-
   async imagePostComment(image: Image) {
     const user = this.auth.currentUser;
 
@@ -157,7 +192,25 @@ export class ImageDetailsComponent implements OnInit {
       this.showLoading();
 
       try {
-        await this.imageService.addComment(image.id, user.uid, this.commentText.replace(/\n/g, '\\n'));
+        await this.imageService.addComment(image.id, user.uid, user.displayName, this.commentText.replace(/\n/g, '\\n'));
+
+        const isCommentedByOwner = user.uid === image.postedBy;
+
+        let notificationMessage = isCommentedByOwner
+          ? 'You added a comment on your post'
+          : `${user.displayName} commented on your post`;
+
+        const notification: Notification = {
+          title: 'New Comment',
+          body: notificationMessage,
+          isRead: false,
+          createdAt: new Date(),
+          type: 'comment',
+          imageId: image.id,
+        };
+
+        await this.notificationService.addNotification(image.postedBy, notification);
+
         this.hideLoading();
 
         const toast = await this.toastCtrl.create({
@@ -175,8 +228,7 @@ export class ImageDetailsComponent implements OnInit {
         this.hideLoading();
 
         const errorToast = await this.toastCtrl.create({
-          message:
-            'An error occurred while saving your comment. Please try again.',
+          message: 'An error occurred while saving your comment. Please try again.',
           duration: 5000,
           position: 'bottom',
           color: 'danger',
@@ -301,7 +353,7 @@ export class ImageDetailsComponent implements OnInit {
       await this.imageService.getImagePostById(id)
         .then((image) => {
           if (image) {
-            console.log(JSON.stringify(image));
+            this.getImageComments();
             this.image = image;
           } else {
             this.errorMessage = 'Image not found';

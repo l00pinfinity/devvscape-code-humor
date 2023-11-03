@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Http } from '@capacitor-community/http';
 import { Auth } from '@angular/fire/auth';
 import { AlertController, Platform, ToastController } from '@ionic/angular';
-import { Image } from 'src/app/core/interface/image';
+import { Image } from 'src/app/core/interface/image.interface';
 import { ImageService } from 'src/app/core/services/image.service';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Subscription } from 'rxjs';

@@ -37,9 +37,26 @@ export const environment = {
 4. Run the app:
 
 ```yaml
-npx nx run app:serve
+npx nx serve
 ```
 
+5. Build Android App
+   
+   ```yaml 
+   npx nx build
+   ```
+
+   Sync your web code to your native project​
+
+   ```yaml
+   npx cap sync
+   ```
+
+   To open the project in Android Studio, run:
+
+   ```yaml
+   npx cap open android
+   ```
 > Open your browser and navigate to http://localhost:4200
 
 # Connect with Us

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { UserCredential } from 'src/app/core/interface/user';
+import { UserCredential } from 'src/app/core/interface/user.interface';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { AuthFormComponent } from '../../auth-form/auth-form.component';
 

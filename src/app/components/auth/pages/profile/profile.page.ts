@@ -7,13 +7,13 @@ import {
 } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { UserProfile } from 'src/app/core/interface/user';
+import { UserProfile } from 'src/app/core/interface/user.interface';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ProfileService } from 'src/app/core/services/profile.service';
 import { ProfileStore } from './profile.store';
 import { Auth, updateProfile } from '@angular/fire/auth';
 import { ImageService } from 'src/app/core/services/image.service';
-import { Image } from 'src/app/core/interface/image';
+import { Image } from 'src/app/core/interface/image.interface';
 import {
   collection,
   deleteDoc,
@@ -30,6 +30,7 @@ export class ProfilePage implements OnDestroy, OnInit {
   maxLength = 200;
   isTextTruncated = true;
   fullNames: string;
+  currentUser: any;
   public userProfile$: Observable<UserProfile> = this.profileStore.userProfile$;
   private userProfileSubscription: Subscription;
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -38,6 +39,7 @@ export class ProfilePage implements OnDestroy, OnInit {
   selectedSegment = 'posts';
   // eslint-disable-next-line @typescript-eslint/member-ordering
   imageLoaded = false;
+  comments: any[];
 
   constructor(
     private auth: Auth,
@@ -52,6 +54,7 @@ export class ProfilePage implements OnDestroy, OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.currentUser = this.auth.currentUser.uid;
     this.userProfileSubscription = this.profileService
       .getUserProfile()
       .subscribe((userProfile: UserProfile) => {
@@ -203,9 +206,38 @@ export class ProfilePage implements OnDestroy, OnInit {
   async fetchImages() {
     if (this.selectedSegment === 'posts') {
       this.images = await this.imageService.getUserPosts();
+      console.log(this.images)
     } else if (this.selectedSegment === 'comments') {
+      this.comments = await this.imageService.getUserPostsComments();
+      console.log(this.comments)
     } else if (this.selectedSegment === 'stars') {
     }
+  }
+
+  formatCommentCard(comment: any): string {
+    return this.formatCommentCardSubtitle({ comment });
+  }
+
+  formatCommentCardSubtitle(image: any): string {
+    // Check if image and image.comment are defined
+    if (!image || !image.comment) {
+      return ''; // or some default value
+    }
+
+    let formattedText = image.comment.text || '';
+
+    formattedText = formattedText.replace(
+      /#(\w+)/g,
+      `<a class="hashtag" style="
+        color: blue;
+        text-decoration: none;
+        cursor: pointer;
+      ">#$1</a>`
+    );
+
+    const formattedTextWithLineBreaks = formattedText.replace(/\\n/g, '<br>');
+
+    return `${formattedTextWithLineBreaks}`;
   }
 
   async deleteImage(image: Image) {

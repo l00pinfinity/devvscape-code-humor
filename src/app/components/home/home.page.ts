@@ -9,7 +9,7 @@ import {
   ToastController,
 } from '@ionic/angular';
 import { ImageService } from 'src/app/core/services/image.service';
-import { Image } from '../../core/interface/image';
+import { Image } from '../../core/interface/image.interface';
 import { Auth } from '@angular/fire/auth';
 import { DocumentSnapshot } from '@angular/fire/firestore';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
@@ -229,7 +229,7 @@ export class HomePage implements OnInit, OnDestroy {
           this.imageFile,
           this.postText.replace(/\n/g, '\\n'),
           user.uid,
-          user.displayName
+          user.displayName 
         );
 
         this.hideLoading();
