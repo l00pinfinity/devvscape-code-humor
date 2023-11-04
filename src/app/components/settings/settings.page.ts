@@ -100,7 +100,11 @@ export class SettingsPage implements OnInit {
                   await this.authService.closeAccount();
                   this.router.navigateByUrl('signup')
                 } catch (error) {
-                  console.error('Error deleting account:', error);
+                  if(error.code = 'auth/requires-recent-login'){
+                    this.handleError('Deleting your account requires you to have logged in recently. Please log in and try again.'); 
+                  }else{
+                    this.handleError('Error deleting account:', error);
+                  }
                 }
               } else {
                 await this.handleError(

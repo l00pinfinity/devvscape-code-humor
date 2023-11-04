@@ -31,6 +31,10 @@
     <app-image *ngFor="let image of images; trackBy: trackImage" [image]="image"></app-image>
   </ion-list>
 
+  <ion-infinite-scroll>
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
   <ion-modal
     #modal
     trigger="open-modal"

@@ -13,7 +13,7 @@ cd devvscape
 2. Install the dependencies:
 
 ```yaml
-npm install
+npm install --force
 ```
 
 3. Configure Firebase:

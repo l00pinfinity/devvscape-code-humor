@@ -164,6 +164,19 @@ export class HomePage implements OnInit, OnDestroy {
     return image.id;
   }
 
+  // async onIonInfinite(event: CustomEvent) {
+  //   this.currentPage++;
+  
+  //   await this.fetchImagesPage(this.currentPage);
+  
+  //   event.target.complete();
+  
+  //   if (!this.hasMoreData) {
+  //     event.target.disabled = true;
+  //   }
+  // }
+  
+
   openImage(selectedImage: any): void {
     //console.log(selectedImage);
     // Open the selected image in the ImageDetailComponent or navigate to a new route

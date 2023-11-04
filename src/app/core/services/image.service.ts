@@ -134,6 +134,7 @@ export class ImageService {
       throw new Error('Unable to fetch image posts');
     }
   }
+  
 
   async getImagePostById(id: string): Promise<Image | null> {
     try {
