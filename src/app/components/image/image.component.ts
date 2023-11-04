@@ -31,7 +31,7 @@ export class ImageComponent implements OnInit, OnDestroy {
     private androidPermissions: AndroidPermissions,
     private alertCtrl: AlertController,
     public toastCtrl: ToastController
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.currentUser = this.auth.currentUser.uid;
@@ -79,7 +79,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   }
 
   openProfile(author: string) {
-    console.log(`Opening profile of ${author}`);
+    //console.log(`Opening profile of ${author}`);
   }
 
   openImage(id: string): void {
@@ -110,7 +110,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   }
 
   toggleText(): void {
-    console.log('Working clicked');
+    //console.log('Working clicked');
     this.isTextTruncated = !this.isTextTruncated;
   }
 
@@ -132,7 +132,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   }
 
   async downloadImage(image: Image): Promise<void> {
-    console.log(image);
+    //console.log(image);
     const permissionResult = await this.androidPermissions.checkPermission(
       this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
     );
@@ -145,12 +145,13 @@ export class ImageComponent implements OnInit, OnDestroy {
       if (!hasPermission.hasPermission) {
         const confirm = await this.alertCtrl.create({
           header: 'Permission Denied',
-          message: 'Time to unleash the memes! Storage access needed for some pixel partying',
+          message:
+            'Time to unleash the memes! Storage access needed for some pixel partying',
           buttons: [
             {
               text: 'OK',
               role: 'cancel',
-              handler: () => { },
+              handler: () => {},
             },
           ],
         });

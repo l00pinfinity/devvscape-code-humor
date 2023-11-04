@@ -183,8 +183,28 @@
   </ng-container>
 
   <ng-container *ngIf="selectedSegment === 'comments'">
-    <div class="no-comments">
-      Coming soon. Comment on some memes in the app repository to have them
+    <ion-list *ngIf="userPostsComments?.length > 0">
+      <ion-item-sliding *ngFor="let comment of userPostsComments">
+        <ion-item (click)="commentAction(comment)">
+          <ion-label>
+            <h3><b>{{ fullNames || "devvscape_user" }}</b></h3>
+            <p class="comment-body">{{ comment.text }}</p>
+            <p class="timestamp">{{ comment.createdAt | dateAgo }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option color="danger">
+            <ion-icon
+            slot="icon-only"
+            name="trash-outline"
+            (click)="deleteComment(comment)"
+          ></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+    <div class="no-comments" *ngIf="userPostsComments?.length === 0">
+      Comment on some memes in the app repository to have them
       here.
     </div>
   </ng-container>

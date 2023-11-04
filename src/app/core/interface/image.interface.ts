@@ -19,10 +19,10 @@ export interface Image {
 export interface Comment {
   id?: string;
   postedBy: string;
-  displayName: string,
+  postId?: string;
+  displayName: string;
   text: string;
   stars: number;
   likedBy: string[];
   createdAt: Date;
 }
-

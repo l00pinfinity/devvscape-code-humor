@@ -197,7 +197,7 @@ export class ImageDetailsComponent implements OnInit {
 
         const isCommentedByOwner = user.uid === image.postedBy;
 
-        let notificationMessage = isCommentedByOwner
+        const notificationMessage = isCommentedByOwner
           ? 'You added a comment on your post'
           : `${user.displayName} commented on your post`;
 
@@ -276,7 +276,7 @@ export class ImageDetailsComponent implements OnInit {
   }
 
   async downloadImage(image: Image): Promise<void> {
-    console.log(image);
+    //console.log(image);
     const permissionResult = await this.androidPermissions.checkPermission(
       this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
     );
@@ -358,7 +358,7 @@ export class ImageDetailsComponent implements OnInit {
             this.image = image;
           } else {
             this.errorMessage = 'Something wrong happen while loading the post';
-            this.router.navigateByUrl('images')
+            this.router.navigateByUrl('images');
           }
         })
         .catch((error) => {
@@ -415,12 +415,6 @@ export class ImageDetailsComponent implements OnInit {
                 const currentUserUid = this.currentUser;
                 const imageId = image.id;
                 const reason = data.reason;
-
-                console.log(
-                  'CurrentUid:' + currentUserUid,
-                  'imageId' + imageId,
-                  'reason' + reason
-                );
 
                 try {
                   await this.imageService.reportImage(

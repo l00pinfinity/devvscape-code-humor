@@ -29,7 +29,7 @@ export class SignupPage implements OnInit {
 
       const notification: Notification = {
         title: 'Welcome, Memelord!',
-        body: 'Congratulations, you have officially joined the league of the finest memers in the developer world. Prepare your keyboard for some epic coding and memeing adventures!',
+        body: 'Welcome to the elite league of developer memers! Get ready for epic coding and meme adventures!',
         isRead: false,
         type: 'newUser',
         userId: user.uid,

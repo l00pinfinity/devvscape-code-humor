@@ -15,7 +15,8 @@ export class NotificationPage implements OnInit {
   constructor(
     private auth: Auth,
     private notificationService: NotificationService,
-    private router: Router) { }
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.getNotifications();
@@ -34,12 +35,16 @@ export class NotificationPage implements OnInit {
   async getNotifications() {
     const user = this.auth.currentUser;
 
-    this.notifications = await this.notificationService.getNotifications(user.uid);
+    this.notifications = await this.notificationService.getNotifications(
+      user.uid
+    );
   }
 
   async markBatchAsRead() {
     const user = this.auth.currentUser;
-    const notificationIds = this.notifications.map(notification => notification.id);
+    const notificationIds = this.notifications.map(
+      (notification) => notification.id
+    );
 
     if (notificationIds.length === 0) {
       return; // No notifications to mark as read
@@ -49,7 +54,7 @@ export class NotificationPage implements OnInit {
       await this.notificationService.markBatchAsRead(user.uid, notificationIds);
 
       // Update the local state to mark notifications as read
-      this.notifications.forEach(notification => {
+      this.notifications.forEach((notification) => {
         notification.isRead = true;
       });
     } catch (error) {
@@ -61,7 +66,10 @@ export class NotificationPage implements OnInit {
     const user = this.auth.currentUser;
     switch (notification.type) {
       case 'comment':
-        await this.notificationService.markNotificationAsRead(user.uid, notification.id);
+        await this.notificationService.markNotificationAsRead(
+          user.uid,
+          notification.id
+        );
         this.router.navigate(['image', notification.imageId]);
         break;
       case 'login':
@@ -69,20 +77,28 @@ export class NotificationPage implements OnInit {
       case 'promotional':
         break;
       case 'newUser':
-        await this.notificationService.markNotificationAsRead(user.uid, notification.id);
+        await this.notificationService.markNotificationAsRead(
+          user.uid,
+          notification.id
+        );
         this.getNotifications();
         //add Welcome page to redirect users to
         break;
       default:
-        await this.notificationService.markNotificationAsRead(user.uid, notification.id);
-        console.log('Unsupported notification type');
+        await this.notificationService.markNotificationAsRead(
+          user.uid,
+          notification.id
+        );
+      //console.log('Unsupported notification type');
     }
   }
 
   async deleteNotification(notification: Notification) {
     const user = this.auth.currentUser;
-    await this.notificationService.deleteNotification(user.uid, notification.id);
+    await this.notificationService.deleteNotification(
+      user.uid,
+      notification.id
+    );
     this.getNotifications();
   }
-
 }

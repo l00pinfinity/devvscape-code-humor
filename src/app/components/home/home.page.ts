@@ -165,7 +165,7 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   openImage(selectedImage: any): void {
-    console.log(selectedImage);
+    //console.log(selectedImage);
     // Open the selected image in the ImageDetailComponent or navigate to a new route
     // You can use a router or any other method to display the ImageDetailComponent
     // Pass the selectedImage data to the ImageDetailComponent
@@ -228,7 +228,7 @@ export class HomePage implements OnInit, OnDestroy {
           this.imageFile,
           this.postText.replace(/\n/g, '\\n'),
           user.uid,
-          user.displayName 
+          user.displayName
         );
 
         this.hideLoading();

@@ -13,7 +13,7 @@ import { ProfileService } from 'src/app/core/services/profile.service';
 import { ProfileStore } from './profile.store';
 import { Auth, updateProfile } from '@angular/fire/auth';
 import { ImageService } from 'src/app/core/services/image.service';
-import { Image } from 'src/app/core/interface/image.interface';
+import { Comment, Image } from 'src/app/core/interface/image.interface';
 import {
   collection,
   deleteDoc,
@@ -39,7 +39,8 @@ export class ProfilePage implements OnDestroy, OnInit {
   selectedSegment = 'posts';
   // eslint-disable-next-line @typescript-eslint/member-ordering
   imageLoaded = false;
-  comments: any[];
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  userPostsComments: Comment[] = [];
 
   constructor(
     private auth: Auth,
@@ -51,7 +52,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     private alertCtrl: AlertController,
     public toastCtrl: ToastController,
     private readonly profileStore: ProfileStore
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.currentUser = this.auth.currentUser.uid;
@@ -61,6 +62,7 @@ export class ProfilePage implements OnDestroy, OnInit {
         this.profileStore.setState(userProfile);
         this.fullNames = userProfile.fullName;
         this.fetchImages();
+        this.fetchUserPostComments();
       });
   }
 
@@ -70,6 +72,7 @@ export class ProfilePage implements OnDestroy, OnInit {
 
   refresh(ev) {
     this.fetchImages();
+    this.fetchUserPostComments();
     setTimeout(() => {
       ev.detail.complete();
     }, 3000);
@@ -92,7 +95,7 @@ export class ProfilePage implements OnDestroy, OnInit {
         {
           text: 'Cancel',
           role: 'cancel',
-          handler: () => { },
+          handler: () => {},
         },
         {
           text: 'Logout',
@@ -153,7 +156,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     if (user) {
       try {
         await updateProfile(user, { displayName: newDisplayName });
-      } catch (error) { }
+      } catch (error) {}
     }
   }
 
@@ -201,17 +204,21 @@ export class ProfilePage implements OnDestroy, OnInit {
     return await alert.present();
   }
 
-  segmentChanged() { }
+  segmentChanged() {}
 
   async fetchImages() {
     if (this.selectedSegment === 'posts') {
       this.images = await this.imageService.getUserPosts();
-      console.log(this.images)
+      //console.log(this.images);
     } else if (this.selectedSegment === 'comments') {
-      this.comments = await this.imageService.getUserPostsComments();
-      console.log(this.comments)
+      this.fetchUserPostComments();
     } else if (this.selectedSegment === 'stars') {
+
     }
+  }
+
+  async fetchUserPostComments(){
+    this.userPostsComments = await this.imageService.getUserPostsComments(this.currentUser);
   }
 
   formatCommentCard(comment: any): string {
@@ -240,16 +247,72 @@ export class ProfilePage implements OnDestroy, OnInit {
     return `${formattedTextWithLineBreaks}`;
   }
 
+  async commentAction(comment: Comment) {
+    //console.log(comment);
+    this.router.navigate(['image', comment.postId]);
+  }
+
+  async deleteComment(comment: Comment) {
+    if (this.currentUser === comment.postedBy) {
+      const confirm = await this.alertCtrl.create({
+        header: 'Delete',
+        message: 'Are you sure you want to delete this comment?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => { },
+          },
+          {
+            text: 'Delete',
+            role: 'exit',
+            handler: async () => {
+              try {
+                await this.imageService.deleteComment(comment.postId,comment.id);
+
+                const toast = await this.toastCtrl.create({
+                  message: 'Your comment has been deleted from the app repository!',
+                  duration: 5000,
+                  position: 'bottom',
+                  color: 'danger',
+                });
+                await toast.present();
+
+                this.userPostsComments = null;
+                await this.fetchUserPostComments();
+              } catch (error) {
+                console.error('Error deleting comment:', error);
+                await this.presentErrorToast('Error deleting comment');
+              }
+            },
+          },
+        ],
+      });
+      await confirm.present();
+    } else {
+
+    }
+  }
+
+  async presentErrorToast(message: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 5000,
+      position: 'bottom',
+      color: 'danger',
+    });
+    await toast.present();
+  }
+
   async deleteImage(image: Image) {
     const confirm = this.alertCtrl.create({
       header: 'Delete',
-      message:
-        'About to delete a post. 🤠 Ready to hit `delete` on that post?',
+      message: 'About to delete a post. 🤠 Ready to hit `delete` on that post?',
       buttons: [
         {
           text: 'Cancel',
           role: 'cancel',
-          handler: () => { },
+          handler: () => {},
         },
         {
           text: 'Delete',

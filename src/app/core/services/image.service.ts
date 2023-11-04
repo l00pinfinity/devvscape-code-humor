@@ -42,7 +42,7 @@ export class ImageService {
     private auth: Auth,
     private firestore: Firestore,
     private router: Router
-  ) { }
+  ) {}
 
   async uploadImageAndPostText(
     imageFile: File,
@@ -118,7 +118,8 @@ export class ImageService {
 
   async getImagePosts(): Promise<Image[]> {
     try {
-      const q = query(collection(this.firestore, 'posts'),
+      const q = query(
+        collection(this.firestore, 'posts'),
         orderBy('createdAt', 'desc')
       );
 
@@ -176,34 +177,36 @@ export class ImageService {
     }
   }
 
-  async getUserPostsComments() {
+  async getUserPostsComments(userId: string): Promise<Comment[]> {
     try {
-      const user = this.auth.currentUser;
-      if (user) {
-        const q = query(
-          collectionGroup(this.firestore, 'comments'),
-          where('postedBy', '==', user.uid)
-        );
+      const q = query(
+        collectionGroup(this.firestore, 'comments'),
+        where('postedBy', '==', userId),
+        orderBy('createdAt', 'desc')
+      );
 
-        const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(q);
 
-        const userPostsComments = [];
+      const userComments: Comment[] = [];
 
-        querySnapshot.forEach((document) => {
-          const data = document.data() as Comment;
+      querySnapshot.forEach((document) => {
+        const data = document.data() as Comment;
 
-          userPostsComments.push({ postId: document.ref.parent.parent.id, ...data });
+        const commentId = document.id; // Get the comment document ID
+        const postId = document.ref.parent.parent.id;
+
+        userComments.push({
+          id: commentId,
+          postId,
+          ...data,
         });
+      });
 
-        return userPostsComments;
-      } else {
-        return [];
-      }
+      return userComments;
     } catch (error) {
       throw error;
     }
   }
-  
 
   async deleteUserPosts(userUid: any) {
     try {
@@ -233,7 +236,8 @@ export class ImageService {
 
   async getStarredImages(userId: string): Promise<Image[]> {
     try {
-      const q = query(collection(this.firestore, 'posts'),
+      const q = query(
+        collection(this.firestore, 'posts'),
         where('likedBy', 'array-contains', userId),
         orderBy('createdAt', 'desc')
       );
@@ -306,22 +310,30 @@ export class ImageService {
             downloads: newDownloads,
             downloadedBy: [...downloadedBy, userId],
           });
-          console.log('Image downloaded and recorded.');
+          //console.log('Image downloaded and recorded.');
         } else {
-          console.log('Image has already been downloaded by this user.');
+          //console.log('Image has already been downloaded by this user.');
         }
       } else {
-        console.error('Image not found');
+        //console.error('Image not found');
       }
     } catch (error) {
-      console.error('Error updating image downloads:', error);
+      //console.error('Error updating image downloads:', error);
       throw error;
     }
   }
 
-  async addComment(postId: string, userId: string, displayName: string, commentText: string): Promise<void> {
+  async addComment(
+    postId: string,
+    userId: string,
+    displayName: string,
+    commentText: string
+  ): Promise<void> {
     try {
-      const commentsCollection = collection(this.firestore, `posts/${postId}/comments`);
+      const commentsCollection = collection(
+        this.firestore,
+        `posts/${postId}/comments`
+      );
 
       const newComment: Comment = {
         postedBy: userId,
@@ -334,30 +346,33 @@ export class ImageService {
 
       await addDoc(commentsCollection, newComment);
 
-      console.log('Comment added successfully.');
+      //console.log('Comment added successfully.');
     } catch (error) {
-      console.error('Error adding comment:', error);
+      //console.error('Error adding comment:', error);
       throw error;
     }
   }
 
   async getImageComments(imageId: string): Promise<Comment[]> {
     try {
-      const commentsCollection = collection(this.firestore, `posts/${imageId}/comments`);
-      
+      const commentsCollection = collection(
+        this.firestore,
+        `posts/${imageId}/comments`
+      );
+
       const q = query(commentsCollection);
-      
+
       const querySnapshot = await getDocs(q);
-      
+
       const imageComments: Comment[] = [];
-      
+
       querySnapshot.forEach((document) => {
         const data = document.data() as Comment;
         const id = document.id;
-        
+
         imageComments.push({ id, ...data });
       });
-      
+
       return imageComments;
     } catch (error) {
       throw error;
@@ -366,16 +381,17 @@ export class ImageService {
 
   async deleteComment(imageId: string, commentId: string): Promise<void> {
     try {
-      const commentsCollection = collection(this.firestore, `posts/${imageId}/comments`);
-
-      const commentRef = doc(commentsCollection, commentId);
+      const commentRef = doc(
+        this.firestore,
+        `posts/${imageId}/comments/${commentId}`
+      );
 
       const commentSnapshot = await getDoc(commentRef);
 
       if (commentSnapshot.exists()) {
         await deleteDoc(commentRef);
 
-        console.log('Comment deleted successfully.');
+        //console.log('Comment deleted successfully.');
       } else {
         console.error('Comment not found in the subcollection.');
       }
@@ -384,7 +400,6 @@ export class ImageService {
       throw error;
     }
   }
-
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   public words: string[] = [
@@ -484,5 +499,3 @@ export class ImageService {
     'iot',
   ];
 }
-
-

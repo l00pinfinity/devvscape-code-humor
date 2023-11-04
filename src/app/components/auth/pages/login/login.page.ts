@@ -23,7 +23,6 @@ export class LoginPage implements OnInit {
         credentials.password
       );
       this.authService.userId = userCredential.user.uid;
-      console.log('Logged in user',userCredential);
       await this.loginForm.hideLoading();
       this.router.navigateByUrl('images');
     } catch (error) {

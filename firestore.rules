@@ -17,9 +17,19 @@ service cloud.firestore {
       allow delete: if request.auth != null && request.auth.uid == resource.data.postedBy;
     }
     
+    // Allow read and write access to comments for authorized users.
+    match /posts/{postId}/comments/{commentId} {
+      allow read, write: if request.auth != null;
+    }
+    
     // Allow write access only to authenticated users for the "reports" collection
     match /reports/{reportId} {
       allow write: if request.auth != null;
+    }
+    
+    // Allow read and write access to notifications for authorized users.
+    match /users/{userId}/notifications/{notificationId} {
+      allow read, write: if request.auth != null;
     }
   }
 }
