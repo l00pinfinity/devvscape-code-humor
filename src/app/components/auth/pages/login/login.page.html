@@ -16,6 +16,7 @@
     #loginForm
     (formSubmitted)="loginUser($event)"
     [actionButtonText]="'Login'"
+    [isLoginPage]="true"
   ></app-auth-form>
 
   <ion-button expand="block" fill="clear" routerLink="/signup" class="secondary-button">

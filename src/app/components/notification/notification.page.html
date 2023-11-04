@@ -27,8 +27,8 @@
           [color]="notification.isRead ? 'success' : 'primary'"
         ></ion-icon>
         <ion-label>
-          <h3>{{ notification.title }}</h3>
-          <p>{{ notification.body }}</p>
+          <h3><b>{{ notification.title }}</b></h3>
+          <p class="notification-body">{{ notification.body }}</p>
           <p class="timestamp">{{ notification.createdAt | dateAgo }}</p>
         </ion-label>
       </ion-item>

@@ -68,6 +68,11 @@ export class NotificationPage implements OnInit {
         break;
       case 'promotional':
         break;
+      case 'newUser':
+        await this.notificationService.markNotificationAsRead(user.uid, notification.id);
+        this.getNotifications();
+        //add Welcome page to redirect users to
+        break;
       default:
         await this.notificationService.markNotificationAsRead(user.uid, notification.id);
         console.log('Unsupported notification type');

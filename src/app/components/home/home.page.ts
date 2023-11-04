@@ -39,7 +39,6 @@ export class HomePage implements OnInit, OnDestroy {
   errorOccurred = false;
   errorMessage = '';
   onlineStatusSubscription: Subscription;
-  ngUnsubscribe: Subscription;
   private modalInstance: HTMLIonModalElement;
 
   constructor(

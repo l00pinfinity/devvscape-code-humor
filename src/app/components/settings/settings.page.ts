@@ -10,6 +10,8 @@ import {
   LoadingController,
   ToastController,
 } from '@ionic/angular';
+import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { ImageService } from 'src/app/core/services/image.service';
 import { ProfileService } from 'src/app/core/services/profile.service';
 import { VersionService } from 'src/app/core/services/version.service';
@@ -43,7 +45,7 @@ export class SettingsPage implements OnInit {
 
   constructor(
     private auth: Auth,
-    private profileService: ProfileService,
+    private authService: AuthService,
     private imageService: ImageService,
     private router: Router,
     private version: VersionService,
@@ -94,34 +96,11 @@ export class SettingsPage implements OnInit {
               await this.showLoading();
 
               if (data && data.password) {
-                const password = data.password;
-
                 try {
-                  const postsDeleted = await this.imageService.deleteUserPosts(
-                    this.currentUser
-                  );
-                  if (postsDeleted) {
-                    try {
-                      await this.profileService
-                        .closeAccount(password)
-                        .toPromise();
-
-                      const toast = await this.toastCtrl.create({
-                        message:
-                          '🚀 Your account and posts have been successfully deleted',
-                        duration: 5000,
-                        position: 'bottom',
-                        color: 'success',
-                      });
-                      await toast.present();
-                    } catch (error) {
-                      await this.handleError(error);
-                    }
-                  } else {
-                    // Handle the case where no posts were found for deletion
-                  }
+                  await this.authService.closeAccount();
+                  this.router.navigateByUrl('signup')
                 } catch (error) {
-                  console.error('Error deleting posts:', error);
+                  console.error('Error deleting account:', error);
                 }
               } else {
                 await this.handleError(

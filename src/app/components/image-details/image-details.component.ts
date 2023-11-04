@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Http } from '@capacitor-community/http';
 import { Platform, AlertController, ToastController, LoadingController } from '@ionic/angular';
@@ -29,6 +29,7 @@ export class ImageDetailsComponent implements OnInit {
   constructor(
     private auth: Auth,
     private firestore: Firestore,
+    private router: Router,
     private imageService: ImageService,
     private notificationService: NotificationService,
     private platform: Platform,
@@ -356,7 +357,8 @@ export class ImageDetailsComponent implements OnInit {
             this.getImageComments();
             this.image = image;
           } else {
-            this.errorMessage = 'Image not found';
+            this.errorMessage = 'Something wrong happen while loading the post';
+            this.router.navigateByUrl('images')
           }
         })
         .catch((error) => {
