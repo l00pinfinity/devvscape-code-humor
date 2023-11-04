@@ -24,7 +24,7 @@ import {
   first,
 } from 'rxjs/operators';
 import { EMPTY, forkJoin, from, Observable } from 'rxjs';
-import { UserProfile } from '../interface/user';
+import { UserProfile } from '../interface/user.interface';
 import { AuthService } from './auth.service';
 
 @Injectable({

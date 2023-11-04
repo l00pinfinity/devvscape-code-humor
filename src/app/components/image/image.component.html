@@ -7,11 +7,6 @@
         src="https://ionicframework.com/docs/img/demos/avatar.svg"
       />
     </ion-avatar> -->
-      <!-- <ion-icon
-        slot="end"
-        [name]="image.likedBy.includes(currentUser) ? 'star' : 'star-outline'"
-        (click)="likeImage(image)"
-      ></ion-icon> -->
       <ion-icon
         slot="end"
         name="cloud-download-outline"
@@ -32,7 +27,7 @@
       <div class="shimmer shimmer_large_para"></div>
     </div>
 
-    <img
+    <img (click)="openImage(image.id)"
       [src]="image.imageUrl"
       [alt]="image.postText"
       (load)="imageLoaded = true"
@@ -65,4 +60,4 @@
       >
     </ion-card-header>
   </ion-card>
-</ion-item>
+</ion-item> 

@@ -9,7 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { provideAnalytics, getAnalytics } from '@angular/fire/analytics';
+import { provideAnalytics, getAnalytics, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
 import { providePerformance, getPerformance } from '@angular/fire/performance';
 import { OnlineStatusModule } from 'ngx-online-status';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
@@ -31,6 +31,8 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
   ],
   providers: [
     AndroidPermissions,
+    ScreenTrackingService,
+    UserTrackingService,
     InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],

@@ -7,13 +7,13 @@ import {
 } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { UserProfile } from 'src/app/core/interface/user';
+import { UserProfile } from 'src/app/core/interface/user.interface';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ProfileService } from 'src/app/core/services/profile.service';
 import { ProfileStore } from './profile.store';
 import { Auth, updateProfile } from '@angular/fire/auth';
 import { ImageService } from 'src/app/core/services/image.service';
-import { Image } from 'src/app/core/interface/image';
+import { Comment, Image } from 'src/app/core/interface/image.interface';
 import {
   collection,
   deleteDoc,
@@ -30,6 +30,7 @@ export class ProfilePage implements OnDestroy, OnInit {
   maxLength = 200;
   isTextTruncated = true;
   fullNames: string;
+  currentUser: any;
   public userProfile$: Observable<UserProfile> = this.profileStore.userProfile$;
   private userProfileSubscription: Subscription;
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -38,6 +39,8 @@ export class ProfilePage implements OnDestroy, OnInit {
   selectedSegment = 'posts';
   // eslint-disable-next-line @typescript-eslint/member-ordering
   imageLoaded = false;
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  userPostsComments: Comment[] = [];
 
   constructor(
     private auth: Auth,
@@ -52,12 +55,14 @@ export class ProfilePage implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.currentUser = this.auth.currentUser.uid;
     this.userProfileSubscription = this.profileService
       .getUserProfile()
       .subscribe((userProfile: UserProfile) => {
         this.profileStore.setState(userProfile);
         this.fullNames = userProfile.fullName;
         this.fetchImages();
+        this.fetchUserPostComments();
       });
   }
 
@@ -67,6 +72,7 @@ export class ProfilePage implements OnDestroy, OnInit {
 
   refresh(ev) {
     this.fetchImages();
+    this.fetchUserPostComments();
     setTimeout(() => {
       ev.detail.complete();
     }, 3000);
@@ -74,6 +80,10 @@ export class ProfilePage implements OnDestroy, OnInit {
 
   async openSettings() {
     this.navCtrl.navigateForward('/settings');
+  }
+
+  openImage(id: string): void {
+    this.router.navigate(['image', id]);
   }
 
   async logOut(): Promise<void> {
@@ -199,16 +209,105 @@ export class ProfilePage implements OnDestroy, OnInit {
   async fetchImages() {
     if (this.selectedSegment === 'posts') {
       this.images = await this.imageService.getUserPosts();
+      //console.log(this.images);
     } else if (this.selectedSegment === 'comments') {
+      this.fetchUserPostComments();
     } else if (this.selectedSegment === 'stars') {
+
     }
+  }
+
+  async fetchUserPostComments(){
+    this.userPostsComments = await this.imageService.getUserPostsComments(this.currentUser);
+  }
+
+  formatCommentCard(comment: any): string {
+    return this.formatCommentCardSubtitle({ comment });
+  }
+
+  formatCommentCardSubtitle(image: any): string {
+    // Check if image and image.comment are defined
+    if (!image || !image.comment) {
+      return ''; // or some default value
+    }
+
+    let formattedText = image.comment.text || '';
+
+    formattedText = formattedText.replace(
+      /#(\w+)/g,
+      `<a class="hashtag" style="
+        color: blue;
+        text-decoration: none;
+        cursor: pointer;
+      ">#$1</a>`
+    );
+
+    const formattedTextWithLineBreaks = formattedText.replace(/\\n/g, '<br>');
+
+    return `${formattedTextWithLineBreaks}`;
+  }
+
+  async commentAction(comment: Comment) {
+    //console.log(comment);
+    this.router.navigate(['image', comment.postId]);
+  }
+
+  async deleteComment(comment: Comment) {
+    if (this.currentUser === comment.postedBy) {
+      const confirm = await this.alertCtrl.create({
+        header: 'Delete',
+        message: 'Are you sure you want to delete this comment?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => { },
+          },
+          {
+            text: 'Delete',
+            role: 'exit',
+            handler: async () => {
+              try {
+                await this.imageService.deleteComment(comment.postId,comment.id);
+
+                const toast = await this.toastCtrl.create({
+                  message: 'Your comment has been deleted from the app repository!',
+                  duration: 5000,
+                  position: 'bottom',
+                  color: 'danger',
+                });
+                await toast.present();
+
+                this.userPostsComments = null;
+                await this.fetchUserPostComments();
+              } catch (error) {
+                console.error('Error deleting comment:', error);
+                await this.presentErrorToast('Error deleting comment');
+              }
+            },
+          },
+        ],
+      });
+      await confirm.present();
+    } else {
+
+    }
+  }
+
+  async presentErrorToast(message: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 5000,
+      position: 'bottom',
+      color: 'danger',
+    });
+    await toast.present();
   }
 
   async deleteImage(image: Image) {
     const confirm = this.alertCtrl.create({
       header: 'Delete',
-      message:
-        'About to delete a post. 🤠 Ready to hit `delete` on that post?',
+      message: 'About to delete a post. 🤠 Ready to hit `delete` on that post?',
       buttons: [
         {
           text: 'Cancel',

@@ -13,7 +13,7 @@ cd devvscape
 2. Install the dependencies:
 
 ```yaml
-npm install
+npm install --force
 ```
 
 3. Configure Firebase:
@@ -37,10 +37,27 @@ export const environment = {
 4. Run the app:
 
 ```yaml
-ionic serve
+npx nx serve
 ```
 
-> Open your browser and navigate to http://localhost:8100
+5. Build Android App
+   
+   ```yaml 
+   npx nx build
+   ```
+
+   Sync your web code to your native project​
+
+   ```yaml
+   npx cap sync
+   ```
+
+   To open the project in Android Studio, run:
+
+   ```yaml
+   npx cap open android
+   ```
+> Open your browser and navigate to http://localhost:4200
 
 # Connect with Us
 Stay updated with the latest news, announcements, and tech discussions. Connect with us on social media:

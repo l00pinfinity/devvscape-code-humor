@@ -9,7 +9,7 @@ import {
   ToastController,
 } from '@ionic/angular';
 import { ImageService } from 'src/app/core/services/image.service';
-import { Image } from '../../core/interface/image';
+import { Image } from '../../core/interface/image.interface';
 import { Auth } from '@angular/fire/auth';
 import { DocumentSnapshot } from '@angular/fire/firestore';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
@@ -39,7 +39,6 @@ export class HomePage implements OnInit, OnDestroy {
   errorOccurred = false;
   errorMessage = '';
   onlineStatusSubscription: Subscription;
-  ngUnsubscribe: Subscription;
   private modalInstance: HTMLIonModalElement;
 
   constructor(
@@ -159,6 +158,30 @@ export class HomePage implements OnInit, OnDestroy {
     } else {
       this.welcomeMessage = 'Good evening';
     }
+  }
+
+  trackImage(index: number, image: any): any {
+    return image.id;
+  }
+
+  // async onIonInfinite(event: CustomEvent) {
+  //   this.currentPage++;
+  
+  //   await this.fetchImagesPage(this.currentPage);
+  
+  //   event.target.complete();
+  
+  //   if (!this.hasMoreData) {
+  //     event.target.disabled = true;
+  //   }
+  // }
+  
+
+  openImage(selectedImage: any): void {
+    //console.log(selectedImage);
+    // Open the selected image in the ImageDetailComponent or navigate to a new route
+    // You can use a router or any other method to display the ImageDetailComponent
+    // Pass the selectedImage data to the ImageDetailComponent
   }
 
   async openModal() {

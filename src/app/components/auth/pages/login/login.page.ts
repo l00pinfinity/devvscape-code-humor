@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserCredential } from 'src/app/core/interface/user';
+import { UserCredential } from 'src/app/core/interface/user.interface';
 import { AuthFormComponent } from '../../auth-form/auth-form.component';
 import { AuthService } from 'src/app/core/services/auth.service';
 
@@ -23,9 +23,8 @@ export class LoginPage implements OnInit {
         credentials.password
       );
       this.authService.userId = userCredential.user.uid;
-      console.log('Logged in user',userCredential);
       await this.loginForm.hideLoading();
-      this.router.navigateByUrl('home');
+      this.router.navigateByUrl('images');
     } catch (error) {
       await this.loginForm.hideLoading();
       this.loginForm.handleError(error);
