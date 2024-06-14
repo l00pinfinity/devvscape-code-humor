@@ -17,8 +17,8 @@ import {
   query,
   updateDoc,
   where,
-} from 'firebase/firestore';
-import { Notification } from '../interface/notification.interface';
+} from '@angular/fire/firestore';
+import { Notification } from '../models/data/notification.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -58,40 +58,40 @@ export class NotificationService {
   async deleteNotification(userId: string, notificationId: string): Promise<void> {
     try {
       const notificationRef = doc(this.firestore, `users/${userId}/notifications/${notificationId}`);
-  
+
       // Delete the notification document
       await deleteDoc(notificationRef);
     } catch (error) {
       throw new Error('Unable to delete the notification');
     }
-  }  
+  }
 
   async markNotificationAsRead(userId: string, notificationId: string): Promise<void> {
     try {
       const notificationRef = doc(this.firestore, `users/${userId}/notifications/${notificationId}`);
-      
+
       await updateDoc(notificationRef, { isRead: true });
     } catch (error) {
       throw new Error('Unable to mark the notification as read');
     }
   }
-  
+
   async markBatchAsRead(userId: string, notificationIds: string[]): Promise<void> {
     try {
       const batch = writeBatch(this.firestore);
-  
+
       const notificationRefs = notificationIds.map((notificationId) =>
         doc(this.firestore, `users/${userId}/notifications/${notificationId}`)
       );
-  
+
       notificationRefs.forEach((notificationRef) => {
         batch.update(notificationRef, { isRead: true });
       });
-  
+
       await batch.commit();
     } catch (error) {
       throw new Error('Unable to mark notifications as read');
     }
   }
-  
+
 }

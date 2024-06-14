@@ -7,20 +7,19 @@ import { IonicModule } from '@ionic/angular';
 import { ProfilePageRoutingModule } from './profile-routing.module';
 
 import { ProfilePage } from './profile.page';
-import { ProfileStore } from './profile.store';
-import { ImageComponentModule } from '../../../image/image.module';
 import { SharedModule } from 'src/app/core/modules/shared.module';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @NgModule({
   declarations: [ProfilePage],
-  providers: [ProfileStore],
+  providers: [],
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     ProfilePageRoutingModule,
-    ImageComponentModule,
-    SharedModule
+    SharedModule,
+    TranslocoModule
   ],
 })
 export class ProfilePageModule {}

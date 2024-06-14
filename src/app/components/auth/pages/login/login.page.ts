@@ -1,8 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { UserCredential } from 'src/app/core/interface/user.interface';
 import { AuthFormComponent } from '../../auth-form/auth-form.component';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { selectAuthLoading, selectAuthError, selectUser } from 'src/app/core/store/selectors/auth.selectors';
+import { login, setLoading } from 'src/app/core/store/actions/auth.actions';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -10,24 +14,40 @@ import { AuthService } from 'src/app/core/services/auth.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  @ViewChild(AuthFormComponent) loginForm: AuthFormComponent;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  @ViewChild(AuthFormComponent) loginForm!: AuthFormComponent;
+  loading$: Observable<boolean>;
+  error$: Observable<any>;
 
-  ngOnInit() {}
+  constructor(private store: Store, private router:Router, private authService: AuthService, public toastCtrl: ToastController) {
+    this.loading$ = this.store.select(selectAuthLoading);
+    this.error$ = this.store.select(selectAuthError);
+  }
 
-  async loginUser(credentials: UserCredential): Promise<void> {
-    try {
-      const userCredential = await this.authService.login(
-        credentials.email,
-        credentials.password
-      );
-      this.authService.userId = userCredential.user.uid;
-      await this.loginForm.hideLoading();
-      this.router.navigateByUrl('images');
-    } catch (error) {
-      await this.loginForm.hideLoading();
-      this.loginForm.handleError(error);
-    }
+  ngOnInit() {
+    this.authService.getUser().subscribe(async user => {
+      if (user) {
+        const successToast = await this.toastCtrl.create({
+          message: 'Logged in...',
+          duration: 5000,
+          position: 'bottom',
+          color: 'success',
+        });
+        await successToast.present();
+        this.router.navigateByUrl('');
+      }
+    });
+  }
+
+  loginUser(credentials: { email: string; password: string; }) {
+    const { email, password } = credentials;
+    this.store.dispatch(setLoading({ loading: true }));
+    this.store.dispatch(login({ email, password }));
+
+    this.store.select(selectUser).subscribe(user =>{
+      if (user){
+        this.router.navigateByUrl('');
+      }
+    })
   }
 }

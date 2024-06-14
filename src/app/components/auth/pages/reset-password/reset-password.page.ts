@@ -1,9 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
-import { UserCredential } from 'src/app/core/interface/user.interface';
-import { AuthService } from 'src/app/core/services/auth.service';
 import { AuthFormComponent } from '../../auth-form/auth-form.component';
+import { Store } from '@ngrx/store';
+import { resetPassword, setLoading } from 'src/app/core/store/actions/auth.actions';
 
 @Component({
   selector: 'app-reset-password',
@@ -11,36 +9,16 @@ import { AuthFormComponent } from '../../auth-form/auth-form.component';
   styleUrls: ['./reset-password.page.scss'],
 })
 export class ResetPasswordPage implements OnInit {
-  @ViewChild(AuthFormComponent)
-  resetPasswordForm: AuthFormComponent;
-  constructor(
-    private authService: AuthService,
-    private alertCtrl: AlertController,
-    private router: Router
-  ) {}
+  @ViewChild(AuthFormComponent) resetPasswordForm!: AuthFormComponent;
 
-  ngOnInit() {}
+  constructor(private store: Store) { }
 
-  async resetPassword(credentials: UserCredential): Promise<void> {
-    try {
-      await this.authService.resetPassword(credentials.email);
-      await this.resetPasswordForm.hideLoading();
-      const alert = await this.alertCtrl.create({
-        message: 'Check your inbox for the password reset link',
-        buttons: [
-          {
-            text: 'Ok',
-            role: 'cancel',
-            handler: () => {
-              this.router.navigateByUrl('login');
-            },
-          },
-        ],
-      });
-      await alert.present();
-    } catch (error) {
-      await this.resetPasswordForm.hideLoading();
-      this.resetPasswordForm.handleError(error);
-    }
+  ngOnInit() { }
+
+  resetPassword(credentials: { email: string; }){
+    const { email } = credentials; 
+    this.store.dispatch(setLoading({ loading: true }));
+    this.store.dispatch(resetPassword({ email }));
   }
+
 }

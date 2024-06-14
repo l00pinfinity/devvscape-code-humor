@@ -8,7 +8,7 @@
       </ion-toolbar>
     </ion-col>
     <ion-col size="10">
-      <h2 class="section-header">Signup</h2>
+      <h2 class="section-header">{{ 'COMPONENTS.AUTH.SIGNUP.TITLE' | transloco }}</h2>
     </ion-col>
   </ion-row>
   <app-auth-form
@@ -17,7 +17,13 @@
     [actionButtonText]="'Create Account'"
   ></app-auth-form>
 
+  <div class="or-container">
+    <div class="line"></div>
+    <span>{{ 'COMPONENTS.AUTH.SIGNUP.OR' | transloco }}</span>
+    <div class="line"></div>
+  </div>
+  
   <ion-button expand="block" fill="clear" routerLink="/login">
-    I already have an account
+    {{ 'COMPONENTS.AUTH.SIGNUP.SIGNIN' | transloco }}
   </ion-button>
 </ion-content>

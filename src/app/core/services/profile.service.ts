@@ -4,7 +4,6 @@ import {
   DocumentData,
   DocumentReference,
   Firestore,
-  getDoc,
   setDoc,
   docData,
 } from '@angular/fire/firestore';
@@ -15,30 +14,28 @@ import {
   updateEmail,
   updatePassword,
 } from '@angular/fire/auth';
-import {
-  map,
-  catchError,
-  switchMap,
-  tap,
-  concatMap,
-  first,
-} from 'rxjs/operators';
-import { EMPTY, forkJoin, from, Observable } from 'rxjs';
-import { UserProfile } from '../interface/user.interface';
+import { map, catchError, switchMap, concatMap, first } from 'rxjs/operators';
+import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { AuthService } from './auth.service';
+import { UserProfile } from '../models/data/user.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfileService {
-  currentUser: User;
+  currentUser: User | null = null;
+
   constructor(private firestore: Firestore, private authService: AuthService) {}
 
   getUserProfileReference(): Observable<DocumentReference<DocumentData>> {
     return this.authService.getUser().pipe(
-      map((user) => {
-        this.currentUser = user;
-        return doc(this.firestore, `users/${user.uid}`);
+      switchMap((user) => {
+        if (user) {
+          this.currentUser = user;
+          return of(doc(this.firestore, `users/${user.uid}`));
+        } else {
+          return EMPTY;
+        }
       }),
       catchError(() => EMPTY)
     );
@@ -46,107 +43,127 @@ export class ProfileService {
 
   getUserProfile(): Observable<UserProfile> {
     return this.getUserProfileReference().pipe(
-      switchMap(
-        (userProfileReference) =>
-          docData(userProfileReference) as Observable<UserProfile>
+      switchMap((userProfileReference) =>
+        docData(userProfileReference) as Observable<UserProfile>
       ),
       catchError(() => EMPTY)
     );
   }
 
-  updateName(fullName: string): Observable<DocumentReference<DocumentData>> {
+  updateName(fullName: string): Observable<void> {
     return this.getUserProfileReference().pipe(
-      tap({
-        next: (userProfileReference) =>
-          setDoc(userProfileReference, { fullName }, { merge: true }),
-        error: (error) => console.error(error),
-      }),
-      catchError(() => EMPTY)
+      concatMap((userProfileReference) =>
+        from(setDoc(userProfileReference, { fullName }, { merge: true }))
+      ),
+      catchError((error) => {
+        console.error('Error updating name:', error);
+        return EMPTY;
+      })
     );
   }
 
-  updateEmail(newEmail: string, password: string): Observable<unknown> {
+  updateEmail(newEmail: string, password: string): Observable<void> {
     return forkJoin([
       this.getUserProfile().pipe(first()),
       this.authService.getUser().pipe(first()),
       this.getUserProfileReference().pipe(first()),
     ]).pipe(
       concatMap(([userProfile, user, userProfileReference]) => {
-        const credential = EmailAuthProvider.credential(
-          userProfile.email,
-          password
-        );
-        return from(reauthenticateWithCredential(user, credential)).pipe(
-          tap({
-            next: () =>
-              from(
-                updateEmail(user, newEmail).then(() =>
-                  setDoc(
-                    userProfileReference,
-                    { email: newEmail },
-                    { merge: true }
+        if (user) {
+          const credential = EmailAuthProvider.credential(
+            userProfile.email,
+            password
+          );
+          return from(reauthenticateWithCredential(user, credential)).pipe(
+            switchMap(() =>
+              from(updateEmail(user, newEmail)).pipe(
+                concatMap(() =>
+                  from(
+                    setDoc(
+                      userProfileReference,
+                      { email: newEmail },
+                      { merge: true }
+                    )
                   )
                 )
-              ),
-            error: (error) => console.error(error),
-          })
-        );
+              )
+            ),
+            catchError((error) => {
+              console.error('Error updating email:', error);
+              throw error;
+            })
+          );
+        } else {
+          return EMPTY;
+        }
       })
     );
   }
 
-  updatePassword(
-    newPassword: string,
-    oldPassword: string
-  ): Observable<unknown> {
+  updatePassword(newPassword: string, oldPassword: string): Observable<void> {
     return forkJoin([
       this.getUserProfile().pipe(first()),
       this.authService.getUser().pipe(first()),
     ]).pipe(
       concatMap(([userProfile, user]) => {
-        const credential = EmailAuthProvider.credential(
-          userProfile.email,
-          oldPassword
-        );
-        return from(reauthenticateWithCredential(user, credential)).pipe(
-          tap({
-            next: () => from(updatePassword(user, newPassword)),
-            error: (error) => console.error(error),
-          })
-        );
+        if (user) {
+          const credential = EmailAuthProvider.credential(
+            userProfile.email,
+            oldPassword
+          );
+          return from(reauthenticateWithCredential(user, credential)).pipe(
+            switchMap(() =>
+              from(updatePassword(user, newPassword))
+            ),
+            catchError((error) => {
+              console.error('Error updating password:', error);
+              throw error;
+            })
+          );
+        } else {
+          return EMPTY;
+        }
       })
     );
   }
 
-  closeAccount(password: string): Observable<unknown> {
+  closeAccount(password: string): Observable<void> {
     return forkJoin([
       this.getUserProfile().pipe(first()),
       this.authService.getUser().pipe(first()),
     ]).pipe(
       concatMap(([userProfile, user]) => {
-        const credential = EmailAuthProvider.credential(
-          userProfile.email,
-          password
-        );
-        return from(reauthenticateWithCredential(user, credential)).pipe(
-          switchMap(() =>
-             from(user.delete()).pipe(
-              concatMap(() =>
-                 this.getUserProfileReference().pipe(
-                  switchMap((userProfileReference) => setDoc(userProfileReference, { deleted: true }, { merge: true }))
+        if (user) {
+          const credential = EmailAuthProvider.credential(
+            userProfile.email,
+            password
+          );
+          return from(reauthenticateWithCredential(user, credential)).pipe(
+            switchMap(() =>
+              from(user.delete()).pipe(
+                concatMap(() =>
+                  this.getUserProfileReference().pipe(
+                    concatMap((userProfileReference) =>
+                      from(
+                        setDoc(
+                          userProfileReference,
+                          { deleted: true },
+                          { merge: true }
+                        )
+                      )
+                    )
+                  )
                 )
-              ),
-              catchError((error) => {
-                console.error('Error deleting account:', error);
-                throw error;
-              })
-            )
-          ),
-          catchError((error) => {
-            console.error('Error reauthenticating:', error);
-            throw error;
-          })
-        );
+              )
+            ),
+            catchError((error) => {
+              console.error('Error closing account:', error);
+              throw error;
+            })
+          );
+        } else {
+          return EMPTY;
+        }
       })
     );
   }

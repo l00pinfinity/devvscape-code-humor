@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { IonicModule } from '@ionic/angular';
-import { DateAgoPipe } from '../pipe/date-ago.pipe';
+import { DateAgoPipe } from '../pipes/date-ago.pipe';
+import { LazyImgDirective } from '../directives/lazy-img.directive';
 
 @NgModule({
   imports: [CommonModule, IonicModule],
-  declarations: [DateAgoPipe],
-  exports: [DateAgoPipe],
-  entryComponents: [],
+  declarations: [DateAgoPipe, LazyImgDirective],
+  exports: [DateAgoPipe, LazyImgDirective],
 })
 export class SharedModule {}

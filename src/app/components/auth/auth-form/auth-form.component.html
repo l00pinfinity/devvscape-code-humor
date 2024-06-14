@@ -1,30 +1,33 @@
 <form [formGroup]="authForm" class="auth-form">
   <ion-item class="input-item" *ngIf="!isLoginPage">
-    <ion-label position="stacked">Username</ion-label>
+    <ion-label position="stacked">{{ 'COMPONENTS.AUTH.AUTH-FORM.USERNAME' | transloco }}</ion-label> 
     <ion-input
       formControlName="username"
       type="text"
-      placeholder="Your username"
+      placeholder="{{ 'COMPONENTS.AUTH.AUTH-FORM.USERNAME-PLACEHOLDER' | transloco }}"
       [class.invalid]="
-        !authForm.controls['username'].valid && authForm.controls['username'].touched
+        !authForm.controls['username'].valid &&
+        authForm.controls['username'].touched
       "
     ></ion-input>
   </ion-item>
   <ion-item
     class="error-message"
     *ngIf="
-      !authForm.controls['username'].valid && authForm.controls['username'].touched
+      !authForm.controls['username'].valid &&
+      authForm.controls['username'].touched
     "
   >
-    <ion-label>Please enter a valid username.</ion-label>
+    <ion-label>{{ 'COMPONENTS.AUTH.AUTH-FORM.USERNAME-ERROR' | transloco }}</ion-label>
   </ion-item>
 
   <ion-item class="input-item">
-    <ion-label position="stacked">Email</ion-label>
+    <ion-label position="stacked">{{ 'COMPONENTS.AUTH.AUTH-FORM.EMAIL' | transloco }}</ion-label>
     <ion-input
+      appAutofill
       formControlName="email"
       type="email"
-      placeholder="Your email address"
+      placeholder="{{ 'COMPONENTS.AUTH.AUTH-FORM.EMAIL-PLACEHOLDER' | transloco }}"
       [class.invalid]="
         !authForm.controls['email'].valid && authForm.controls['email'].touched
       "
@@ -36,15 +39,16 @@
       !authForm.controls['email'].valid && authForm.controls['email'].touched
     "
   >
-    <ion-label>Please enter a valid email address.</ion-label>
+    <ion-label>{{ 'COMPONENTS.AUTH.AUTH-FORM.EMAIL-ERROR' | transloco }}</ion-label>
   </ion-item>
 
   <ion-item class="input-item" *ngIf="!isPasswordResetPage">
-    <ion-label position="stacked">Password</ion-label>
+    <ion-label position="stacked">{{ 'COMPONENTS.AUTH.AUTH-FORM.PASSWORD' | transloco }}</ion-label>
     <ion-input
+      appAutofill
       formControlName="password"
       type="password"
-      placeholder="Your password"
+      placeholder="{{ 'COMPONENTS.AUTH.AUTH-FORM.PASSWORD-PLACEHOLDER' | transloco }}"
       [class.invalid]="
         !authForm.controls['password'].valid &&
         authForm.controls['password'].touched
@@ -59,7 +63,7 @@
       !isPasswordResetPage
     "
   >
-    <ion-label>Your password needs more than 6 characters.</ion-label>
+    <ion-label>{{ 'COMPONENTS.AUTH.AUTH-FORM.PASSWORD-ERROR' | transloco }}</ion-label>
   </ion-item>
 
   <ion-button
