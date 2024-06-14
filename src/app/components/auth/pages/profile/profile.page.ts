@@ -1,25 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  AlertController,
-  NavController,
-  ToastController,
-} from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
-import { first } from 'rxjs/operators';
-import { UserProfile } from 'src/app/core/interface/user.interface';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ProfileService } from 'src/app/core/services/profile.service';
-import { ProfileStore } from './profile.store';
-import { Auth, updateProfile } from '@angular/fire/auth';
+import { Auth, updateProfile, updateEmail, reauthenticateWithCredential, EmailAuthProvider } from '@angular/fire/auth';
 import { ImageService } from 'src/app/core/services/image.service';
-import { Comment, Image } from 'src/app/core/interface/image.interface';
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getFirestore,
-} from '@angular/fire/firestore';
+import { collection, deleteDoc, doc, getFirestore } from '@angular/fire/firestore';
+import { Image } from 'src/app/core/models/data/image.interface';
+import { UserProfile } from 'src/app/core/models/data/user.interface';
+import { Comment } from 'src/app/core/models/data/comment.interface.ts';
 
 @Component({
   selector: 'app-profile',
@@ -28,38 +18,36 @@ import {
 })
 export class ProfilePage implements OnDestroy, OnInit {
   maxLength = 200;
-  isTextTruncated = true;
-  fullNames: string;
   currentUser: any;
-  public userProfile$: Observable<UserProfile> = this.profileStore.userProfile$;
-  private userProfileSubscription: Subscription;
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  images: any[] = [];
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  selectedSegment = 'posts';
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  imageLoaded = false;
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  userPostsComments: Comment[] = [];
+  selectedSegment: string = 'posts';
+  images$!: Observable<Image[]>;
+  comments: Comment[] = [];
+  user: any;
+  userPostsComments$!: Observable<Comment[]>;
+  fullNames: string = '';
+  imageLoaded: boolean = false;
+  isTextTruncated: boolean = true;
+  commentsSubscription!: Subscription;
+  private userProfileSubscription!: Subscription;
 
   constructor(
     private auth: Auth,
     private authService: AuthService,
     private imageService: ImageService,
     private router: Router,
-    private navCtrl: NavController,
     private profileService: ProfileService,
     private alertCtrl: AlertController,
-    public toastCtrl: ToastController,
-    private readonly profileStore: ProfileStore
-  ) {}
+    public toastCtrl: ToastController
+  ) { }
 
   ngOnInit(): void {
-    this.currentUser = this.auth.currentUser.uid;
+    this.currentUser = this.auth.currentUser;
+    this.authService.getUser().subscribe(user => {
+      this.user = user;
+    });
     this.userProfileSubscription = this.profileService
       .getUserProfile()
       .subscribe((userProfile: UserProfile) => {
-        this.profileStore.setState(userProfile);
         this.fullNames = userProfile.fullName;
         this.fetchImages();
         this.fetchUserPostComments();
@@ -67,10 +55,15 @@ export class ProfilePage implements OnDestroy, OnInit {
   }
 
   ngOnDestroy(): void {
-    this.userProfileSubscription?.unsubscribe();
+    if (this.commentsSubscription) {
+      this.commentsSubscription.unsubscribe();
+    }
+    if (this.userProfileSubscription) {
+      this.userProfileSubscription?.unsubscribe();
+    }
   }
 
-  refresh(ev) {
+  refresh(ev: any) {
     this.fetchImages();
     this.fetchUserPostComments();
     setTimeout(() => {
@@ -78,86 +71,56 @@ export class ProfilePage implements OnDestroy, OnInit {
     }, 3000);
   }
 
-  async openSettings() {
-    this.navCtrl.navigateForward('/settings');
+  changeDP() { }
+
+  openProfile(author: string) {
+    console.log(`Opening profile of ${author}`);
   }
 
-  openImage(id: string): void {
-    this.router.navigate(['image', id]);
+  generateAvatarUrl(name: string): string {
+    const initials = name.split(' ').map(n => n[0]).join('');
+    return `https://ui-avatars.com/api/?name=${initials}&background=random&color=fff&format=svg`;
   }
 
-  async logOut(): Promise<void> {
-    const confirm = this.alertCtrl.create({
-      header: 'Logout',
-      message:
-        'About to logout? Don\'t worry, reality bites less when it\'s not in binary!',
+  async updateDisplayName(): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      inputs: [
+        { type: 'text', name: 'username', placeholder: 'Your new username' },
+      ],
       buttons: [
+        { text: 'Cancel' },
         {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {},
-        },
-        {
-          text: 'Logout',
-          role: 'exit',
-          handler: async () => {
-            await this.authService.logout();
-            this.router.navigateByUrl('login');
+          text: 'Save',
+          handler: async (data) => {
+            const newDisplayName = data.username;
+            const user = this.auth.currentUser;
+            if (user) {
+              try {
+                await updateProfile(user, { displayName: newDisplayName });
+                const toast = await this.toastCtrl.create({
+                  message: 'Display name updated successfully',
+                  duration: 3000,
+                  position: 'bottom',
+                  color: 'success',
+                });
+                await toast.present();
+                this.user.displayName = newDisplayName;
+              } catch (error) {
+                const toast = await this.toastCtrl.create({
+                  message: 'Error updating display name',
+                  duration: 3000,
+                  position: 'bottom',
+                  color: 'danger',
+                });
+                await toast.present();
+                console.error('Error updating display name:', error);
+              }
+            }
           },
         },
       ],
     });
-    (await confirm).present();
-  }
-
-  updateName(): void {
-    this.userProfileSubscription = this.userProfile$
-      .pipe(first())
-      .subscribe(async (userProfile) => {
-        const alert = await this.alertCtrl.create({
-          subHeader: 'Username',
-          inputs: [
-            {
-              type: 'text',
-              name: 'fullName',
-              placeholder: 'Your username',
-              value: userProfile.fullName,
-            },
-          ],
-          buttons: [
-            { text: 'Cancel' },
-            {
-              text: 'Save',
-              handler: async (data) => {
-                const updatedFullName = data.fullName;
-
-                if (updatedFullName.length > 25) {
-                  const toast = await this.toastCtrl.create({
-                    message: 'Username cannot exceed 25 characters.',
-                    duration: 3000,
-                    position: 'bottom',
-                  });
-                  await toast.present();
-                  return false;
-                }
-
-                this.profileStore.updateUserName(updatedFullName);
-                await this.updateDisplayName(updatedFullName);
-              },
-            },
-          ],
-        });
-        return await alert.present();
-      });
-  }
-
-  async updateDisplayName(newDisplayName: string): Promise<void> {
-    const user = this.auth.currentUser;
-    if (user) {
-      try {
-        await updateProfile(user, { displayName: newDisplayName });
-      } catch (error) {}
-    }
+    return await alert.present();
   }
 
   async updateEmail(): Promise<void> {
@@ -170,11 +133,34 @@ export class ProfilePage implements OnDestroy, OnInit {
         { text: 'Cancel' },
         {
           text: 'Save',
-          handler: (data) => {
-            this.profileStore.updateUserEmail({
-              email: data.newEmail,
-              password: data.password,
-            });
+          handler: async (data) => {
+            const newEmail = data.newEmail;
+            const password = data.password;
+            const user = this.auth.currentUser;
+            if (user && user.email) {
+              const credential = EmailAuthProvider.credential(user.email, password);
+              try {
+                await reauthenticateWithCredential(user, credential);
+                await updateEmail(user, newEmail);
+                const toast = await this.toastCtrl.create({
+                  message: 'Email updated successfully',
+                  duration: 3000,
+                  position: 'bottom',
+                  color: 'success',
+                });
+                await toast.present();
+                this.user.email = newEmail;
+              } catch (error) {
+                const toast = await this.toastCtrl.create({
+                  message: 'Error updating email',
+                  duration: 3000,
+                  position: 'bottom',
+                  color: 'danger',
+                });
+                await toast.present();
+                console.error('Error updating email:', error);
+              }
+            }
           },
         },
       ],
@@ -182,69 +168,42 @@ export class ProfilePage implements OnDestroy, OnInit {
     return await alert.present();
   }
 
-  async updatePassword(): Promise<void> {
-    const alert = await this.alertCtrl.create({
-      inputs: [
-        { name: 'newPassword', placeholder: 'New password', type: 'password' },
-        { name: 'oldPassword', placeholder: 'Old password', type: 'password' },
-      ],
-      buttons: [
-        { text: 'Cancel' },
-        {
-          text: 'Save',
-          handler: (data) => {
-            this.profileStore.updateUserPassword({
-              newPassword: data.newPassword,
-              oldPassword: data.oldPassword,
-            });
-          },
-        },
-      ],
-    });
-    return await alert.present();
+  openImage(id: string): void {
+    this.router.navigate(['image', id]);
   }
 
-  segmentChanged() {}
+  logOut() {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Logout error', error);
+      }
+    });
+  }
+
+  segmentChanged() { }
 
   async fetchImages() {
     if (this.selectedSegment === 'posts') {
-      this.images = await this.imageService.getUserPosts();
-      //console.log(this.images);
+      this.images$ = await this.imageService.getUserPosts();
     } else if (this.selectedSegment === 'comments') {
       this.fetchUserPostComments();
-    } else if (this.selectedSegment === 'stars') {
-
     }
   }
 
-  async fetchUserPostComments(){
-    this.userPostsComments = await this.imageService.getUserPostsComments(this.currentUser);
-  }
+  async fetchUserPostComments() {
+    this.userPostsComments$ = this.imageService.getUserPostsComments(this.currentUser?.uid);
 
-  formatCommentCard(comment: any): string {
-    return this.formatCommentCardSubtitle({ comment });
-  }
-
-  formatCommentCardSubtitle(image: any): string {
-    // Check if image and image.comment are defined
-    if (!image || !image.comment) {
-      return ''; // or some default value
-    }
-
-    let formattedText = image.comment.text || '';
-
-    formattedText = formattedText.replace(
-      /#(\w+)/g,
-      `<a class="hashtag" style="
-        color: blue;
-        text-decoration: none;
-        cursor: pointer;
-      ">#$1</a>`
+    this.commentsSubscription = this.userPostsComments$.subscribe(
+      (comments) => {
+        this.comments = comments;
+      },
+      (error) => {
+        console.error('Error fetching comments:', error);
+      }
     );
-
-    const formattedTextWithLineBreaks = formattedText.replace(/\\n/g, '<br>');
-
-    return `${formattedTextWithLineBreaks}`;
   }
 
   async commentAction(comment: Comment) {
@@ -253,7 +212,7 @@ export class ProfilePage implements OnDestroy, OnInit {
   }
 
   async deleteComment(comment: Comment) {
-    if (this.currentUser === comment.postedBy) {
+    if (this.currentUser?.uid === comment.postedBy) {
       const confirm = await this.alertCtrl.create({
         header: 'Delete',
         message: 'Are you sure you want to delete this comment?',
@@ -268,18 +227,21 @@ export class ProfilePage implements OnDestroy, OnInit {
             role: 'exit',
             handler: async () => {
               try {
-                await this.imageService.deleteComment(comment.postId,comment.id);
+                if (comment.postId && comment.id) {
+                  await this.imageService.deleteComment(comment.postId, comment.id);
 
-                const toast = await this.toastCtrl.create({
-                  message: 'Your comment has been deleted from the app repository!',
-                  duration: 5000,
-                  position: 'bottom',
-                  color: 'danger',
-                });
-                await toast.present();
+                  const toast = await this.toastCtrl.create({
+                    message: 'Your comment has been deleted from the app repository!',
+                    duration: 5000,
+                    position: 'bottom',
+                    color: 'danger',
+                  });
+                  await toast.present();
 
-                this.userPostsComments = null;
-                await this.fetchUserPostComments();
+                  await this.fetchUserPostComments();
+                } else {
+                  await this.presentErrorToast('Error: Comment or post ID is missing.');
+                }
               } catch (error) {
                 console.error('Error deleting comment:', error);
                 await this.presentErrorToast('Error deleting comment');
@@ -290,7 +252,7 @@ export class ProfilePage implements OnDestroy, OnInit {
       });
       await confirm.present();
     } else {
-
+      await this.presentErrorToast('You are not authorized to delete this comment.');
     }
   }
 
@@ -312,14 +274,14 @@ export class ProfilePage implements OnDestroy, OnInit {
         {
           text: 'Cancel',
           role: 'cancel',
-          handler: () => {},
+          handler: () => { },
         },
         {
           text: 'Delete',
           role: 'exit',
           handler: async () => {
             const user = this.auth.currentUser;
-            const userId = user.uid;
+            const userId = user?.uid;
             try {
               if (image.postedBy === userId) {
                 const firestore = getFirestore();
@@ -330,17 +292,12 @@ export class ProfilePage implements OnDestroy, OnInit {
                 this.fetchImages();
 
                 const toast = this.toastCtrl.create({
-                  message:
-                    'Your post has been deleted from the app repository!',
+                  message: 'Your post has been deleted from the app repository!',
                   duration: 5000,
                   position: 'bottom',
                   color: 'success',
                 });
                 (await toast).present();
-
-                //console.log(`Post with ID ${image.id} deleted`);
-              } else {
-                //console.error('You are not authorized to delete this post.');
               }
             } catch (error) {
               console.error('Error deleting post:', error);
@@ -354,8 +311,7 @@ export class ProfilePage implements OnDestroy, OnInit {
   }
 
   formatCardSubtitle(image: any): string {
-    const displayName = this.fullNames || 'devvscape_user';
-
+    const displayName = image.displayName || 'devvscape_user';
     let formattedText = image.postText;
 
     if (this.isTextTruncated && image.postText.length > this.maxLength) {
@@ -377,7 +333,6 @@ export class ProfilePage implements OnDestroy, OnInit {
   }
 
   toggleText(): void {
-    //console.log('Working clicked');
     this.isTextTruncated = !this.isTextTruncated;
   }
 }

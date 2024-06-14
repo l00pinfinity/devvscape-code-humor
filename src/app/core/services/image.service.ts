@@ -1,91 +1,54 @@
-import { Injectable } from '@angular/core';
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  UploadTask,
-} from 'firebase/storage';
-import {
-  Firestore,
-  collection,
-  addDoc,
-  serverTimestamp,
-  orderBy,
-  writeBatch,
-} from '@angular/fire/firestore';
-import { Comment, Image } from '../interface/image.interface';
-import { Observable } from 'rxjs';
-import {
-  DocumentSnapshot,
-  collectionGroup,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  query,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
-import { Auth } from '@angular/fire/auth';
-import { Router } from '@angular/router';
-import { v4 as uuidv4 } from 'uuid';
+import { Injectable } from "@angular/core";
+import { Auth } from "@angular/fire/auth";
+import { Storage, ref, uploadBytesResumable, getDownloadURL, } from '@angular/fire/storage';
+import { Firestore, collection, doc, getDoc, getDocs, limit, orderBy, query } from "@angular/fire/firestore";
+import { Router } from "@angular/router";
+import { Observable, catchError, from, map, } from "rxjs";
+import { Image } from "../models/data/image.interface";
+import { Comment } from "../models/data/comment.interface.ts";
+import { DocumentSnapshot, addDoc, collectionGroup, deleteDoc, getFirestore, serverTimestamp, updateDoc, where, writeBatch } from "@angular/fire/firestore";
 
 @Injectable({
   providedIn: 'root',
 })
 export class ImageService {
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  images: Observable<Image[]>;
-  constructor(
-    private auth: Auth,
-    private firestore: Firestore,
-    private router: Router
-  ) {}
+  constructor(private auth: Auth, private firestore: Firestore, private storage: Storage, private router: Router) { }
 
-  async uploadImageAndPostText(
-    imageFile: File,
-    postText: string,
-    userId: string,
-    displayName: string
-  ) {
-    const storageRef = ref(getStorage(), 'images/' + imageFile.name);
-    const uploadTask: UploadTask = uploadBytesResumable(storageRef, imageFile);
+  getImagePosts(): Observable<Image[]> {
+    const q = query(collection(this.firestore, 'posts'), orderBy('createdAt', 'desc'), limit(40));
 
-    await uploadTask;
-    const imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
-
-    // Extract hashtags from postText
-    const hashtags = postText.match(/#(\w+)/g) || [];
-
-    // Check for common programming words in postText
-    const tags = this.words.filter((word) =>
-      postText.toLocaleLowerCase().includes(word)
+    return from(getDocs(q)).pipe(
+      map((querySnapshot) => {
+        return querySnapshot.docs.map((document) => {
+          const data = document.data() as Image;
+          const id = document.id;
+          return { ...data, id };
+        });
+      }),
+      catchError(error => {
+        console.error('Error fetching image posts:', error);
+        throw error;
+      })
     );
+  }
 
-    // Save image URL and postText to Firestore
-    try {
-      const postsCollection = collection(this.firestore, 'posts');
-      await addDoc(postsCollection, {
-        //add the generated id here
-        imageUrl,
-        postText,
-        postedBy: userId,
-        stars: 0,
-        downloads: 0,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        displayName,
-        comments: [],
-        likedBy: [],
-        downloadedBy: [],
-        tags,
-        hashtags,
-      });
-    } catch (error) {
-      throw new Error('Error saving post to Firestore:');
-    }
+  getImagePostById(id: string): Observable<Image | null> {
+    const docRef = doc(this.firestore, 'posts', id);
+
+    return from(getDoc(docRef)).pipe(
+      map((docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data() as Image;
+          return { ...data, id };
+        } else {
+          return null;
+        }
+      }),
+      catchError(error => {
+        console.error('Error fetching image post by ID:', error);
+        throw error;
+      })
+    );
   }
 
   async reportImage(imageId: string, userId: string, reason: string) {
@@ -116,42 +79,6 @@ export class ImageService {
     }
   }
 
-  async getImagePosts(): Promise<Image[]> {
-    try {
-      const q = query(
-        collection(this.firestore, 'posts'),
-        orderBy('createdAt', 'desc')
-      );
-
-      const querySnapshot = await getDocs(q);
-
-      return querySnapshot.docs.map((document) => {
-        const data = document.data() as Image;
-        const id = document.id;
-        return { id, ...data };
-      });
-    } catch (error) {
-      throw new Error('Unable to fetch image posts');
-    }
-  }
-  
-
-  async getImagePostById(id: string): Promise<Image | null> {
-    try {
-      const docRef = doc(this.firestore, 'posts', id);
-      const docSnapshot = await getDoc(docRef);
-
-      if (docSnapshot.exists()) {
-        const data = docSnapshot.data() as Image;
-        return { id, ...data };
-      } else {
-        return null;
-      }
-    } catch (error) {
-      throw new Error('Unable to fetch image post by ID');
-    }
-  }
-
   async getUserPosts() {
     try {
       const user = this.auth.currentUser;
@@ -162,51 +89,54 @@ export class ImageService {
           orderBy('createdAt', 'desc')
         );
 
-        const querySnapshot = await getDocs(q);
-
-        const userPosts = querySnapshot.docs.map((document) => {
-          const data = document.data() as Image;
-          const id = document.id;
-          return { id, ...data };
-        });
-        return userPosts;
+        return from(getDocs(q)).pipe(
+          map((querySnapshot) => {
+            return querySnapshot.docs.map((document) => {
+              const data = document.data() as Image;
+              const id = document.id;
+              return { ...data, id };
+            });
+          }),
+        )
       } else {
-        return [];
+        return from([])
       }
     } catch (error) {
       throw error;
     }
   }
 
-  async getUserPostsComments(userId: string): Promise<Comment[]> {
-    try {
-      const q = query(
-        collectionGroup(this.firestore, 'comments'),
-        where('postedBy', '==', userId),
-        orderBy('createdAt', 'desc')
-      );
+  getUserPostsComments(userId: string): Observable<Comment[]> {
+    const q = query(
+      collectionGroup(this.firestore, 'comments'),
+      where('postedBy', '==', userId),
+      orderBy('createdAt', 'desc')
+    );
 
-      const querySnapshot = await getDocs(q);
+    return from(getDocs(q)).pipe(
+      map((querySnapshot) => {
+        const userComments: Comment[] = [];
+        querySnapshot.forEach((document) => {
+          const data = document.data() as Comment;
+          const commentId = document.id;
 
-      const userComments: Comment[] = [];
+          const parent = document.ref.parent;
+          const grandparent = parent ? parent.parent : null;
+          const postId = grandparent ? grandparent.id : null;
 
-      querySnapshot.forEach((document) => {
-        const data = document.data() as Comment;
-
-        const commentId = document.id; // Get the comment document ID
-        const postId = document.ref.parent.parent.id;
-
-        userComments.push({
-          id: commentId,
-          postId,
-          ...data,
+          userComments.push({
+            id: commentId,
+            postId: postId ?? '',
+            ...data,
+          });
         });
-      });
-
-      return userComments;
-    } catch (error) {
-      throw error;
-    }
+        return userComments;
+      }),
+      catchError((error) => {
+        console.error('Error fetching user comments:', error);
+        throw error;
+      })
+    );
   }
 
   async deleteUserPosts(userUid: any) {
@@ -235,23 +165,179 @@ export class ImageService {
     }
   }
 
-  async getStarredImages(userId: string): Promise<Image[]> {
+  getStarredImages(userId: string): Observable<Image[]> {
+    const q = query(
+      collection(this.firestore, 'posts'),
+      where('likedBy', 'array-contains', userId),
+      orderBy('createdAt', 'desc')
+    );
+
+    return from(getDocs(q)).pipe(
+      map((querySnapshot) => {
+        return querySnapshot.docs.map((document) => {
+          const data = document.data() as Image;
+          const id = document.id;
+          return { ...data, id };
+        });
+      }),
+      catchError((error) => {
+        console.error('Error fetching starred images:', error);
+        throw new Error('Unable to fetch starred images');
+      })
+    );
+  }
+
+  async addComment(
+    postId: string,
+    userId: string,
+    displayName: string,
+    commentText: string
+  ): Promise<void> {
     try {
-      const q = query(
-        collection(this.firestore, 'posts'),
-        where('likedBy', 'array-contains', userId),
-        orderBy('createdAt', 'desc')
+      const commentsCollection = collection(
+        this.firestore,
+        `posts/${postId}/comments`
       );
+
+      const newComment: Comment = {
+        postedBy: userId,
+        displayName,
+        text: commentText,
+        stars: 0,
+        likedBy: [],
+        createdAt: new Date(),
+      };
+
+      await addDoc(commentsCollection, newComment);
+
+      //console.log('Comment added successfully.');
+    } catch (error) {
+      //console.error('Error adding comment:', error);
+      throw error;
+    }
+  }
+
+  async deleteComment(imageId: string, commentId: string): Promise<void> {
+    try {
+      const commentRef = doc(
+        this.firestore,
+        `posts/${imageId}/comments/${commentId}`
+      );
+
+      const commentSnapshot = await getDoc(commentRef);
+
+      if (commentSnapshot.exists()) {
+        await deleteDoc(commentRef);
+
+        //console.log('Comment deleted successfully.');
+      } else {
+        console.error('Comment not found in the subcollection.');
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      throw error;
+    }
+  }
+
+  async uploadImageAndPostText(imageFile: File, postText: string, userId: string, displayName: string) {
+    try {
+      // Upload image to Firebase Storage
+      const storageRef = ref(this.storage, 'images/' + imageFile.name);
+      const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+      await uploadTask;
+      const imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+
+      // Extract hashtags from postText
+      const hashtags = postText.match(/#(\w+)/g) || [];
+
+      // Check for common programming words in postText
+      const tags = this.words.filter((word) =>
+        postText.toLowerCase().includes(word)
+      );
+
+      // Prepare the post data
+      const postData = {
+        imageUrl: imageUrl,
+        postText: postText,
+        postedBy: userId,
+        stars: 0,
+        downloads: 0,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        displayName: displayName,
+        comments: [],
+        likedBy: [],
+        downloadedBy: [],
+        tags: tags,
+        hashtags: hashtags,
+      };
+
+      // Save image URL and postText to Firestore
+      const postsCollection = collection(this.firestore, 'posts');
+      await addDoc(postsCollection, postData);
+
+    } catch (error) {
+      console.error('Error uploading image and creating post:', error);
+      throw new Error(`Error uploading image and creating post: ${error}`);
+    }
+  }
+
+  async getImageComments(imageId: string): Promise<Comment[]> {
+    try {
+      const commentsCollection = collection(
+        this.firestore,
+        `posts/${imageId}/comments`
+      );
+
+      const q = query(commentsCollection);
 
       const querySnapshot = await getDocs(q);
 
-      return querySnapshot.docs.map((document) => {
-        const data = document.data() as Image;
+      const imageComments: Comment[] = [];
+
+      querySnapshot.forEach((document) => {
+        const data = document.data() as Comment;
         const id = document.id;
-        return { id, ...data };
+
+        imageComments.push({ id, ...data });
       });
+
+      return imageComments;
     } catch (error) {
-      throw new Error('Unable to fetch starred images');
+      throw error;
+    }
+  }
+
+  async downloads(imageId: string, userId: string): Promise<void> {
+    try {
+      const firestore = getFirestore();
+      const postsCollection = collection(firestore, 'posts');
+      const postRef = doc(postsCollection, imageId);
+      const postSnapshot: DocumentSnapshot<unknown> = await getDoc(postRef);
+
+      if (postSnapshot.exists()) {
+        const data = postSnapshot.data() as Image;
+        const downloadedBy = data.downloadedBy || [];
+
+        const userDownloaded = downloadedBy.includes(userId);
+
+        if (!userDownloaded) {
+          const newDownloads = data.downloads + 1;
+          await updateDoc(postRef, {
+            downloads: newDownloads,
+            downloadedBy: [...downloadedBy, userId],
+          });
+          //console.log('Image downloaded and recorded.');
+        } else {
+          //console.log('Image has already been downloaded by this user.');
+        }
+      } else {
+        //console.error('Image not found');
+      }
+    } catch (error) {
+      //console.error('Error updating image downloads:', error);
+      throw error;
     }
   }
 
@@ -292,117 +378,6 @@ export class ImageService {
     }
   }
 
-  async downloads(imageId: string, userId: string): Promise<void> {
-    try {
-      const firestore = getFirestore();
-      const postsCollection = collection(firestore, 'posts');
-      const postRef = doc(postsCollection, imageId);
-      const postSnapshot: DocumentSnapshot<unknown> = await getDoc(postRef);
-
-      if (postSnapshot.exists()) {
-        const data = postSnapshot.data() as Image;
-        const downloadedBy = data.downloadedBy || [];
-
-        const userDownloaded = downloadedBy.includes(userId);
-
-        if (!userDownloaded) {
-          const newDownloads = data.downloads + 1;
-          await updateDoc(postRef, {
-            downloads: newDownloads,
-            downloadedBy: [...downloadedBy, userId],
-          });
-          //console.log('Image downloaded and recorded.');
-        } else {
-          //console.log('Image has already been downloaded by this user.');
-        }
-      } else {
-        //console.error('Image not found');
-      }
-    } catch (error) {
-      //console.error('Error updating image downloads:', error);
-      throw error;
-    }
-  }
-
-  async addComment(
-    postId: string,
-    userId: string,
-    displayName: string,
-    commentText: string
-  ): Promise<void> {
-    try {
-      const commentsCollection = collection(
-        this.firestore,
-        `posts/${postId}/comments`
-      );
-
-      const newComment: Comment = {
-        postedBy: userId,
-        displayName,
-        text: commentText,
-        stars: 0,
-        likedBy: [],
-        createdAt: new Date(),
-      };
-
-      await addDoc(commentsCollection, newComment);
-
-      //console.log('Comment added successfully.');
-    } catch (error) {
-      //console.error('Error adding comment:', error);
-      throw error;
-    }
-  }
-
-  async getImageComments(imageId: string): Promise<Comment[]> {
-    try {
-      const commentsCollection = collection(
-        this.firestore,
-        `posts/${imageId}/comments`
-      );
-
-      const q = query(commentsCollection);
-
-      const querySnapshot = await getDocs(q);
-
-      const imageComments: Comment[] = [];
-
-      querySnapshot.forEach((document) => {
-        const data = document.data() as Comment;
-        const id = document.id;
-
-        imageComments.push({ id, ...data });
-      });
-
-      return imageComments;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async deleteComment(imageId: string, commentId: string): Promise<void> {
-    try {
-      const commentRef = doc(
-        this.firestore,
-        `posts/${imageId}/comments/${commentId}`
-      );
-
-      const commentSnapshot = await getDoc(commentRef);
-
-      if (commentSnapshot.exists()) {
-        await deleteDoc(commentRef);
-
-        //console.log('Comment deleted successfully.');
-      } else {
-        console.error('Comment not found in the subcollection.');
-      }
-    } catch (error) {
-      console.error('Error deleting comment:', error);
-      throw error;
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/member-ordering
   public words: string[] = [
     'java',
     'python',

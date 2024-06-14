@@ -23,5 +23,23 @@ ion-content {
 
 .secondary-button {
   margin-top: 10px;
-  color: #007bff; /* Change to your preferred color */
+  color: #007bff;
+}
+
+.or-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.or-container .line {
+  width: 100px;
+  height: 1px;
+  background-color: #ccc;
+  margin: 0 10px;
+}
+
+.or-container span {
+  white-space: nowrap;
 }

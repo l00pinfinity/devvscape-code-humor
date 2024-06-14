@@ -1,10 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { App } from '@capacitor/app';
-import { SplashScreen } from '@capacitor/splash-screen';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Platform, AlertController, ToastController } from '@ionic/angular';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
+import { Preferences } from '@capacitor/preferences';
+import { TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-root',
@@ -13,20 +15,23 @@ import { Subscription } from 'rxjs';
 })
 export class AppComponent implements OnInit, OnDestroy {
   backButtonSubscription: any;
-  onlineStatusSubscription: Subscription;
+  onlineStatusSubscription!: Subscription;
 
   constructor(
     private platform: Platform,
     private androidPermissions: AndroidPermissions,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private onlineStatusService: OnlineStatusService
+    private onlineStatusService: OnlineStatusService,
+    private router: Router, 
+    private zone: NgZone,
+    private translocoService: TranslocoService
   ) {
     this.initializeApp();
   }
 
   async ngOnInit() {
-    await SplashScreen.hide();
+    this.loadSelectedLanguage();
     this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, () => {
       this.exitConfirm();
     });
@@ -37,6 +42,13 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.backButtonSubscription.unsubscribe();
     this.onlineStatusSubscription.unsubscribe();
+  }
+
+  async loadSelectedLanguage() {
+    const { value } = await Preferences.get({ key: 'selectedLanguage' });
+    if (value) {
+      this.translocoService.setActiveLang(value);
+    }
   }
 
   async initializeApp() {
@@ -68,6 +80,19 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         }
       );
+
+      App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
+        this.zone.run(() => {
+            // Example url: https://beerswift.app/tabs/tab2
+            // slug = /tabs/tab2
+            const slug = event.url.split(".app").pop();
+            if (slug) {
+                this.router.navigateByUrl(slug);
+            }
+            // If no match, do nothing - let regular routing
+            // logic take over
+        });
+    });
   }
 
   async exitConfirm() {

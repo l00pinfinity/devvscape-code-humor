@@ -1,0 +1,112 @@
+{
+  "APP": {
+    "TITLE": "Devvscape",
+    "WELCOME_MESSAGE": "¡Bienvenido a Devvscape!"
+  },
+  "COMPONENTS": {
+    "AUTH": {
+      "AUTH-FORM": {
+        "EMAIL": "Correo electrónico",
+        "EMAIL-PLACEHOLDER": "Tu dirección de correo electrónico",
+        "EMAIL-ERROR": "Por favor ingresa una dirección de correo electrónico válida",
+        "USERNAME": "Nombre de usuario",
+        "USERNAME-PLACEHOLDER": "Tu nombre de usuario",
+        "USERNAME-ERROR": "Por favor ingresa un nombre de usuario válido, menos de 25 caracteres",
+        "PASSWORD": "Contraseña",
+        "PASSWORD-PLACEHOLDER": "Tu contraseña",
+        "PASSWORD-ERROR": "Tu contraseña necesita más de 6 caracteres"
+      },
+      "LOGIN": {
+        "TITLE": "Iniciar sesión",
+        "SIGNUP": "Crea una nueva cuenta",
+        "FORGOT-PASSWORD": "Olvidé mi contraseña",
+        "GITHUB": "Continuar con GitHub",
+        "OR": "o",
+        "ACTION-BUTTON": "Iniciar sesión"
+      },
+      "SIGNUP": {
+        "TITLE": "Regístrate",
+        "SIGNIN": "Ya tengo una cuenta",
+        "GITHUB": "Continuar con GitHub",
+        "OR": "o",
+        "ACTION-BUTTON": "Crear cuenta"
+      },
+      "RESET_PASSWORD": {
+        "TITLE": "Olvidé mi contraseña",
+        "ACTION-BUTTON": "Restablecer la contraseña"
+      },
+      "PROFILE": {
+        "TITLE": "Cuenta",
+        "PROFILE": "Perfil",
+        "JOINED": "Unido",
+        "ACTIVITY": "Actividad",
+        "TABS": {
+          "POSTS": "Publicaciones",
+          "COMMENTS": "Comentarios",
+          "STARS": "Estrellas"
+        }
+      }
+    },
+    "NAVBAR": {
+      "HOME": {
+        "TITLE": "Inicio",
+        "TABS": {
+          "EXPLORE": "Explorar",
+          "FOR-YOU": "Para ti"
+        },
+        "MODAL": {
+          "CREATE-POST": "Crear Publicación",
+          "SAY-SOMETHING": "Di algo sobre la imagen",
+          "SELECT-IMAGE": "Haz clic para seleccionar una imagen",
+          "POST": "Publicar"
+        }
+      },
+      "SEARCH": {
+        "TITLE": "Buscar"
+      },
+      "NOTIFICATIONS": {
+        "TITLE": "Notificaciones",
+        "NO-NOTIFICATIONS": "No hay notificaciones por el momento."
+      },
+      "SETTINGS": {
+        "TITLE": "Configuración",
+        "APP-SETTINGS": "Configuración de la aplicación",
+        "APPERANCE": "Apariencia",
+        "SUPPORT&INFO": "Soporte e Información",
+        "REVIEW&SHARE": "Revisar y Compartir",
+        "TERMS&CONDITIONS": "Términos y Condiciones",
+        "PRIVACY": "Política de Privacidad",
+        "VERSION": "Versión de la Aplicación",
+        "ACCOUNT-MANAGEMENT": "Gestión de Cuenta",
+        "DELETE": "Eliminar Cuenta",
+        "TAGLINE": "El Futuro de SilkwebHQ y la SilkCommunity",
+        "NOTIFICATIONS": {
+          "TITLE": "Notificaciones"
+        },
+        "APPEARANCE": {
+          "TITLE": "Visuales"
+        },
+        "LANGUAGE": {
+          "TITLE": "Idioma",
+          "SELECT_LANGUAGE": "Seleccionar Idioma",
+          "EN": "Inglés",
+          "ES": "Español"
+        }
+      }
+    },
+    "SHARED": {
+      "IMAGE": {
+        "TITLE": "Imagen"
+      },
+      "IMAGE-DETAILS": {
+        "TITLE": "Detalles de la Imagen"
+      }
+    },
+    "TABS": {
+      "HOME": "Para ti",
+      "SEARCH": "Buscar",
+      "NOTIFICATIONS": "Notificaciones",
+      "SETTINGS": "Configuración"
+    }
+  }
+}
