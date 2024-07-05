@@ -25,6 +25,8 @@ import { imageReducer } from './core/store/reducers/image.reducer';
 import { HttpClientModule } from '@angular/common/http';
 import { TranslocoRootModule } from './transloco-root.module';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { HackerNewsEffects } from './core/store/effects/hacker-news.effects';
+import { hackerNewsReducer } from './core/store/reducers/hacker-news.reducer';
 
 
 export function initializeFirebaseApp(): FirebaseApp {
@@ -43,10 +45,11 @@ export function initializeFirebaseApp(): FirebaseApp {
     provideStorage(() => getStorage()),
     provideMessaging(() => getMessaging()), 
     providePerformance(() => getPerformance()),
-    provideStore({auth:authReducer, image:imageReducer}), 
-    provideEffects(AuthEffects, ImageEffects),
+    provideStore({auth:authReducer, image:imageReducer, hackerNews:hackerNewsReducer}), 
+    provideEffects(AuthEffects, ImageEffects, HackerNewsEffects),
     provideState({ name: 'auth', reducer: authReducer}),
     provideState({ name: 'image', reducer: imageReducer}),
+    provideState({ name: 'hackerNews', reducer: hackerNewsReducer}),
     ScreenTrackingService, 
     UserTrackingService, 
     AndroidPermissions,

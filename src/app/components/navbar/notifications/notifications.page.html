@@ -47,9 +47,6 @@
     <div class="no-notifications">{{ 'COMPONENTS.NAVBAR.NOTIFICATIONS.NO-NOTIFICATIONS' | transloco }}</div>
   </ng-template>
 
-  <ng-container *ngIf="notifications.length === 0 && notifications !== null">
-    <div class="no-notifications">{{ 'COMPONENTS.NAVBAR.NOTIFICATIONS.NO-NOTIFICATIONS' | transloco }}</div>
-  </ng-container>
 
   <ng-container *ngIf="notifications === null">
     <ion-spinner class="preloader"></ion-spinner>

@@ -9,6 +9,8 @@ import { ActionSheetController, AlertController, LoadingController, NavControlle
 import { TranslocoService } from '@jsverse/transloco';
 import { Observable, Subject, finalize } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { VersionService } from 'src/app/core/services/version.service';
+import { AdMobService } from 'src/app/core/services/ad-mob.service';
 
 @Component({
   selector: 'app-settings',
@@ -16,7 +18,8 @@ import { AuthService } from 'src/app/core/services/auth.service';
   styleUrls: ['./settings.page.scss'],
 })
 export class SettingsPage implements OnInit {
-  currentVersion = '2.0.1';
+  currentVersion!: string;
+  appVersion = '2.0.2'; 
   languages = ['en', 'es'];
   selectedLanguage = 'en';
   private loadingSubject = new Subject<boolean>();
@@ -41,19 +44,64 @@ export class SettingsPage implements OnInit {
   };
 
 
-  constructor(private authService: AuthService, private translocoService: TranslocoService, private router: Router, private navCtrl: NavController, private alertCtrl: AlertController, public toastCtrl: ToastController, private loadingCtrl: LoadingController, private iab: InAppBrowser, private actionSheetCtrl: ActionSheetController) { }
+  constructor(private authService: AuthService, private adMobService: AdMobService, private versionService: VersionService ,private translocoService: TranslocoService, private router: Router, private navCtrl: NavController, private alertCtrl: AlertController, public toastCtrl: ToastController, private loadingCtrl: LoadingController, private iab: InAppBrowser, private actionSheetCtrl: ActionSheetController) { }
 
   ngOnInit() {
     this.presentingElement = document.querySelector('.ion-page');
     this.loadSelectedLanguage()
+    this.fetchCurrentVersion();
   }
 
-  goToNotificationsPage() {
-    this.navCtrl.navigateForward('/tabs/settings/notifications');
+  ionViewWillEnter() {
+    this.adMobService.showBannerAd('notification-banner-ad','ca-app-pub-6424707922606590/1224657880');
   }
 
-  goToVisualsPage() {
-    this.navCtrl.navigateForward('/tabs/settings/visuals');
+  async fetchCurrentVersion() {
+    try {
+      this.currentVersion = await this.versionService.getCurrentVersion();
+      this.checkForUpdate()
+    } catch (error) {
+      console.error('Error fetching current version:', error);
+      // Handle error appropriately in your application
+    }
+  }
+
+  async checkForUpdate() {
+    if (this.currentVersion !== this.appVersion) {
+      await this.presentUpdateAlert();
+    } else {
+    }
+  }
+
+  async presentUpdateAlert() {
+    const header = this.translocoService.translate('COMPONENTS.NAVBAR.SETTINGS.UPDATEHEADER');
+    const message = this.translocoService.translate('COMPONENTS.NAVBAR.SETTINGS.UPDATEMESSAGE');
+    const later = this.translocoService.translate('COMPONENTS.NAVBAR.SETTINGS.LATER');
+    const update = this.translocoService.translate('COMPONENTS.NAVBAR.SETTINGS.UPDATE');
+
+    const alert = await this.alertCtrl.create({
+      header,
+      message,
+      buttons: [
+        {
+          text: later,
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            // Handle "Later" button action
+          }
+        },
+        {
+          text: update,
+          handler: () => {
+            // Redirect to Google Play Store for update
+            window.open('https://play.google.com/store/apps/details?id=com.silkwebhq.devvscapecode', '_system');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   async changeLanguage(lang: string) {
@@ -77,9 +125,14 @@ export class SettingsPage implements OnInit {
   disableAccount(){}
 
   async closeAccount() {
+    const header = this.translocoService.translate('COMPONENTS.NAVBAR.SETTINGS.DELETEHEADER');
+    const message = this.translocoService.translate('COMPONENTS.NAVBAR.SETTINGS.DELETEMESSAGE');
+    const cancel = this.translocoService.translate('APP.CANCEL_BUTTON');
+    const exit = this.translocoService.translate('APP.DELETE_BUTTON');
+
     const alert = await this.alertCtrl.create({
-      header: 'Delete account',
-      message: 'About to close account? Enter your password to confirm account deletion:',
+      header,
+      message,
       inputs: [
         {
           name: 'password',
@@ -89,12 +142,12 @@ export class SettingsPage implements OnInit {
       ],
       buttons: [
         {
-          text: 'Cancel',
+          text: cancel,
           role: 'cancel',
           handler: () => { },
         },
         {
-          text: 'Delete',
+          text: exit,
           role: 'exit',
           handler: async (data) => {
             if (data && data.password) {

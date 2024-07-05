@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import { Auth } from "@angular/fire/auth";
-import { Storage, ref, uploadBytesResumable, getDownloadURL, } from '@angular/fire/storage';
+import { Storage, ref, uploadBytesResumable, getDownloadURL } from '@angular/fire/storage';
 import { Firestore, collection, doc, getDoc, getDocs, limit, orderBy, query } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
-import { Observable, catchError, from, map, } from "rxjs";
+import { Observable, catchError, from, map, of } from "rxjs";
 import { Image } from "../models/data/image.interface";
 import { Comment } from "../models/data/comment.interface.ts";
 import { DocumentSnapshot, addDoc, collectionGroup, deleteDoc, getFirestore, serverTimestamp, updateDoc, where, writeBatch } from "@angular/fire/firestore";
@@ -27,7 +27,7 @@ export class ImageService {
       }),
       catchError(error => {
         console.error('Error fetching image posts:', error);
-        throw error;
+        return of([]); // Return an empty array in case of error
       })
     );
   }
@@ -46,12 +46,12 @@ export class ImageService {
       }),
       catchError(error => {
         console.error('Error fetching image post by ID:', error);
-        throw error;
+        return of(null); // Return null in case of error
       })
     );
   }
 
-  async reportImage(imageId: string, userId: string, reason: string) {
+  async reportImage(imageId: string, userId: string, reason: string): Promise<void> {
     try {
       const reportsRef = collection(this.firestore, 'reports');
       const querySnapshot = await getDocs(
@@ -75,34 +75,35 @@ export class ImageService {
         resolved: false,
       });
     } catch (error) {
+      console.error(`Error saving report: ${error}`);
       throw new Error(`Error saving report: ${error}`);
     }
   }
 
-  async getUserPosts() {
-    try {
-      const user = this.auth.currentUser;
-      if (user) {
-        const q = query(
-          collection(this.firestore, 'posts'),
-          where('postedBy', '==', user.uid),
-          orderBy('createdAt', 'desc')
-        );
+  getUserPosts(): Observable<Image[]> {
+    const user = this.auth.currentUser;
+    if (user) {
+      const q = query(
+        collection(this.firestore, 'posts'),
+        where('postedBy', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
 
-        return from(getDocs(q)).pipe(
-          map((querySnapshot) => {
-            return querySnapshot.docs.map((document) => {
-              const data = document.data() as Image;
-              const id = document.id;
-              return { ...data, id };
-            });
-          }),
-        )
-      } else {
-        return from([])
-      }
-    } catch (error) {
-      throw error;
+      return from(getDocs(q)).pipe(
+        map((querySnapshot) => {
+          return querySnapshot.docs.map((document) => {
+            const data = document.data() as Image;
+            const id = document.id;
+            return { ...data, id };
+          });
+        }),
+        catchError(error => {
+          console.error('Error fetching user posts:', error);
+          return of([]);
+        })
+      );
+    } else {
+      return of([]);
     }
   }
 
@@ -134,12 +135,12 @@ export class ImageService {
       }),
       catchError((error) => {
         console.error('Error fetching user comments:', error);
-        throw error;
+        return of([]); // Return an empty array in case of error
       })
     );
   }
 
-  async deleteUserPosts(userUid: any) {
+  async deleteUserPosts(userUid: string): Promise<boolean> {
     try {
       const q = query(
         collection(this.firestore, 'posts'),
@@ -161,6 +162,7 @@ export class ImageService {
         return false;
       }
     } catch (error) {
+      console.error('Error deleting user posts:', error);
       throw error;
     }
   }
@@ -182,7 +184,7 @@ export class ImageService {
       }),
       catchError((error) => {
         console.error('Error fetching starred images:', error);
-        throw new Error('Unable to fetch starred images');
+        return of([]); // Return an empty array in case of error
       })
     );
   }
@@ -210,9 +212,9 @@ export class ImageService {
 
       await addDoc(commentsCollection, newComment);
 
-      //console.log('Comment added successfully.');
+      console.log('Comment added successfully.');
     } catch (error) {
-      //console.error('Error adding comment:', error);
+      console.error('Error adding comment:', error);
       throw error;
     }
   }
@@ -228,8 +230,7 @@ export class ImageService {
 
       if (commentSnapshot.exists()) {
         await deleteDoc(commentRef);
-
-        //console.log('Comment deleted successfully.');
+        console.log('Comment deleted successfully.');
       } else {
         console.error('Comment not found in the subcollection.');
       }
@@ -239,7 +240,7 @@ export class ImageService {
     }
   }
 
-  async uploadImageAndPostText(imageFile: File, postText: string, userId: string, displayName: string) {
+  async uploadImageAndPostText(imageFile: File, postText: string, userId: string, displayName: string): Promise<void> {
     try {
       // Upload image to Firebase Storage
       const storageRef = ref(this.storage, 'images/' + imageFile.name);
@@ -305,6 +306,7 @@ export class ImageService {
 
       return imageComments;
     } catch (error) {
+      console.error('Error fetching image comments:', error);
       throw error;
     }
   }
@@ -328,15 +330,15 @@ export class ImageService {
             downloads: newDownloads,
             downloadedBy: [...downloadedBy, userId],
           });
-          //console.log('Image downloaded and recorded.');
+          console.log('Image downloaded and recorded.');
         } else {
-          //console.log('Image has already been downloaded by this user.');
+          console.log('Image has already been downloaded by this user.');
         }
       } else {
-        //console.error('Image not found');
+        console.error('Image not found');
       }
     } catch (error) {
-      //console.error('Error updating image downloads:', error);
+      console.error('Error updating image downloads:', error);
       throw error;
     }
   }

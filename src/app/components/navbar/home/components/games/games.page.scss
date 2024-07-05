@@ -1,0 +1,59 @@
+ion-content {
+  --padding-top: 40px;
+}
+
+.section-header {
+  font-weight: bold;
+  margin-left: 20px;
+  margin-bottom: 30px;
+}
+
+.top-right-button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 25px;
+  font-family: "Spotify";
+  font-weight: bold;
+  float: right;
+  margin-right: 10px;
+  margin-bottom: 30px;
+  margin-top: 18px;
+}
+
+.category-card {
+  cursor: pointer;
+  color: white;
+  height: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 24px;
+  padding: 20px;
+  margin: 10px;
+  background: #2B7A78;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4.5px);
+  -webkit-backdrop-filter: blur(4.5px);
+  border: 1px solid rgba(58, 175, 169, 0.23);
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Ensure the text size is responsive */
+  @media (max-width: 768px) {
+    font-size: 20px;
+    height: 110px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 18px;
+    height: 100px;
+  }
+}
+

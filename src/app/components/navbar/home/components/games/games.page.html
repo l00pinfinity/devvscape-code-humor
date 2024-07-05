@@ -1,0 +1,84 @@
+<ion-content [fullscreen]="true" class="ion-padding bg-primary">
+  <ion-row>
+    <ion-col size="2">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/"></ion-back-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-col>
+    <ion-col size="5">
+      <h2 class="section-header">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.TITLE' | transloco }}</h2>
+    </ion-col>
+    <ion-col size="5">
+      <button id="game-settings-modal" class="top-right-button">
+        <ion-icon name="settings-outline"></ion-icon>
+      </button>
+      <!-- <button id="open-post-modal" class="top-right-button">
+        <ion-icon name="globe-outline"></ion-icon>
+      </button> -->
+    </ion-col>
+  </ion-row>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col
+        size="6"
+        size-md="4"
+        size-lg="2"
+        *ngFor="let category of categories"
+        (click)="selectCategory(category)"
+      >
+        <ion-card class="category-card">
+          <ion-card-content> {{ category.name }} </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-modal
+    trigger="game-settings-modal"
+    (willDismiss)="onWillDismiss($event)"
+  >
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.TRIVIASETTINGS' | transloco }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="confirm()" [strong]="true">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.CONFIRM' | transloco }}</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-list>
+          <ion-item-group>
+            <ion-item-divider>
+              <ion-label> {{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.NOOFQUESTIONS' | transloco }} </ion-label>
+            </ion-item-divider>
+            <ion-item>
+              <ion-range aria-label="Custom range" [(ngModel)]="defaultSettings.amount" min="1" max="50" step="1" pin="true">
+                <ion-label slot="start">1</ion-label>
+                <ion-label slot="end">50</ion-label>
+              </ion-range>
+            </ion-item>
+          </ion-item-group>
+
+          <ion-item-group>
+            <ion-item-divider>
+              <ion-label> {{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.SELECTDIFFICULTY' | transloco }} </ion-label>
+            </ion-item-divider>
+
+            <ion-item>
+              <ion-radio-group [(ngModel)]="defaultSettings.difficulty" [allowEmptySelection]="true">
+                <ion-radio value="any">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.ANYDIFFICULTY' | transloco }}</ion-radio><br />
+                <ion-radio value="easy">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.EASY' | transloco }}</ion-radio><br />
+                <ion-radio value="medium">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.MEDIUM' | transloco }}</ion-radio><br />
+                <ion-radio value="hard">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.HARD' | transloco }}</ion-radio><br />
+              </ion-radio-group>
+            </ion-item>
+          </ion-item-group>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

@@ -28,26 +28,27 @@
     type="indeterminate"
   ></ion-progress-bar> -->
 
-    <ion-item-group class="shadow-none rounded">
-      <ion-item-divider>
-        <ion-label>{{ 'COMPONENTS.AUTH.PROFILE.PROFILE' | transloco }}</ion-label>
-      </ion-item-divider>
-      <ion-item>
-        <ion-avatar slot="start" (click)="changeDP()">
-          <img alt="DP" [src]="user?.photoURL || generateAvatarUrl(user?.displayName || 'devvscape_user')" />
-        </ion-avatar>
-        <ion-label>
-          <h2 (click)="updateDisplayName()"><b>{{ user?.displayName || "devvscape_user" }}</b></h2>
-          <p (click)="updateEmail()">{{ user?.email }}</p>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-icon name="calendar-outline" slot="start"></ion-icon>
-        <ion-label>
-          <p><b>{{ 'COMPONENTS.AUTH.PROFILE.JOINED' | transloco }}:</b> {{ user?.metadata.createdAt | date }}</p>
-        </ion-label>
-      </ion-item>
-    </ion-item-group>
+  <ion-item-group class="shadow-none rounded">
+    <ion-item-divider>
+      <ion-label>{{ 'COMPONENTS.AUTH.PROFILE.PROFILE' | transloco }}</ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-avatar slot="start" (click)="changeDP()">
+        <img alt="DP" [src]="user?.photoURL || generateAvatarUrl(user?.displayName || 'devvscape_user')" />
+      </ion-avatar>
+      <ion-label>
+        <h2 (click)="user?.displayName ? null : updateDisplayName()"><b>{{ user?.displayName || "devvscape_user" }}</b></h2>
+        <p (click)="updateEmail()">{{ user?.email }}</p>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="calendar-outline" slot="start"></ion-icon>
+      <ion-label>
+        <p><b>{{ 'COMPONENTS.AUTH.PROFILE.JOINED' | transloco }}:</b> {{ user?.metadata.createdAt | date }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-item-group>
+  
   <br />
 
   <ion-item-divider>

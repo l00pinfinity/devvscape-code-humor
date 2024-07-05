@@ -7,17 +7,7 @@ import {
   orderBy,
   writeBatch,
 } from '@angular/fire/firestore';
-import {
-  DocumentSnapshot,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  query,
-  updateDoc,
-  where,
-} from '@angular/fire/firestore';
+import { deleteDoc, doc, getDocs, query, updateDoc, where } from '@angular/fire/firestore';
 import { Notification } from '../models/data/notification.interface';
 
 @Injectable({
@@ -91,6 +81,20 @@ export class NotificationService {
       await batch.commit();
     } catch (error) {
       throw new Error('Unable to mark notifications as read');
+    }
+  }
+
+  async getUnreadNotificationCount(userId: string): Promise<number> {
+    try {
+      const q = query(collection(this.firestore, `users/${userId}/notifications`),
+        where('isRead', '==', false)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      return querySnapshot.size;
+    } catch (error) {
+      throw new Error('Unable to fetch unread notification count');
     }
   }
 

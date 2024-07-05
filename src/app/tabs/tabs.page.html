@@ -6,15 +6,15 @@
       <ion-label>{{ 'COMPONENTS.TABS.HOME' | transloco }}</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="search" href="/tabs/search">
+    <!-- <ion-tab-button tab="search" href="/tabs/search">
       <ion-icon aria-hidden="true" name="search"></ion-icon>
       <ion-label>{{ 'COMPONENTS.TABS.SEARCH' | transloco }}</ion-label>
-    </ion-tab-button>
+    </ion-tab-button> -->
 
     <ion-tab-button tab="notifications" href="/tabs/notifications">
       <ion-icon aria-hidden="true" name="notifications"></ion-icon>
       <ion-label>{{ 'COMPONENTS.TABS.NOTIFICATIONS' | transloco }}</ion-label>
-      <ion-badge color="danger">11</ion-badge>
+      <ion-badge color="danger" *ngIf="count > 0">{{count}}</ion-badge>
 
     </ion-tab-button>
 

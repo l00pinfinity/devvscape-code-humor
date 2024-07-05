@@ -52,14 +52,14 @@ export class ImageEffects {
     this.actions$.pipe(
       ofType(ImageActions.loadUserPosts),
       mergeMap(() =>
-        from(this.imageService.getUserPosts()).pipe(
-          switchMap((observable) => observable),
+        this.imageService.getUserPosts().pipe(
           map((images) => ImageActions.loadUserPostsSuccess({ images })),
           catchError((error) => of(ImageActions.loadUserPostsFailure({ error })))
         )
       )
     )
   );
+  
 
   loadUserPostsComments$ = createEffect(() =>
     this.actions$.pipe(

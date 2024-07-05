@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import {
   doc,
@@ -14,7 +15,7 @@ import {
   updateEmail,
   updatePassword,
 } from '@angular/fire/auth';
-import { map, catchError, switchMap, concatMap, first } from 'rxjs/operators';
+import { catchError, switchMap, concatMap, first } from 'rxjs/operators';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { AuthService } from './auth.service';
 import { UserProfile } from '../models/data/user.interface';

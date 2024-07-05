@@ -2,41 +2,58 @@
   <ion-toolbar>
     <ion-row>
       <ion-col size="7">
-        <h2 class="section-header">{{welcomeMessage}}</h2>
+        <h2 class="section-header">Devvscape</h2>
       </ion-col>
       <ion-col size="5">
-        <button class="top-right-button" (click)="openProfile()">
+        <button
+          class="top-right-button"
+          (click)="openProfile()"
+          aria-label="Open Profile"
+        >
           <ion-icon name="person-outline"></ion-icon>
         </button>
-        <button id="open-post-modal" class="top-right-button">
+        <button
+          id="open-post-modal"
+          class="top-right-button"
+          aria-label="Add Post"
+          (click)="openPostModal()"
+        >
           <ion-icon name="add-outline"></ion-icon>
         </button>
       </ion-col>
     </ion-row>
 
     <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged()">
-      <ion-segment-button value="explore">
-        <ion-label>{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE' | transloco }}</ion-label>
+      <ion-segment-button value="explore" aria-label="Explore">
+        <ion-label
+          >{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.TITLE' | transloco }}</ion-label
+        >
       </ion-segment-button>
-      <ion-segment-button value="for-you">
-        <ion-label>{{ 'COMPONENTS.NAVBAR.HOME.TABS.FOR-YOU' | transloco }}</ion-label>
+      <ion-segment-button value="for-you" aria-label="For You">
+        <ion-label
+          >{{ 'COMPONENTS.NAVBAR.HOME.TABS.FOR-YOU.TITLE' | transloco }}</ion-label
+        >
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="content-with-header">
   <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged()">
-        <ion-segment-button value="explore">
-          <ion-label>{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE' | transloco }}</ion-label>
+        <ion-segment-button value="explore" aria-label="Explore">
+          <ion-label
+            >{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE' | transloco }}</ion-label
+          >
         </ion-segment-button>
-        <ion-segment-button value="for-you">
-          <ion-label>{{ 'COMPONENTS.NAVBAR.HOME.TABS.FOR-YOU' | transloco }}</ion-label>
+        <ion-segment-button value="for-you" aria-label="For You">
+          <ion-label
+            >{{ 'COMPONENTS.NAVBAR.HOME.TABS.FOR-YOU' | transloco }}</ion-label
+          >
         </ion-segment-button>
       </ion-segment>
     </ion-toolbar>
@@ -44,29 +61,63 @@
 
   <ng-container *ngIf="selectedSegment === 'explore'">
     <div class="explore">
-      <ng-container id="preloader">
-        <ion-spinner class="preloader"></ion-spinner>
-      </ng-container>
+      <ion-card class="games-card" (click)="navigateToGames()">
+          <img alt="Trivia Games" src="/assets/icon/quiz.gif" />
+      </ion-card>
+
+      <ion-item-group class="shadow rounded">
+        <ion-item>
+          <ion-label style="color: #2B7A78;">{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.BESTSTORIES' | transloco }}</ion-label>
+          <ion-icon name="chevron-forward-circle" slot="end" (click)="navigateToNews()" style="color: #2B7A78;"></ion-icon>
+          <ion-spinner name="lines-sharp" *ngIf="!(bestStories$ | async)?.length"></ion-spinner>
+        </ion-item>
+        <swiper-container class="news" space-between="30" slides-per-view="auto">
+          <swiper-slide class="news-slide" *ngFor="let story of bestStories$ | async">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>{{ story.title }}</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.BY' | transloco }} {{ story.by }}</p>
+                <ion-button fill="clear" [href]="story.url" target="_blank">{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.READMORE' | transloco }}</ion-button>
+              </ion-card-content>
+            </ion-card>
+          </swiper-slide>
+        </swiper-container>
+      </ion-item-group>
+
+      <div class="ad-banner" id="home-banner-ad"></div>
+      
+  
+      <!-- <ion-item-group class="shadow rounded">
+        <ion-item>
+          <ion-label>Events (Coming Soon)</ion-label>
+          <ion-icon name="chevron-forward-circle" slot="end" (click)="navigateToEvents()"></ion-icon>
+        </ion-item>
+      </ion-item-group> -->
     </div>
   </ng-container>
+  
 
   <ng-container *ngIf="selectedSegment === 'for-you'">
     <div class="for-you">
       <ng-container id="preloader" *ngIf="!(images$ | async)">
-        <ion-spinner class="preloader"></ion-spinner>
+        <ion-spinner class="preloader" aria-label="Loading"></ion-spinner>
       </ng-container>
-  
+
       <ion-list *ngIf="(images$ | async) as images">
         <ng-container *ngIf="images.length > 0">
-          <app-image *ngFor="let image of images; trackBy: trackImage" [image]="image"></app-image>
+          <app-image
+            *ngFor="let image of images; trackBy: trackImage"
+            [image]="image"
+          ></app-image>
         </ng-container>
         <div class="no-posts" *ngIf="images.length === 0 && !(images$ | async)">
-          Loading...
+          {{ 'COMPONENTS.NAVBAR.HOME.TABS.FOR-YOU.LOADING' | transloco }}
         </div>
       </ion-list>
     </div>
   </ng-container>
-  
 
   <ion-modal
     #modal
@@ -77,10 +128,16 @@
       <ion-content class="ion-padding">
         <ion-row>
           <ion-col size="7">
-            <h2 class="section-header">{{ 'COMPONENTS.NAVBAR.HOME.MODAL.CREATE-POST' | transloco }}</h2>
+            <h2 class="section-header">
+              {{ 'COMPONENTS.NAVBAR.HOME.MODAL.CREATE-POST' | transloco }}
+            </h2>
           </ion-col>
           <ion-col size="5">
-            <button class="top-right-button" (click)="modal.dismiss()">
+            <button
+              class="top-right-button"
+              (click)="modal.dismiss()"
+              aria-label="Close Modal"
+            >
               <ion-icon name="close-outline"></ion-icon>
             </button>
           </ion-col>
@@ -89,7 +146,9 @@
           <label for="imageInput" class="card-label">
             <div class="card-content">
               <i class="fas fa-upload"></i>
-              <p>{{ 'COMPONENTS.NAVBAR.HOME.MODAL.SELECT-IMAGE' | transloco }}</p>
+              <p>
+                {{ 'COMPONENTS.NAVBAR.HOME.MODAL.SELECT-IMAGE' | transloco }}
+              </p>
             </div>
           </label>
           <input
@@ -97,6 +156,7 @@
             id="imageInput"
             (change)="onFileSelected($event)"
             accept="image/*"
+            aria-label="Select Image"
           />
         </div>
 
@@ -105,6 +165,7 @@
           class="cancel-button"
           fill="clear"
           (click)="cancelImageSelection()"
+          aria-label="Cancel Image Selection"
         >
           <ion-icon name="trash"></ion-icon>
         </ion-button>
@@ -120,6 +181,7 @@
           placeholder="{{ 'COMPONENTS.NAVBAR.HOME.MODAL.SAY-SOMETHING' | transloco }}"
           [maxlength]="300"
           [autoGrow]="true"
+          aria-label="Post Text"
         ></ion-textarea>
         <div class="input-counter" *ngIf="imageFile">
           {{ postText.length }} / 300
@@ -130,9 +192,11 @@
           expand="block"
           class="post-button"
           (click)="uploadImageAndPostText()"
+          aria-label="Post Image"
         >
-        {{ 'COMPONENTS.NAVBAR.HOME.MODAL.POST' | transloco }}
+          {{ 'COMPONENTS.NAVBAR.HOME.MODAL.POST' | transloco }}
         </ion-button>
+
       </ion-content>
     </ng-template>
   </ion-modal>

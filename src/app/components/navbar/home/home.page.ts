@@ -1,17 +1,26 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { NavController, ModalController, LoadingController, ToastController, AlertController } from '@ionic/angular';
+import { Store, select } from '@ngrx/store';
+import {
+  NavController,
+  ModalController,
+  LoadingController,
+  ToastController,
+  AlertController,
+} from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Auth } from '@angular/fire/auth';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { ActionPerformed, PushNotificationSchema, PushNotifications, Token, } from '@capacitor/push-notifications';
 import { Platform } from '@ionic/angular';
-import * as ImageActions from 'src/app/core/store/actions/image.actions';
 import { selectAllImages, selectImageState, selectImagesLoaded } from 'src/app/core/store/selectors/image.selectors';
 import { OnlineStatusService, OnlineStatusType } from 'ngx-online-status';
 import { Image } from 'src/app/core/models/data/image.interface';
 import { ImageService } from 'src/app/core/services/image.service';
+import { loadImages } from 'src/app/core/store/actions/image.actions';
+import { loadBestStories } from 'src/app/core/store/actions/hacker-news.actions';
+import { selectBestStories } from 'src/app/core/store/selectors/hacker-news.selectors';
+import { AdMobService } from 'src/app/core/services/ad-mob.service';
 
 @Component({
   selector: 'app-home',
@@ -20,7 +29,6 @@ import { ImageService } from 'src/app/core/services/image.service';
 })
 export class HomePage implements OnInit, OnDestroy {
 
-  public welcomeMessage = '';
   images$!: Observable<Image[]>;
   presentingElement: Element | null = null;
   imageFile: File | null = null;
@@ -31,23 +39,25 @@ export class HomePage implements OnInit, OnDestroy {
   private modalInstance!: HTMLIonModalElement;
   onlineStatusSubscription!: Subscription;
   imagesLoaded$!: Observable<boolean>;
+  bestStories$ = this.store.pipe(select(selectBestStories));
 
   constructor(private auth: Auth,
     private platform: Platform,
     private store: Store,
     private imageService: ImageService,
+    private adMobService: AdMobService,
     private navCtrl: NavController,
     private androidPermissions: AndroidPermissions,
     private modalCtrl: ModalController,
     private loadingCtrl: LoadingController,
     public toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private onlineStatusService: OnlineStatusService
+    private onlineStatusService: OnlineStatusService,
   ) { }
 
   ngOnInit(): void {
     this.checkOnlineStatus();
-    this.setWelcomeMessage();
+    this.store.dispatch(loadBestStories());
     this.presentingElement = document.querySelector('.ion-page');
     this.notificationStatus();
 
@@ -69,24 +79,15 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
+  ionViewWillEnter() {
+    this.adMobService.showBannerAd('home-banner-ad','ca-app-pub-6424707922606590/3709250809');
+  }
+
   refresh(ev: any) {
-    this.store.dispatch(ImageActions.loadImages());
+    this.store.dispatch(loadImages());
     setTimeout(() => {
       ev.detail.complete();
     }, 3000);
-  }
-
-  setWelcomeMessage(): void {
-    const currentDate = new Date();
-    const currentHour = currentDate.getHours();
-
-    if (currentHour >= 5 && currentHour < 12) {
-      this.welcomeMessage = 'Good morning';
-    } else if (currentHour >= 12 && currentHour < 18) {
-      this.welcomeMessage = 'Good afternoon';
-    } else {
-      this.welcomeMessage = 'Good evening';
-    }
   }
 
   fetchImagePosts(): void {
@@ -95,10 +96,49 @@ export class HomePage implements OnInit, OnDestroy {
     this.store.select(selectImageState).pipe(
       map(state => {
         if (!state.loaded || (state.lastUpdated && (now - state.lastUpdated) > oneHour)) {
-          this.store.dispatch(ImageActions.loadImages());
+          this.store.dispatch(loadImages());
         }
       })
     ).subscribe();
+  }
+
+  async openPostModal() {
+    const hasPermission = await this.checkStoragePermission();
+    if (hasPermission) {
+      const modalElement = document.getElementById('open-post-modal');
+      this.modalInstance = await this.modalCtrl.create({
+        component: modalElement,
+      });
+      await this.modalInstance.present();
+    }
+  }
+
+  async checkStoragePermission(): Promise<boolean> {
+    const permissionResult = await this.androidPermissions.checkPermission(
+      this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
+    );
+
+    if (!permissionResult.hasPermission) {
+      const hasPermission = await this.androidPermissions.requestPermission(
+        this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
+      );
+
+      if (!hasPermission.hasPermission) {
+        const confirm = await this.alertCtrl.create({
+          header: 'Permission Denied',
+          message: 'Storage permission is required to upload images.',
+          buttons: [
+            {
+              text: 'OK',
+              role: 'cancel',
+            },
+          ],
+        });
+        await confirm.present();
+        return false;
+      }
+    }
+    return true;
   }
 
   async uploadImageAndPostText() {
@@ -129,7 +169,7 @@ export class HomePage implements OnInit, OnDestroy {
         this.postText = '';
         this.imageSrc = null;
 
-        this.store.dispatch(ImageActions.loadImages());
+        this.store.dispatch(loadImages());
       } catch (error) {
         console.error('Error uploading image and post:', error);
 
@@ -146,13 +186,14 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
-  onFileSelected(event: Event) {
+  async onFileSelected(event: Event) { 
     const inputElement = event.target as HTMLInputElement;
     if (inputElement.files && inputElement.files.length) {
       this.imageFile = inputElement.files[0];
       this.displaySelectedImage();
     }
   }
+  
 
   displaySelectedImage() {
     if (this.imageFile) {
@@ -259,22 +300,7 @@ export class HomePage implements OnInit, OnDestroy {
     this.navCtrl.navigateForward('/notifications');
   }
 
-
   async notificationStatus() {
-    const permissionResult = await this.androidPermissions.checkPermission(
-      this.androidPermissions.PERMISSION.POST_NOTIFICATIONS
-    );
-
-    if (!permissionResult.hasPermission) {
-      const hasPermission = await this.androidPermissions.requestPermission(
-        this.androidPermissions.PERMISSION.POST_NOTIFICATIONS
-      );
-
-      if (!hasPermission.hasPermission) {
-        return;
-      }
-    }
-
     PushNotifications.requestPermissions().then(async (result) => {
       if (result.receive === 'granted') {
         PushNotifications.register();
@@ -298,22 +324,40 @@ export class HomePage implements OnInit, OnDestroy {
     });
 
     // On success, we should be able to receive notifications
-    PushNotifications.addListener('registration', (token: Token) => { });
+    PushNotifications.addListener('registration', (token: Token) => {
+      console.log('Push registration success, token: ' + token.value);
+    });
 
     // Some issue with our setup and push will not work
-    PushNotifications.addListener('registrationError', (error: any) => { });
+    PushNotifications.addListener('registrationError', (error: any) => {
+      console.error('Push registration error: ', error);
+    });
 
     // Show us the notification payload if the app is open on our device
     PushNotifications.addListener(
       'pushNotificationReceived',
-      (notification: PushNotificationSchema) => { }
-    );
+      (notification: PushNotificationSchema) => {
+        console.log('Push notification received: ', notification
+        );
+      });
 
     // Method called when tapping on a notification
     PushNotifications.addListener(
       'pushNotificationActionPerformed',
-      (notification: ActionPerformed) => { }
+      (notification: ActionPerformed) => {
+        console.log('Push notification action performed: ', notification);
+        // Handle notification action, e.g., navigate to a specific page
+        this.handleNotificationAction(notification);
+      }
     );
+  }
+
+  handleNotificationAction(notification: ActionPerformed) {
+    // Example: Navigate to a specific page based on the notification data
+    const data = notification.notification.data;
+    if (data.page) {
+      this.navCtrl.navigateForward(data.page);
+    }
   }
 
   async openAppSettings() {
@@ -321,6 +365,27 @@ export class HomePage implements OnInit, OnDestroy {
       const packageName = 'com.silkwebhq.devvscapecode';
       const intentUri = 'package:' + packageName;
       window.open('intent:' + intentUri + '#Intent;end;');
+    } else if (this.platform.is('ios')) {
+      // For iOS, direct users to the app settings
+      const alert = await this.alertCtrl.create({
+        header: 'Open Settings',
+        message: 'Please go to the app settings and enable notifications.',
+        buttons: [
+          {
+            text: 'Open Settings',
+            handler: () => {
+              // Open iOS app settings
+              const settingsUrl = 'app-settings:';
+              window.open(settingsUrl, '_system');
+            }
+          },
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          }
+        ]
+      });
+      await alert.present();
     }
   }
 
@@ -345,5 +410,17 @@ export class HomePage implements OnInit, OnDestroy {
           }, 3000);
         }
       });
+  }
+
+  navigateToGames() {
+    this.navCtrl.navigateForward('/tabs/home/games');
+  }
+
+  navigateToNews() {
+    this.navCtrl.navigateForward('/tabs/home/news');
+  }
+
+  navigateToEvents() {
+    this.navCtrl.navigateForward('/tabs/home/events');
   }
 }

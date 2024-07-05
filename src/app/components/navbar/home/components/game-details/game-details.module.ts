@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { VisualsPageRoutingModule } from './visuals-routing.module';
+import { GameDetailsPageRoutingModule } from './game-details-routing.module';
 
-import { VisualsPage } from './visuals.page';
+import { GameDetailsPage } from './game-details.page';
 import { TranslocoModule } from '@jsverse/transloco';
 
 @NgModule({
@@ -14,9 +14,9 @@ import { TranslocoModule } from '@jsverse/transloco';
     CommonModule,
     FormsModule,
     IonicModule,
-    VisualsPageRoutingModule,
+    GameDetailsPageRoutingModule,
     TranslocoModule
   ],
-  declarations: [VisualsPage]
+  declarations: [GameDetailsPage]
 })
-export class VisualsPageModule {}
+export class GameDetailsPageModule {}

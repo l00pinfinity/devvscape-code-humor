@@ -7,7 +7,7 @@ import { selectAuthError, selectAuthLoading, selectUser } from 'src/app/core/sto
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ToastController } from '@ionic/angular';
-import { UserCredential } from '@angular/fire/auth';
+import { AdMobService } from 'src/app/core/services/ad-mob.service';
 
 @Component({
   selector: 'app-signup',
@@ -20,7 +20,7 @@ export class SignupPage implements OnInit {
   loading$: Observable<boolean>;
   error$: Observable<any>;
   
-  constructor(private store: Store, private router:Router, private authService: AuthService, public toastCtrl: ToastController) {
+  constructor(private store: Store, private router:Router, private authService: AuthService, private adMobService: AdMobService,public toastCtrl: ToastController) {
     this.loading$ = this.store.select(selectAuthLoading);
     this.error$ = this.store.select(selectAuthError);
   }
@@ -39,6 +39,15 @@ export class SignupPage implements OnInit {
       }
     });
   }
+
+  ionViewWillEnter() {
+    this.adMobService.hideBannerAd('home-banner-ad');
+  }
+
+  ionViewWillLeave() {
+    this.adMobService.showBannerAd('home-banner-ad','ca-app-pub-6424707922606590/3709250809');
+  }
+
   signupUser(credentials: { email: string; password: string; username: string }) {
     const { email, password, username } = credentials;
     this.store.dispatch(setLoading({ loading: true }));

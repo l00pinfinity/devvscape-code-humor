@@ -1,7 +1,12 @@
 {
   "APP": {
     "TITLE": "Devvscape",
-    "WELCOME_MESSAGE": "Welcome to Devvscape!"
+    "WELCOME_MESSAGE": "Welcome to Devvscape!",
+    "ALERT_HEADER": "Code Escape Portal",
+    "ALERT_MESSAGE": "Ready to close the coding dimension and face reality? Choose your destiny.",
+    "CANCEL_BUTTON": "Cancel",
+    "EXIT_BUTTON": "Exit",
+    "DELETE_BUTTON": "Delete"
   },
   "COMPONENTS": {
     "AUTH": {
@@ -20,15 +25,15 @@
         "TITLE": "Login",
         "SIGNUP": "Create a new account",
         "FORGOT-PASSWORD": "I forgot my password",
-        "GITHUB":"Continue with GitHub",
-        "OR":"or",
+        "GITHUB": "Continue with GitHub",
+        "OR": "or",
         "ACTION-BUTTON": "Login"
       },
       "SIGNUP": {
         "TITLE": "Sign Up",
         "SIGNIN": "I already have an account",
-        "GITHUB":"Continue with GitHub",
-        "OR":"or",
+        "GITHUB": "Continue with GitHub",
+        "OR": "or",
         "ACTION-BUTTON": "Create Account"
       },
       "RESET_PASSWORD": {
@@ -37,29 +42,50 @@
       },
       "PROFILE": {
         "TITLE": "Account",
-        "PROFILE":"Profile",
-        "JOINED":"Joined",
-        "ACTIVITY":"Activity",
-        "TABS":{
-          "POSTS":"Posts",
-          "COMMENTS":"Comments",
-          "STARS":"Stars"
+        "PROFILE": "Profile",
+        "JOINED": "Joined",
+        "ACTIVITY": "Activity",
+        "TABS": {
+          "POSTS": "Posts",
+          "COMMENTS": "Comments",
+          "STARS": "Stars"
         }
       }
     },
     "NAVBAR": {
       "HOME": {
         "TITLE": "Home",
-
-        "TABS":{
-          "EXPLORE":"Explore",
-          "FOR-YOU":"For You"
+        "TABS": {
+          "EXPLORE": {
+            "TITLE": "Explore",
+            "TOPSTORIES": "Top Stories",
+            "BESTSTORIES": "Best Stories",
+            "NEWSTORIES": "New Stories",
+            "NEWS": "News",
+            "BY": "by",
+            "READMORE": "Read more"
+          },
+          "FOR-YOU": {
+            "TITLE": "For You",
+            "LOADING": "Loading..."
+          },
+          "TRIVIA": {
+            "TITLE": "Trivia",
+            "TRIVIASETTINGS": "Trivia Settings",
+            "CONFIRM": "Confirm",
+            "NOOFQUESTIONS": "Number of Questions: ",
+            "SELECTDIFFICULTY": "Select Difficulty: ",
+            "ANYDIFFICULTY": "Any Difficulty",
+            "EASY": "Easy",
+            "MEDIUM": "Medium",
+            "HARD": "Hard"
+          }
         },
-        "MODAL":{
-          "CREATE-POST":"Create Post",
-          "SAY-SOMETHING":"Say something about the image",
-          "SELECT-IMAGE":"Click to select an image",
-          "POST":"Post"
+        "MODAL": {
+          "CREATE-POST": "Create Post",
+          "SAY-SOMETHING": "Say something about the image",
+          "SELECT-IMAGE": "Click to select an image",
+          "POST": "Post"
         }
       },
       "SEARCH": {
@@ -67,12 +93,12 @@
       },
       "NOTIFICATIONS": {
         "TITLE": "Notifications",
-        "NO-NOTIFICATIONS":"No notifications at the moment."
+        "NO-NOTIFICATIONS": "No notifications at the moment."
       },
       "SETTINGS": {
         "TITLE": "Settings",
         "APP-SETTINGS": "App Settings",
-        "APPERANCE":"Appearance",
+        "APPERANCE": "Appearance",
         "SUPPORT&INFO": "Support & Info",
         "REVIEW&SHARE": "Review and Share",
         "TERMS&CONDITIONS": "Terms & Conditions",
@@ -81,7 +107,13 @@
         "ACCOUNT-MANAGEMENT": "Account Management",
         "DELETE": "Delete Account",
         "TAGLINE": "The Future of SilkwebHQ and the SilkCommunity",
-
+        "UPDATEHEADER": "Update Available",
+        "UPDATEMESSAGE": "A new version of the app is available. Please update to continue using the app.",
+        "DELETEHEADER": "Delete account",
+        "DELETEMESSAGE": "bout to close account? Enter your password to confirm account deletion:",
+        "LATER": "Later",
+        "UPDATE": "Update",
+        "QUIZ": "Quiz",
         "NOTIFICATIONS": {
           "TITLE": "Notifications"
         },
@@ -93,6 +125,32 @@
           "SELECT_LANGUAGE": "Select Language",
           "EN": "English",
           "ES": "Spanish"
+        },
+        "GAMES": {
+          "GENERAL": "General Knowledge",
+          "BOOKS": "Entertainment: Books",
+          "FILM": "Entertainment: Film",
+          "MUSIC": "Entertainment: Music",
+          "MUSICAL": "Entertainment: Musicals & Theatres",
+          "TELEVISION": "Entertainment: Television",
+          "VIDEOGAMES": "Entertainment: Video Games",
+          "BOARDGAMES": "Entertainment: Board Games",
+          "NATURE": "Science & Nature",
+          "COMPUTERS": "Science: Computers",
+          "MATHEMATICS": "Science: Mathematics",
+          "MYTHOLOGY": "Mythology",
+          "SPORTS": "Sports",
+          "GEOGRAPHY": "Geography",
+          "HISTORY": "History",
+          "POLITICS": "Politics",
+          "ART": "Art",
+          "CELEBRITIES": "Celebrities",
+          "ANIMALS": "Animals",
+          "VEHICLES": "Vehicles",
+          "COMICS": "Entertainment: Comics",
+          "GADGETS": "Science: Gadgets",
+          "JAPANESEANIME": "Entertainment: Japanese Anime & Manga",
+          "CARTOON": "Entertainment: Cartoon & Animations"
         }
       }
     },
