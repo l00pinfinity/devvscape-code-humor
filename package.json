@@ -43,7 +43,7 @@
     "@ngrx/router-store": "^17.2.0",
     "@ngrx/store": "^17.2.0",
     "@ngrx/store-devtools": "^17.2.0",
-    "firebase": "^9.23.0",
+    "firebase": "^10.12.3",
     "ionicons": "^7.0.0",
     "ngx-online-status": "^2.0.0",
     "rxfire": "^6.0.3",
