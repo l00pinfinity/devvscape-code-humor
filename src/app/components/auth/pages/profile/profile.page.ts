@@ -10,6 +10,7 @@ import { collection, deleteDoc, doc, getFirestore } from '@angular/fire/firestor
 import { Image } from 'src/app/core/models/data/image.interface';
 import { UserProfile } from 'src/app/core/models/data/user.interface';
 import { Comment } from 'src/app/core/models/data/comment.interface.ts';
+import { AdMobService } from 'src/app/core/services/ad-mob.service';
 
 @Component({
   selector: 'app-profile',
@@ -34,6 +35,7 @@ export class ProfilePage implements OnDestroy, OnInit {
     private auth: Auth,
     private authService: AuthService,
     private imageService: ImageService,
+    private adMobService: AdMobService,
     private router: Router,
     private profileService: ProfileService,
     private alertCtrl: AlertController,
@@ -61,6 +63,14 @@ export class ProfilePage implements OnDestroy, OnInit {
     if (this.userProfileSubscription) {
       this.userProfileSubscription?.unsubscribe();
     }
+  }
+
+  ionViewWillEnter() {
+    this.adMobService.hideBannerAd('home-banner-ad');
+  }
+
+  ionViewWillLeave() {
+    this.adMobService.showBannerAd('home-banner-ad', 'ca-app-pub-6424707922606590/3709250809');
   }
 
   refresh(ev: any) {

@@ -1,12 +1,8 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Http } from '@capacitor-community/http';
 import { Auth } from '@angular/fire/auth';
-import { AlertController, Platform, ToastController } from '@ionic/angular';
+import { AlertController, NavController, ToastController } from '@ionic/angular';
 import { ImageService } from 'src/app/core/services/image.service';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Subscription } from 'rxjs';
-import { Firestore, collection, doc, getDoc } from '@angular/fire/firestore';
-import { Router } from '@angular/router';
 import { Image } from 'src/app/core/models/data/image.interface';
 
 @Component({
@@ -21,13 +17,21 @@ export class ImageComponent implements OnInit, OnDestroy {
   isTextTruncated = true;
   currentUser: any;
   permissionSubscription!: Subscription;
+  reportReasons: string[] = [
+    'Inappropriate Content',
+    'Spam or Advertisement',
+    'Harassment or Bullying',
+    'False Information',
+    'Intellectual Property Violation',
+    'Other',
+  ];
 
   constructor(
     private auth: Auth,
     private imageService: ImageService,
-    private router: Router,
     private alertCtrl: AlertController,
-    public toastCtrl: ToastController
+    public toastCtrl: ToastController,
+    private navCtrl: NavController
   ) {}
 
   ngOnInit() {
@@ -60,11 +64,11 @@ export class ImageComponent implements OnInit, OnDestroy {
   }
 
   openProfile(author: string) {
-    console.log(`Opening profile of ${author}`);
+    //console.log(`Opening profile of ${author}`);
   }
 
   openImage(id: string): void {
-    this.router.navigate(['image', id]);
+    this.navCtrl.navigateForward(['image', id]);
   }
 
   formatCardSubtitle(image: any): string {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { Notification } from 'src/app/core/models/data/notification.interface';
+import { AdMobService } from 'src/app/core/services/ad-mob.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 
 @Component({
@@ -16,7 +17,8 @@ export class NotificationsPage implements OnInit {
   constructor(
     private auth: Auth,
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private adMobService: AdMobService,
   ) { }
 
   ngOnInit() {
@@ -25,6 +27,8 @@ export class NotificationsPage implements OnInit {
 
   ionViewWillEnter() {
     this.getNotifications();
+    this.adMobService.showBannerAd('notification-banner-ad','ca-app-pub-6424707922606590/1224657880');
+
   }
 
   refresh(ev: any) {

@@ -9,6 +9,7 @@ import { NotificationService } from 'src/app/core/services/notification.service'
 import { Image } from 'src/app/core/models/data/image.interface';
 import { Comment } from 'src/app/core/models/data/comment.interface.ts';
 import { Notification } from 'src/app/core/models/data/notification.interface';
+import { AdMobService } from 'src/app/core/services/ad-mob.service';
 
 @Component({
   selector: 'app-image-details',
@@ -29,6 +30,7 @@ export class ImageDetailsComponent implements OnInit {
     private auth: Auth,
     private router: Router,
     private imageService: ImageService,
+    private adMobService: AdMobService,
     private notificationService: NotificationService,
     private platform: Platform,
     private androidPermissions: AndroidPermissions,
@@ -41,6 +43,14 @@ export class ImageDetailsComponent implements OnInit {
   ngOnInit() {
     this.currentUser = this.auth.currentUser;
     this.loadImageDetails();
+  }
+
+  ionViewWillEnter() {
+    this.adMobService.hideBannerAd('home-banner-ad');
+  }
+
+  ionViewWillLeave() {
+    this.adMobService.showBannerAd('home-banner-ad','ca-app-pub-6424707922606590/3709250809');
   }
 
   refresh(ev: any) {

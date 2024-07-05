@@ -1,44 +1,49 @@
 {
   "APP": {
     "TITLE": "Devvscape",
-    "WELCOME_MESSAGE": "¡Bienvenido a Devvscape!"
+    "WELCOME_MESSAGE": "¡Bienvenido a Devvscape!",
+    "ALERT_HEADER": "Portal de Escape de Código",
+    "ALERT_MESSAGE": "¿Listo para cerrar la dimensión de codificación y enfrentar la realidad? Elige tu destino.",
+    "CANCEL_BUTTON": "Cancelar",
+    "EXIT_BUTTON": "Salir",
+    "DELETE_BUTTON": "Eliminar"
   },
   "COMPONENTS": {
     "AUTH": {
       "AUTH-FORM": {
-        "EMAIL": "Correo electrónico",
+        "EMAIL": "Correo Electrónico",
         "EMAIL-PLACEHOLDER": "Tu dirección de correo electrónico",
-        "EMAIL-ERROR": "Por favor ingresa una dirección de correo electrónico válida",
-        "USERNAME": "Nombre de usuario",
+        "EMAIL-ERROR": "Por favor, introduce una dirección de correo electrónico válida",
+        "USERNAME": "Nombre de Usuario",
         "USERNAME-PLACEHOLDER": "Tu nombre de usuario",
-        "USERNAME-ERROR": "Por favor ingresa un nombre de usuario válido, menos de 25 caracteres",
+        "USERNAME-ERROR": "Por favor, introduce un nombre de usuario válido, de menos de 25 caracteres",
         "PASSWORD": "Contraseña",
         "PASSWORD-PLACEHOLDER": "Tu contraseña",
         "PASSWORD-ERROR": "Tu contraseña necesita más de 6 caracteres"
       },
       "LOGIN": {
-        "TITLE": "Iniciar sesión",
-        "SIGNUP": "Crea una nueva cuenta",
+        "TITLE": "Iniciar Sesión",
+        "SIGNUP": "Crear una nueva cuenta",
         "FORGOT-PASSWORD": "Olvidé mi contraseña",
         "GITHUB": "Continuar con GitHub",
         "OR": "o",
-        "ACTION-BUTTON": "Iniciar sesión"
+        "ACTION-BUTTON": "Iniciar Sesión"
       },
       "SIGNUP": {
-        "TITLE": "Regístrate",
+        "TITLE": "Registrarse",
         "SIGNIN": "Ya tengo una cuenta",
         "GITHUB": "Continuar con GitHub",
         "OR": "o",
-        "ACTION-BUTTON": "Crear cuenta"
+        "ACTION-BUTTON": "Crear Cuenta"
       },
       "RESET_PASSWORD": {
-        "TITLE": "Olvidé mi contraseña",
-        "ACTION-BUTTON": "Restablecer la contraseña"
+        "TITLE": "Olvidé mi Contraseña",
+        "ACTION-BUTTON": "Restablecer Contraseña"
       },
       "PROFILE": {
         "TITLE": "Cuenta",
         "PROFILE": "Perfil",
-        "JOINED": "Unido",
+        "JOINED": "Se unió",
         "ACTIVITY": "Actividad",
         "TABS": {
           "POSTS": "Publicaciones",
@@ -51,8 +56,30 @@
       "HOME": {
         "TITLE": "Inicio",
         "TABS": {
-          "EXPLORE": "Explorar",
-          "FOR-YOU": "Para ti"
+          "EXPLORE": {
+            "TITLE": "Explorar",
+            "TOPSTORIES": "Historias Destacadas",
+            "BESTSTORIES": "Mejores Historias",
+            "NEWSTORIES": "Nuevas Historias",
+            "NEWS": "Noticias",
+            "BY": "por",
+            "READMORE": "Leer más"
+          },
+          "FOR-YOU": {
+            "TITLE": "Para Ti",
+            "LOADING": "Cargando..."
+          },
+          "TRIVIA": {
+            "TITLE": "Trivia",
+            "TRIVIASETTINGS": "Configuración de Trivia",
+            "CONFIRM": "Confirmar",
+            "NOOFQUESTIONS": "Número de Preguntas: ",
+            "SELECTDIFFICULTY": "Seleccionar Dificultad: ",
+            "ANYDIFFICULTY": "Cualquier Dificultad",
+            "EASY": "Fácil",
+            "MEDIUM": "Medio",
+            "HARD": "Difícil"
+          }
         },
         "MODAL": {
           "CREATE-POST": "Crear Publicación",
@@ -66,11 +93,11 @@
       },
       "NOTIFICATIONS": {
         "TITLE": "Notificaciones",
-        "NO-NOTIFICATIONS": "No hay notificaciones por el momento."
+        "NO-NOTIFICATIONS": "No hay notificaciones en este momento."
       },
       "SETTINGS": {
-        "TITLE": "Configuración",
-        "APP-SETTINGS": "Configuración de la aplicación",
+        "TITLE": "Configuraciones",
+        "APP-SETTINGS": "Configuración de la Aplicación",
         "APPERANCE": "Apariencia",
         "SUPPORT&INFO": "Soporte e Información",
         "REVIEW&SHARE": "Revisar y Compartir",
@@ -79,7 +106,14 @@
         "VERSION": "Versión de la Aplicación",
         "ACCOUNT-MANAGEMENT": "Gestión de Cuenta",
         "DELETE": "Eliminar Cuenta",
-        "TAGLINE": "El Futuro de SilkwebHQ y la SilkCommunity",
+        "TAGLINE": "El Futuro de SilkwebHQ y la Comunidad de Silk",
+        "UPDATEHEADER": "Actualización Disponible",
+        "UPDATEMESSAGE": "Hay una nueva versión de la aplicación disponible. Por favor, actualiza para seguir usando la aplicación.",
+        "DELETEHEADER": "Eliminar cuenta",
+        "DELETEMESSAGE": "¿A punto de cerrar la cuenta? Introduce tu contraseña para confirmar la eliminación de la cuenta:",
+        "LATER": "Más Tarde",
+        "UPDATE": "Actualizar",
+        "QUIZ": "Cuestionario",
         "NOTIFICATIONS": {
           "TITLE": "Notificaciones"
         },
@@ -91,6 +125,32 @@
           "SELECT_LANGUAGE": "Seleccionar Idioma",
           "EN": "Inglés",
           "ES": "Español"
+        },
+        "GAMES": {
+          "GENERAL": "Conocimiento General",
+          "BOOKS": "Entretenimiento: Libros",
+          "FILM": "Entretenimiento: Películas",
+          "MUSIC": "Entretenimiento: Música",
+          "MUSICAL": "Entretenimiento: Musicales y Teatros",
+          "TELEVISION": "Entretenimiento: Televisión",
+          "VIDEOGAMES": "Entretenimiento: Videojuegos",
+          "BOARDGAMES": "Entretenimiento: Juegos de Mesa",
+          "NATURE": "Ciencia y Naturaleza",
+          "COMPUTERS": "Ciencia: Computadoras",
+          "MATHEMATICS": "Ciencia: Matemáticas",
+          "MYTHOLOGY": "Mitología",
+          "SPORTS": "Deportes",
+          "GEOGRAPHY": "Geografía",
+          "HISTORY": "Historia",
+          "POLITICS": "Política",
+          "ART": "Arte",
+          "CELEBRITIES": "Celebridades",
+          "ANIMALS": "Animales",
+          "VEHICLES": "Vehículos",
+          "COMICS": "Entretenimiento: Cómics",
+          "GADGETS": "Ciencia: Gadgets",
+          "JAPANESEANIME": "Entretenimiento: Anime y Manga Japonés",
+          "CARTOON": "Entretenimiento: Dibujos Animados"
         }
       }
     },
@@ -103,10 +163,10 @@
       }
     },
     "TABS": {
-      "HOME": "Para ti",
+      "HOME": "Para-Ti",
       "SEARCH": "Buscar",
       "NOTIFICATIONS": "Notificaciones",
-      "SETTINGS": "Configuración"
+      "SETTINGS": "Configuraciones"
     }
   }
 }

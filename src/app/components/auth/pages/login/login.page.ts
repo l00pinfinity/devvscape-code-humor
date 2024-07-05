@@ -7,6 +7,7 @@ import { login, setLoading } from 'src/app/core/store/actions/auth.actions';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ToastController } from '@ionic/angular';
+import { AdMobService } from 'src/app/core/services/ad-mob.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,7 @@ export class LoginPage implements OnInit {
   loading$: Observable<boolean>;
   error$: Observable<any>;
 
-  constructor(private store: Store, private router:Router, private authService: AuthService, public toastCtrl: ToastController) {
+  constructor(private store: Store, private router:Router, private authService: AuthService, private adMobService: AdMobService, public toastCtrl: ToastController) {
     this.loading$ = this.store.select(selectAuthLoading);
     this.error$ = this.store.select(selectAuthError);
   }
@@ -37,6 +38,14 @@ export class LoginPage implements OnInit {
         this.router.navigateByUrl('');
       }
     });
+  }
+
+  ionViewWillEnter() {
+    this.adMobService.hideBannerAd('home-banner-ad');
+  }
+
+  ionViewWillLeave() {
+    this.adMobService.showBannerAd('home-banner-ad', 'ca-app-pub-6424707922606590/3709250809');
   }
 
   loginUser(credentials: { email: string; password: string; }) {

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AdMobService } from 'src/app/core/services/ad-mob.service';
 
 @Component({
   selector: 'app-search',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SearchPage implements OnInit {
 
-  constructor() { }
+  constructor(private adMobService: AdMobService) { }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
+    this.adMobService.showBannerAd('notification-banner-ad','ca-app-pub-6424707922606590/1224657880');
   }
 
 }

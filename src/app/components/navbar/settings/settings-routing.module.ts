@@ -7,14 +7,6 @@ const routes: Routes = [
   {
     path: '',
     component: SettingsPage
-  },
-  {
-    path: 'notifications',
-    loadChildren: () => import('./components/notifications/notifications.module').then( m => m.NotificationsPageModule)
-  },
-  {
-    path: 'visuals',
-    loadChildren: () => import('./components/visuals/visuals.module').then( m => m.VisualsPageModule)
   }
 ];
 
@@ -22,4 +14,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SettingsPageRoutingModule {}
+export class SettingsPageRoutingModule { }
