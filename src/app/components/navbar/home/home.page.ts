@@ -85,22 +85,41 @@ export class HomePage implements OnInit, OnDestroy {
 
   refresh(ev: any) {
     this.store.dispatch(loadImages());
+    this.bestStories$ = this.store.pipe(select(selectBestStories));
     setTimeout(() => {
       ev.detail.complete();
     }, 3000);
   }
 
-  fetchImagePosts(): void {
+  async fetchImagePosts() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Loading...',
+    });
+    await loading.present();
+  
     const oneHour = 60 * 60 * 1000;
     const now = Date.now();
-    this.store.select(selectImageState).pipe(
+  
+    const imageState$ = this.store.select(selectImageState).pipe(
       map(state => {
         if (!state.loaded || (state.lastUpdated && (now - state.lastUpdated) > oneHour)) {
           this.store.dispatch(loadImages());
         }
+        return state.loaded;
       })
-    ).subscribe();
+    );
+  
+    imageState$.subscribe({
+      next: (loaded) => {
+        if (loaded) {
+          loading.dismiss();
+        }
+      },
+      error: () => loading.dismiss(),
+      complete: () => loading.dismiss()
+    });
   }
+  
 
   async openPostModal() {
     const hasPermission = await this.checkStoragePermission();

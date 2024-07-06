@@ -73,23 +73,12 @@ export class GamesPage implements OnInit {
   constructor(private navCtrl: NavController, private translocoService: TranslocoService, private adMobService: AdMobService, private alertCtrl: AlertController) { }
 
   ngOnInit(): void {
-    this.presentAlert()
     this.shuffleCategories();
     this.loadPreferences();
   }
 
   ionViewWillEnter() {
     this.adMobService.showBannerAd('game-banner-ad', 'ca-app-pub-6424707922606590/4972331204');
-  }
-
-  async presentAlert() {
-    const alert = await this.alertCtrl.create({
-      header: 'Notice',
-      message: 'The trivia does not save your progress. You can answer questions to get the correct answers and use this to learn about various topics.',
-      buttons: ['OK']
-    });
-
-    await alert.present();
   }
 
   private shuffleCategories() {

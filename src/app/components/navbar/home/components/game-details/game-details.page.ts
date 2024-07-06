@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AlertController, IonRouterOutlet, NavController, Platform, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { AdMobService } from 'src/app/core/services/ad-mob.service';
 
 @Component({
@@ -27,10 +27,7 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private http: HttpClient,
     private adMobService: AdMobService,
-    private routerOutlet: IonRouterOutlet,
-    private platform: Platform,
     private alertCtrl: AlertController,
-    private navCtrl: NavController,
     private loadingCtrl: LoadingController
   ) { }
 
@@ -55,7 +52,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Unsubscribe from route params
     if (this.routeSub) {
       this.routeSub.unsubscribe();
     }

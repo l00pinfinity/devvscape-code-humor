@@ -20,7 +20,6 @@ export class NewsPage implements OnInit {
   constructor(private store: Store, private adMobService: AdMobService, private alertCtrl: AlertController) { }
 
   ngOnInit() {
-    this.presentAlert();
     this.store.dispatch(loadTopStories());
     this.store.dispatch(loadBestStories());
     this.store.dispatch(loadNewStories());
@@ -28,15 +27,5 @@ export class NewsPage implements OnInit {
 
   ionViewWillEnter() {
     this.adMobService.showBannerAd('news-banner-ad','ca-app-pub-6424707922606590/7406922852');
-  }
-
-  async presentAlert() {
-    const alert = await this.alertCtrl.create({
-      header: 'Notice',
-      message: 'The content on this page is fetched from the Hacker News API and is not managed by us. Please report any inappropriate content directly to Hacker News.',
-      buttons: ['OK']
-    });
-
-    await alert.present();
   }
 }

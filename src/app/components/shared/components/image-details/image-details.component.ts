@@ -191,6 +191,7 @@ export class ImageDetailsComponent implements OnInit {
 
       try {
         if (user) {
+          console.log(user)
           await this.imageService.addComment(image.id, user.uid, user.displayName || 'devvscape_user', this.commentText.replace(/\n/g, '\\n'));
           console.log('Comment text:', this.commentText);
 
