@@ -1,38 +1,38 @@
 {
   "APP": {
     "TITLE": "Devvscape",
-    "WELCOME_MESSAGE": "Welcome to Devvscape!",
+    "WELCOME_MESSAGE": "Welcome to Devvscape! Enter the coder's paradise.",
     "ALERT_HEADER": "Code Escape Portal",
-    "ALERT_MESSAGE": "Ready to close the coding dimension and face reality? Choose your destiny.",
-    "CANCEL_BUTTON": "Cancel",
-    "EXIT_BUTTON": "Exit",
+    "ALERT_MESSAGE": "Ready to exit the code matrix and confront the real world? Pick your fate.",
+    "CANCEL_BUTTON": "Stay",
+    "EXIT_BUTTON": "Escape",
     "DELETE_BUTTON": "Delete"
   },
   "COMPONENTS": {
     "AUTH": {
       "AUTH-FORM": {
         "EMAIL": "Email",
-        "EMAIL-PLACEHOLDER": "Your email address",
-        "EMAIL-ERROR": "Please enter a valid email address",
+        "EMAIL-PLACEHOLDER": "Your email address (no spam, we promise!)",
+        "EMAIL-ERROR": "Please enter a valid email address (we won't judge... much)",
         "USERNAME": "Username",
-        "USERNAME-PLACEHOLDER": "Your username",
-        "USERNAME-ERROR": "Please enter a valid username, less than 25 characters",
+        "USERNAME-PLACEHOLDER": "Your cool username",
+        "USERNAME-ERROR": "Please enter a valid username, less than 25 characters (be concise, be cool)",
         "PASSWORD": "Password",
-        "PASSWORD-PLACEHOLDER": "Your password",
-        "PASSWORD-ERROR": "Your password needs more than 6 characters"
+        "PASSWORD-PLACEHOLDER": "Your secret code",
+        "PASSWORD-ERROR": "Your password needs more than 6 characters (longer than '123456')"
       },
       "LOGIN": {
         "TITLE": "Login",
-        "SIGNUP": "Create a new account",
-        "FORGOT-PASSWORD": "I forgot my password",
-        "GITHUB": "Continue with GitHub",
+        "SIGNUP": "Create a new awesome account",
+        "FORGOT-PASSWORD": "I forgot my magic word",
+        "GITHUB": "Continue with GitHub (because real devs use GitHub)",
         "OR": "or",
         "ACTION-BUTTON": "Login"
       },
       "SIGNUP": {
         "TITLE": "Sign Up",
-        "SIGNIN": "I already have an account",
-        "GITHUB": "Continue with GitHub",
+        "SIGNIN": "I already have an epic account",
+        "GITHUB": "Continue with GitHub (where the cool kids hang out)",
         "OR": "or",
         "ACTION-BUTTON": "Create Account"
       },
@@ -43,7 +43,7 @@
       "PROFILE": {
         "TITLE": "Account",
         "PROFILE": "Profile",
-        "JOINED": "Joined",
+        "JOINED": "Joined the party on",
         "ACTIVITY": "Activity",
         "TABS": {
           "POSTS": "Posts",
@@ -63,11 +63,11 @@
             "NEWSTORIES": "New Stories",
             "NEWS": "News",
             "BY": "by",
-            "READMORE": "Read more"
+            "READMORE": "Dive in"
           },
           "FOR-YOU": {
             "TITLE": "For You",
-            "LOADING": "Loading..."
+            "LOADING": "Loading... (grab a coffee)"
           },
           "TRIVIA": {
             "TITLE": "Trivia",
@@ -76,15 +76,16 @@
             "NOOFQUESTIONS": "Number of Questions: ",
             "SELECTDIFFICULTY": "Select Difficulty: ",
             "ANYDIFFICULTY": "Any Difficulty",
-            "EASY": "Easy",
-            "MEDIUM": "Medium",
-            "HARD": "Hard"
+            "EASY": "Easy Peasy",
+            "MEDIUM": "Not Too Hard",
+            "HARD": "Bring It On",
+            "FOOTER": "Note: This trivia doesn’t save your progress. Feel free to answer questions and become a trivia master."
           }
         },
         "MODAL": {
           "CREATE-POST": "Create Post",
-          "SAY-SOMETHING": "Say something about the image",
-          "SELECT-IMAGE": "Click to select an image",
+          "SAY-SOMETHING": "Say something witty about the image",
+          "SELECT-IMAGE": "Click to choose an awesome image",
           "POST": "Post"
         }
       },
@@ -93,7 +94,7 @@
       },
       "NOTIFICATIONS": {
         "TITLE": "Notifications",
-        "NO-NOTIFICATIONS": "No notifications at the moment."
+        "NO-NOTIFICATIONS": "No notifications. You're all caught up!"
       },
       "SETTINGS": {
         "TITLE": "Settings",
@@ -101,6 +102,9 @@
         "APPERANCE": "Appearance",
         "SUPPORT&INFO": "Support & Info",
         "REVIEW&SHARE": "Review and Share",
+        "DEVELOPERS":"Developers",
+        "BUGS":"Hack the Code",
+        "ISSUES":"Feature request",
         "TERMS&CONDITIONS": "Terms & Conditions",
         "PRIVACY": "Privacy Policy",
         "VERSION": "App Version",
@@ -108,9 +112,9 @@
         "DELETE": "Delete Account",
         "TAGLINE": "The Future of SilkwebHQ and the SilkCommunity",
         "UPDATEHEADER": "Update Available",
-        "UPDATEMESSAGE": "A new version of the app is available. Please update to continue using the app.",
-        "DELETEHEADER": "Delete account",
-        "DELETEMESSAGE": "bout to close account? Enter your password to confirm account deletion:",
+        "UPDATEMESSAGE": "A shiny new version is available. Please update to continue your adventure.",
+        "DELETEHEADER": "Delete Account",
+        "DELETEMESSAGE": "About to delete your account? Enter your password to confirm this bold move:",
         "LATER": "Later",
         "UPDATE": "Update",
         "QUIZ": "Quiz",
@@ -122,7 +126,7 @@
         },
         "LANGUAGE": {
           "TITLE": "Language",
-          "SELECT_LANGUAGE": "Select Language",
+          "SELECT_LANGUAGE": "Select Your Language",
           "EN": "English",
           "ES": "Spanish"
         },
@@ -163,7 +167,7 @@
       }
     },
     "TABS": {
-      "HOME": "For-You",
+      "HOME": "For You",
       "SEARCH": "Search",
       "NOTIFICATIONS": "Notifications",
       "SETTINGS": "Settings"

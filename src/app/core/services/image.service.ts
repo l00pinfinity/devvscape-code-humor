@@ -15,7 +15,7 @@ export class ImageService {
   constructor(private auth: Auth, private firestore: Firestore, private storage: Storage, private router: Router) { }
 
   getImagePosts(): Observable<Image[]> {
-    const q = query(collection(this.firestore, 'posts'), orderBy('createdAt', 'desc'), limit(40));
+    const q = query(collection(this.firestore, 'posts',), orderBy('createdAt', 'desc'), limit(40));
 
     return from(getDocs(q)).pipe(
       map((querySnapshot) => {

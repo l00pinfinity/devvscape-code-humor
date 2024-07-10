@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { withCache } from '@ngneat/cashew';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class HackerNewsService {
   constructor(private http: HttpClient) { }
 
   getTopStories(): Observable<any[]> {
-    return this.http.get<number[]>(`${this.baseUrl}/topstories.json`).pipe(
+    return this.http.get<number[]>(`${this.baseUrl}/topstories.json`,{context:withCache({mode:'stateManagement'})}).pipe(
       map(ids => ids.slice(0, 10)),
       switchMap(ids => forkJoin(ids.map(id => this.getStory(id)))),
       catchError(error => {
@@ -23,7 +24,7 @@ export class HackerNewsService {
   }
 
   getBestStories(): Observable<any[]> {
-    return this.http.get<number[]>(`${this.baseUrl}/beststories.json`).pipe(
+    return this.http.get<number[]>(`${this.baseUrl}/beststories.json`,{context:withCache({mode:'stateManagement'})}).pipe(
       map(ids => ids.slice(0, 10)),
       switchMap(ids => forkJoin(ids.map(id => this.getStory(id)))),
       catchError(error => {
@@ -34,7 +35,7 @@ export class HackerNewsService {
   }
 
   getNewStories(): Observable<any[]> {
-    return this.http.get<number[]>(`${this.baseUrl}/newstories.json`).pipe(
+    return this.http.get<number[]>(`${this.baseUrl}/newstories.json`,{context:withCache({mode:'stateManagement'})}).pipe(
       map(ids => ids.slice(0, 10)),
       switchMap(ids => forkJoin(ids.map(id => this.getStory(id)))),
       catchError(error => {
