@@ -8,7 +8,9 @@
       </ion-toolbar>
     </ion-col>
     <ion-col size="5">
-      <h2 class="section-header">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.TITLE' | transloco }}</h2>
+      <h2 class="section-header">
+        {{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.TITLE' | transloco }}
+      </h2>
     </ion-col>
     <ion-col size="5">
       <button id="game-settings-modal" class="top-right-button">
@@ -43,9 +45,15 @@
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.TRIVIASETTINGS' | transloco }}</ion-title>
+          <ion-title
+            >{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.TRIVIASETTINGS' | transloco
+            }}</ion-title
+          >
           <ion-buttons slot="end">
-            <ion-button (click)="confirm()" [strong]="true">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.CONFIRM' | transloco }}</ion-button>
+            <ion-button (click)="confirm()" [strong]="true"
+              >{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.CONFIRM' | transloco
+              }}</ion-button
+            >
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
@@ -53,10 +61,20 @@
         <ion-list>
           <ion-item-group>
             <ion-item-divider>
-              <ion-label> {{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.NOOFQUESTIONS' | transloco }} </ion-label>
+              <ion-label>
+                {{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.NOOFQUESTIONS' |
+                transloco }}
+              </ion-label>
             </ion-item-divider>
             <ion-item>
-              <ion-range aria-label="Custom range" [(ngModel)]="defaultSettings.amount" min="1" max="50" step="1" pin="true">
+              <ion-range
+                aria-label="Custom range"
+                [(ngModel)]="defaultSettings.amount"
+                min="1"
+                max="50"
+                step="1"
+                pin="true"
+              >
                 <ion-label slot="start">1</ion-label>
                 <ion-label slot="end">50</ion-label>
               </ion-range>
@@ -65,15 +83,33 @@
 
           <ion-item-group>
             <ion-item-divider>
-              <ion-label> {{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.SELECTDIFFICULTY' | transloco }} </ion-label>
+              <ion-label>
+                {{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.SELECTDIFFICULTY' |
+                transloco }}
+              </ion-label>
             </ion-item-divider>
 
             <ion-item>
-              <ion-radio-group [(ngModel)]="defaultSettings.difficulty" [allowEmptySelection]="true">
-                <ion-radio value="any">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.ANYDIFFICULTY' | transloco }}</ion-radio><br />
-                <ion-radio value="easy">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.EASY' | transloco }}</ion-radio><br />
-                <ion-radio value="medium">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.MEDIUM' | transloco }}</ion-radio><br />
-                <ion-radio value="hard">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.HARD' | transloco }}</ion-radio><br />
+              <ion-radio-group
+                [(ngModel)]="defaultSettings.difficulty"
+                [allowEmptySelection]="true"
+              >
+                <ion-radio value="any"
+                  >{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.ANYDIFFICULTY' |
+                  transloco }}</ion-radio
+                ><br />
+                <ion-radio value="easy"
+                  >{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.EASY' | transloco
+                  }}</ion-radio
+                ><br />
+                <ion-radio value="medium"
+                  >{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.MEDIUM' | transloco
+                  }}</ion-radio
+                ><br />
+                <ion-radio value="hard"
+                  >{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.HARD' | transloco
+                  }}</ion-radio
+                ><br />
               </ion-radio-group>
             </ion-item>
           </ion-item-group>
@@ -82,3 +118,9 @@
     </ng-template>
   </ion-modal>
 </ion-content>
+
+<ion-footer class="ion-no-border">
+  <ion-toolbar>
+    <ion-text  class="small-text">{{ 'COMPONENTS.NAVBAR.HOME.TABS.TRIVIA.FOOTER' | transloco}}</ion-text>
+  </ion-toolbar>
+</ion-footer>

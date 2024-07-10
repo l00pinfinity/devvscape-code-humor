@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.silkwebhq.devvscapecode',
   appName: 'Devvscape',
-  webDir: 'www',
+  webDir: 'www/browser',
   bundledWebRuntime: false,
   plugins: {
     AdMob: {

@@ -20,14 +20,6 @@
     </ion-col>
   </ion-row>
 
-  <ion-progress-bar
-    type="indeterminate"
-  ></ion-progress-bar>
-  <!-- <ion-progress-bar
-    *ngIf="images$?.length < 0"
-    type="indeterminate"
-  ></ion-progress-bar> -->
-
   <ion-item-group class="shadow-none rounded">
     <ion-item-divider>
       <ion-label>{{ 'COMPONENTS.AUTH.PROFILE.PROFILE' | transloco }}</ion-label>
@@ -127,7 +119,7 @@
         <ion-item-sliding *ngFor="let comment of comments">
           <ion-item (click)="commentAction(comment)">
             <ion-label>
-              <h3><b>{{ fullNames || 'devvscape_user' }}</b></h3>
+              <h3><b>{{ user?.displayName || "devvscape_user" }}</b></h3>
               <p class="comment-body">{{ comment.text }}</p>
               <p class="timestamp">{{ comment.createdAt | dateAgo }}</p>
             </ion-label>

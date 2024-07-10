@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -22,12 +22,13 @@ import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions
 import { OnlineStatusModule } from 'ngx-online-status';
 import { ImageEffects } from './core/store/effects/image.effects';
 import { imageReducer } from './core/store/reducers/image.reducer';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { TranslocoRootModule } from './transloco-root.module';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { HackerNewsEffects } from './core/store/effects/hacker-news.effects';
 import { hackerNewsReducer } from './core/store/reducers/hacker-news.reducer';
-
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { provideHttpCache, withHttpCacheInterceptor } from '@ngneat/cashew';
 
 export function initializeFirebaseApp(): FirebaseApp {
   return initializeApp(environment.firebaseConfig);
@@ -35,26 +36,32 @@ export function initializeFirebaseApp(): FirebaseApp {
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, OnlineStatusModule, HttpClientModule, TranslocoRootModule],
-  providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, 
+  bootstrap: [AppComponent], imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, OnlineStatusModule, TranslocoRootModule, ServiceWorkerModule.register('ngsw-worker.js', {
+    enabled: !isDevMode(),
+    // Register the ServiceWorker as soon as the application is stable
+    // or after 30 seconds (whichever comes first).
+    registrationStrategy: 'registerWhenStable:30000'
+  })], providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideFirebaseApp(() => initializeFirebaseApp()),
-    provideAuth(() => getAuth()), 
-    provideAnalytics(() => getAnalytics()), 
-    provideFirestore(() => getFirestore()), 
+    provideAuth(() => getAuth()),
+    provideAnalytics(() => getAnalytics()),
+    provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
-    provideMessaging(() => getMessaging()), 
+    provideMessaging(() => getMessaging()),
     providePerformance(() => getPerformance()),
-    provideStore({auth:authReducer, image:imageReducer, hackerNews:hackerNewsReducer}), 
+    provideStore({ auth: authReducer, image: imageReducer, hackerNews: hackerNewsReducer }),
     provideEffects(AuthEffects, ImageEffects, HackerNewsEffects),
-    provideState({ name: 'auth', reducer: authReducer}),
-    provideState({ name: 'image', reducer: imageReducer}),
-    provideState({ name: 'hackerNews', reducer: hackerNewsReducer}),
-    ScreenTrackingService, 
-    UserTrackingService, 
+    provideState({ name: 'auth', reducer: authReducer }),
+    provideState({ name: 'image', reducer: imageReducer }),
+    provideState({ name: 'hackerNews', reducer: hackerNewsReducer }),
+    ScreenTrackingService,
+    UserTrackingService,
     AndroidPermissions,
-    InAppBrowser
-  ],
-  bootstrap: [AppComponent],
+    InAppBrowser,
+    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptors([withHttpCacheInterceptor()])), 
+    provideHttpCache()
+  ]
 })
-export class AppModule {}
+export class AppModule { }

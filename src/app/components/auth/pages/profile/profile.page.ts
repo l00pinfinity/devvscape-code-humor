@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ProfileService } from 'src/app/core/services/profile.service';
@@ -29,7 +29,6 @@ export class ProfilePage implements OnDestroy, OnInit {
   imageLoaded: boolean = false;
   isTextTruncated: boolean = true;
   commentsSubscription!: Subscription;
-  private userProfileSubscription!: Subscription;
 
   constructor(
     private auth: Auth,
@@ -39,7 +38,8 @@ export class ProfilePage implements OnDestroy, OnInit {
     private router: Router,
     private profileService: ProfileService,
     private alertCtrl: AlertController,
-    public toastCtrl: ToastController
+    public toastCtrl: ToastController,
+    private loadingCtrl: LoadingController
   ) { }
 
   ngOnInit(): void {
@@ -47,21 +47,16 @@ export class ProfilePage implements OnDestroy, OnInit {
     this.authService.getUser().subscribe(user => {
       this.user = user;
     });
-    this.userProfileSubscription = this.profileService
-      .getUserProfile()
-      .subscribe((userProfile: UserProfile) => {
+    this.fetchImages();
+    this.fetchUserPostComments();
+    this.profileService.getUserProfile().subscribe((userProfile: UserProfile) => {
         this.fullNames = userProfile.fullName;
-        this.fetchImages();
-        this.fetchUserPostComments();
       });
   }
 
   ngOnDestroy(): void {
     if (this.commentsSubscription) {
       this.commentsSubscription.unsubscribe();
-    }
-    if (this.userProfileSubscription) {
-      this.userProfileSubscription?.unsubscribe();
     }
   }
 
@@ -182,12 +177,27 @@ export class ProfilePage implements OnDestroy, OnInit {
     this.router.navigate(['image', id]);
   }
 
-  logOut() {
+  async logOut() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Logging out...',
+      duration: 3000, // Adjust the duration as needed
+    });
+    await loading.present();
+
     this.authService.logout().subscribe({
-      next: () => {
+      next: async () => {
+        await loading.dismiss();
         this.router.navigate(['/login']);
       },
-      error: (error) => {
+      error: async (error) => {
+        await loading.dismiss();
+        const toast = await this.toastCtrl.create({
+          message: 'Error logging out',
+          duration: 3000,
+          position: 'bottom',
+          color: 'danger',
+        });
+        await toast.present();
         console.error('Logout error', error);
       }
     });
@@ -197,23 +207,33 @@ export class ProfilePage implements OnDestroy, OnInit {
 
   async fetchImages() {
     if (this.selectedSegment === 'posts') {
-      this.images$ = await this.imageService.getUserPosts();
+      const loading = await this.loadingCtrl.create({
+      });
+      await loading.present();
+      this.images$ = this.imageService.getUserPosts();
+      this.images$.subscribe({
+        next: () => loading.dismiss(),
+        error: () => loading.dismiss(),
+        complete: () => loading.dismiss(),
+      });
     } else if (this.selectedSegment === 'comments') {
       this.fetchUserPostComments();
     }
   }
 
   async fetchUserPostComments() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
     this.userPostsComments$ = this.imageService.getUserPostsComments(this.currentUser?.uid);
-
-    this.commentsSubscription = this.userPostsComments$.subscribe(
-      (comments) => {
+    this.commentsSubscription = this.userPostsComments$.subscribe({
+      next: (comments) => {
         this.comments = comments;
+        loading.dismiss();
       },
-      (error) => {
-        console.error('Error fetching comments:', error);
-      }
-    );
+      error: () => loading.dismiss(),
+      complete: () => loading.dismiss(),
+    });
   }
 
   async commentAction(comment: Comment) {
