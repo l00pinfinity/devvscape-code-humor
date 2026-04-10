@@ -1,10 +1,10 @@
-# Contributing to Devvscape 🚀
+# Contributing to Devvscape 
 
 Thank you for your interest in contributing to Devvscape! This document provides guidelines and information for contributors.
 
-## 🤝 How Can I Contribute?
+##  How Can I Contribute?
 
-### 🐛 Reporting Bugs
+### Reporting Bugs
 
 Before creating bug reports, please check the existing issues to avoid duplicates. When creating a bug report, include as many details as possible:
 
@@ -36,7 +36,7 @@ If applicable, add screenshots to help explain your problem.
 Add any other context about the problem here.
 ```
 
-### 💡 Suggesting Enhancements
+### Suggesting Enhancements
 
 We welcome feature requests! Please use the enhancement template:
 
@@ -55,7 +55,7 @@ A clear and concise description of any alternative solutions or features you've 
 Add any other context or screenshots about the feature request here.
 ```
 
-### 🔧 Pull Requests
+### Pull Requests
 
 1. **Fork** the repository
 2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
@@ -65,7 +65,7 @@ Add any other context or screenshots about the feature request here.
 6. **Push** to your branch
 7. **Open** a Pull Request
 
-## 📋 Development Setup
+## Development Setup
 
 ### Prerequisites
 
@@ -96,7 +96,7 @@ Add any other context or screenshots about the feature request here.
    npm start
    ```
 
-## 🧪 Testing
+## Testing
 
 ### Running Tests
 
@@ -118,7 +118,7 @@ npm run lint
 
 We aim for at least 80% test coverage. Please ensure your contributions include appropriate tests.
 
-## 📝 Code Style
+## Code Style
 
 ### TypeScript/Angular Guidelines
 
@@ -140,7 +140,7 @@ We aim for at least 80% test coverage. Please ensure your contributions include 
 - Use **PascalCase** for component names
 - Use **camelCase** for variables and functions
 
-## 🔄 Git Workflow
+## Git Workflow
 
 ### Branch Naming
 
@@ -170,7 +170,7 @@ type(scope): description
 - `test` - Adding tests
 - `chore` - Maintenance tasks
 
-## 🏗️ Architecture Guidelines
+## Architecture Guidelines
 
 ### State Management
 
@@ -186,7 +186,7 @@ type(scope): description
 - Handle **errors** appropriately
 - Return **observables** for async operations
 
-## 🔒 Security
+## Security
 
 ### Security Guidelines
 
@@ -196,7 +196,7 @@ type(scope): description
 - Follow **OWASP guidelines**
 - Report security issues privately
 
-## 📚 Documentation
+## Documentation
 
 ### Code Documentation
 
@@ -205,7 +205,7 @@ type(scope): description
 - Include **usage examples**
 - Keep documentation **up-to-date**
 
-## 🚀 Release Process
+## Release Process
 
 ### Version Management
 
@@ -215,7 +215,7 @@ We use [Semantic Versioning](https://semver.org/):
 - **MINOR** - New features (backward compatible)
 - **PATCH** - Bug fixes (backward compatible)
 
-## 🤝 Community Guidelines
+## Community Guidelines
 
 ### Code of Conduct
 
@@ -228,14 +228,14 @@ We are committed to providing a welcoming and inspiring community for all. Pleas
 - Provide **context** for suggestions
 - Be **patient** with newcomers
 
-## 📞 Contact
+## Contact
 
 - **Discord**: [Join our community](https://discord.gg/vpS3Uu88)
 - **Email**: contributors@devvscape.com
-- **Twitter**: [@l00pinfinity](https://twitter.com/l00pinfinity)
+- **Twitter**: [@b4r0id](https://x.com/b4r0id)
 
 ---
 
-**Thank you for contributing to Devvscape! 🚀**
+**Thank you for contributing to Devvscape!**
 
-*Your contributions help make this project better for everyone.* 
+*Your contributions help make this project better for everyone.*

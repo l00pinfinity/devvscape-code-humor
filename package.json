@@ -1,6 +1,6 @@
 {
   "name": "devvscape-code-humor",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "author": "SilkwebHQ Tech",
   "homepage": "https://devvscape.com/",
   "scripts": {
@@ -58,7 +58,7 @@
     "@ngrx/store": "^18.0.1",
     "@ngrx/store-devtools": "^18.0.1",
     "@stencil/core": "^4.34.0",
-    "firebase": "^9.23.0",
+    "firebase": "^10.14.1",
     "ionicons": "^7.4.0",
     "ngx-online-status": "^2.0.0",
     "ngx-quicklink": "^0.4.6",
@@ -116,7 +116,7 @@
   "main": "karma.conf.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/l00pinfinity/devvscape-code-humor.git"
+    "url": "git+https://github.com/silkwebhq/devvscape-code-humor.git"
   },
   "keywords": [
     "DeveloperEscape",
@@ -124,6 +124,6 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/l00pinfinity/devvscape-code-humor/issues"
+    "url": "https://github.com/silkwebhq/devvscape-code-humor/issues"
   }
 }

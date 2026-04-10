@@ -1,4 +1,4 @@
-# Developers Escape (Devvscape) 🚀
+# Developers Escape (Devvscape) 
 
 [![Angular](https://img.shields.io/badge/Angular-18.0.6-red.svg)](https://angular.io/)
 [![Ionic](https://img.shields.io/badge/Ionic-8.6.1-blue.svg)](https://ionicframework.com/)
@@ -9,25 +9,25 @@
 
 A mobile-first application providing code-related humor and entertainment for developers. Built with modern web technologies and following best practices in mobile development.
 
-## 📥 Download
+## Download
 
 [![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.silkwebhq.devvscapecode)
 
-## ✨ Features
+## Features
 
-- 🎭 **Code Humor**: Curated collection of programming jokes and memes
-- 📱 **Mobile-First**: Responsive design optimized for mobile devices
-- 🔔 **Push Notifications**: Stay updated with new content
-- 🌐 **In-App Browser**: Seamless web browsing experience
-- 💰 **AdMob Integration**: Monetization through Google AdMob
-- 🔄 **Offline Support**: Service workers for offline functionality
-- 🌍 **Multi-Language**: Internationalization support
-- 📲 **PWA Ready**: Progressive Web App capabilities
-- 🔐 **Authentication**: Secure user authentication with Firebase
-- 📊 **Analytics**: Built-in analytics and tracking
-- 🎨 **Modern UI**: Clean, intuitive user interface
+- **Code Humor**: Curated collection of programming jokes and memes
+- **Mobile-First**: Responsive design optimized for mobile devices
+-  **Push Notifications**: Stay updated with new content
+- **In-App Browser**: Seamless web browsing experience
+- **AdMob Integration**: Monetization through Google AdMob
+- **Offline Support**: Service workers for offline functionality
+- **Multi-Language**: Internationalization support
+- **PWA Ready**: Progressive Web App capabilities
+- **Authentication**: Secure user authentication with Firebase
+- **Analytics**: Built-in analytics and tracking
+- **Modern UI**: Clean, intuitive user interface
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Frontend
 - **Angular 18** - Progressive web application framework
@@ -55,13 +55,13 @@ A mobile-first application providing code-related humor and entertainment for de
 - **Jasmine/Karma** - Testing framework
 - **Transloco** - Internationalization
 
-## 📱 Platform Support
+## Platform Support
 
-- ✅ **Web Application** - Modern browsers
-- ✅ **Android Mobile App** - Google Play Store
-- ✅ **Progressive Web App** - Installable web app
+- **Web Application** - Modern browsers
+- **Android Mobile App** - Google Play Store
+- **Progressive Web App** - Installable web app
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -85,17 +85,19 @@ A mobile-first application providing code-related humor and entertainment for de
 
 3. **Environment Setup**
    
-   Create `src/environments/environment.ts`:
+   Create `src/environments/environment.ts` & `src/environment/environment.development.ts`:
    ```typescript
    export const environment = {
      production: false,
-     firebaseConfig: {
-       apiKey: 'your-api-key',
-       authDomain: 'your-auth-domain',
-       projectId: 'your-project-id',
-       storageBucket: 'your-storage-bucket',
-       messagingSenderId: 'your-messaging-sender-id',
-       appId: 'your-app-id',
+      firebaseConfig: {
+        apiKey: '',
+        authDomain: '',
+        databaseURL: '',
+        projectId: '',
+        storageBucket: '',
+        messagingSenderId: '',
+        appId: '',
+        measurementId: '',
      },
    };
    ```
@@ -125,7 +127,7 @@ npx cap sync
 npx cap open android
 ```
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 devvscape-code-humor/
@@ -149,7 +151,7 @@ devvscape-code-humor/
 └── docs/                         # Documentation
 ```
 
-## 🧪 Testing
+##  Testing
 
 ```bash
 # Run unit tests
@@ -182,19 +184,19 @@ ionic capacitor build android
 ionic capacitor build android --prod
 ```
 
-## 🤝 Contributing
+## Contributing
 
 We love your input! We want to make contributing to Devvscape as easy and transparent as possible, whether it's:
 
-- 🐛 Reporting a bug
-- 💡 Discussing the current state of the code
-- 🔧 Submitting a fix
-- ✨ Proposing new features
-- 📖 Becoming a maintainer
+-  Reporting a bug
+-  Discussing the current state of the code
+-  Submitting a fix
+-  Proposing new features
+-  Becoming a maintainer
 
 See our [Contributing Guide](CONTRIBUTING.md) for details.
 
-## 📋 Development Workflow
+## Development Workflow
 
 1. **Fork** the repository
 2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
@@ -202,34 +204,34 @@ See our [Contributing Guide](CONTRIBUTING.md) for details.
 4. **Push** to the branch (`git push origin feature/amazing-feature`)
 5. **Open** a Pull Request
 
-## 🐛 Bug Reports
+## Bug Reports
 
 We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/{your-username}/devvscape-code-humor/issues/new).
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **Ionic Team** - For the amazing mobile framework
 - **Angular Team** - For the robust web framework
 - **Firebase Team** - For the powerful backend services
 - **Our Contributors** - For making this project better
 
-## 📞 Support
+## Support
 
-- 📧 **Email**: support@devvscape.com
-- 🐦 **Twitter**: [@l00pinfinity](https://twitter.com/l00pinfinity)
-- 💬 **Discord**: [Join our community](https://discord.gg/vpS3Uu88)
-- 📖 **Documentation**: [docs.devvscape.com](https://docs.devvscape.com)
+- **Email**: support@devvscape.com
+- **Twitter**: [@b4r0id](https://x.com/b4r0id)
+- **Discord**: [Join our community](https://discord.gg/vpS3Uu88)
+- **Documentation**: [docs.devvscape.com](https://docs.devvscape.com)
 
-## 📊 Project Status
+## Project Status
 
-![GitHub last commit](https://img.shields.io/github/last-commit/bdr0id/devvscape-code-humor)
-![GitHub issues](https://img.shields.io/github/issues/bdr0id/devvscape-code-humor)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/bdr0id/devvscape-code-humor)
-![GitHub stars](https://img.shields.io/github/stars/bdr0id/devvscape-code-humor)
+![GitHub last commit](https://img.shields.io/github/last-commit/silkwebhq/devvscape-code-humor)
+![GitHub issues](https://img.shields.io/github/issues/silkwebhq/devvscape-code-humor)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/silkwebhq/devvscape-code-humor)
+![GitHub stars](https://img.shields.io/github/stars/silkwebhq/devvscape-code-humor)
 
 ---
 
