@@ -1,0 +1,51 @@
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <div class="top-bar">
+    <div class="logo">Silkweb<span>.</span>HQ</div>
+    <button class="skip-btn" (click)="skipToEnd()">Skip →</button>
+  </div>
+
+  <div class="slides-outer">
+    <swiper-container #swiperRef init="false">
+      <swiper-slide *ngFor="let slide of slides">
+        <div class="slide-card" [ngClass]="slide.cardClass">
+          <div class="blob blob-a"></div>
+          <div class="blob blob-b"></div>
+          <div class="slide-illustration">{{ slide.illustration }}</div>
+          <div class="slide-icon">{{ slide.icon }}</div>
+          <span class="slide-tag">{{ slide.tag }}</span>
+          <h2 class="slide-title">
+            {{ slide.titleStart }}<em>{{ slide.titleEm }}</em>{{ slide.titleEnd
+            }}
+          </h2>
+          <p class="slide-desc">{{ slide.description }}</p>
+        </div>
+      </swiper-slide>
+    </swiper-container>
+  </div>
+
+  <div class="custom-pagination">
+    <div
+      *ngFor="let slide of slides; let i = index"
+      class="dot"
+      [class.active]="i === activeIndex"
+      (click)="goToSlide(i)"
+    ></div>
+  </div>
+
+  <div class="cta-area">
+    <ion-button expand="block" class="btn-signup" (click)="goToSignup()">
+      Create an Account
+    </ion-button>
+
+    <div class="divider-row">or</div>
+
+    <ion-button
+      expand="block"
+      fill="outline"
+      class="btn-login"
+      (click)="goToLogin()"
+    >
+      Log In
+    </ion-button>
+  </div>
+</ion-content>

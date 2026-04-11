@@ -4,21 +4,23 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { SignupPageRoutingModule } from './signup-routing.module';
+import { WelcomePageRoutingModule } from './welcome-routing.module';
 
-import { SignupPage } from './signup.page';
+import { WelcomePage } from './welcome.page';
 import { TranslocoModule } from '@jsverse/transloco';
 import { AuthModule } from '../../auth.module';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @NgModule({
-  declarations: [SignupPage],
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SignupPageRoutingModule,
+    WelcomePageRoutingModule,
     TranslocoModule,
     AuthModule,
   ],
+  declarations: [WelcomePage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class SignupPageModule {}
+export class WelcomePageModule {}

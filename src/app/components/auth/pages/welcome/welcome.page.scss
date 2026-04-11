@@ -1,0 +1,370 @@
+// ── Layout tokens (no colours — all come from variables.css) ─────────────────
+:host {
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  --topbar-h: 64px;
+  --dots-h: 44px;
+}
+
+// ── Ion-content: flex column, full viewport height ────────────────────────────
+ion-content {
+  --background: var(--ion-color-secondary); // #17252a — deep dark teal
+  --color: var(--ion-color-light); // #f6f8fc — near-white text
+
+  &::part(scroll) {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+// ── TOP BAR ───────────────────────────────────────────────────────────────────
+.top-bar {
+  flex-shrink: 0;
+  height: var(--topbar-h);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  animation: fadeUp 0.5s ease both;
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--ion-color-light);
+    letter-spacing: -0.5px;
+
+    span {
+      color: var(--ion-color-primary);
+    } // #3aafa9 teal accent
+  }
+
+  .skip-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    color: var(--ion-color-medium); // #5f5f5f muted
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--ion-color-light);
+    }
+  }
+}
+
+// ── SLIDES OUTER — flex-grows to fill remaining space ─────────────────────────
+.slides-outer {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 0 20px;
+  animation: fadeUp 0.6s ease both;
+}
+
+// ── SWIPER ELEMENT ────────────────────────────────────────────────────────────
+swiper-container {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+swiper-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  height: 100%;
+}
+
+// ── SLIDE CARD ────────────────────────────────────────────────────────────────
+.slide-card {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px 24px;
+
+  // Each slide uses a different tonal gradient built from the theme palette
+  &.s1 {
+    background: linear-gradient(
+      150deg,
+      var(--ion-color-secondary) 0%,
+      var(--ion-color-secondary-shade) 60%,
+      var(--ion-color-tertiary-shade) 100%
+    );
+  }
+  &.s2 {
+    background: linear-gradient(
+      150deg,
+      var(--ion-color-secondary-shade) 0%,
+      var(--ion-color-tertiary-shade) 50%,
+      var(--ion-color-tertiary) 100%
+    );
+  }
+  &.s3 {
+    background: linear-gradient(
+      150deg,
+      var(--ion-color-tertiary-shade) 0%,
+      var(--ion-color-tertiary) 50%,
+      var(--ion-color-primary-shade) 100%
+    );
+  }
+  &.s4 {
+    background: linear-gradient(
+      150deg,
+      var(--ion-color-secondary) 0%,
+      var(--ion-color-tertiary) 50%,
+      var(--ion-color-primary) 100%
+    );
+  }
+}
+
+// ── BLOBS (atmospheric glow, tinted from theme) ───────────────────────────────
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.s1 {
+  .blob-a {
+    width: 240px;
+    height: 240px;
+    background: var(--ion-color-tertiary-shade);
+    top: -50px;
+    right: -50px;
+  }
+  .blob-b {
+    width: 160px;
+    height: 160px;
+    background: var(--ion-color-secondary-tint);
+    bottom: 50px;
+    left: -40px;
+  }
+}
+.s2 {
+  .blob-a {
+    width: 240px;
+    height: 240px;
+    background: var(--ion-color-tertiary);
+    top: -50px;
+    right: -40px;
+  }
+  .blob-b {
+    width: 150px;
+    height: 150px;
+    background: var(--ion-color-primary-shade);
+    bottom: 60px;
+    left: -40px;
+  }
+}
+.s3 {
+  .blob-a {
+    width: 220px;
+    height: 220px;
+    background: var(--ion-color-primary);
+    top: -40px;
+    right: -50px;
+  }
+  .blob-b {
+    width: 160px;
+    height: 160px;
+    background: var(--ion-color-tertiary-tint);
+    bottom: 50px;
+    left: -40px;
+  }
+}
+.s4 {
+  .blob-a {
+    width: 230px;
+    height: 230px;
+    background: var(--ion-color-primary-tint);
+    top: -50px;
+    right: -40px;
+  }
+  .blob-b {
+    width: 150px;
+    height: 150px;
+    background: var(--ion-color-tertiary);
+    bottom: 60px;
+    left: -30px;
+  }
+}
+
+// ── GHOST NUMBER ──────────────────────────────────────────────────────────────
+.slide-illustration {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 6rem;
+  font-weight: 800;
+  opacity: 0.07;
+  line-height: 1;
+  color: var(--ion-color-light);
+  user-select: none;
+}
+
+// ── FLOATING ICON ─────────────────────────────────────────────────────────────
+.slide-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -75%);
+  font-size: 4.5rem;
+  filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.35));
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(-50%, -75%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -75%) translateY(-10px);
+  }
+}
+
+// ── SLIDE TAG ─────────────────────────────────────────────────────────────────
+.slide-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 10px;
+  backdrop-filter: blur(8px);
+  // Consistent pill style using primary colour across all slides
+  background: rgba(var(--ion-color-primary-rgb), 0.15);
+  color: var(--ion-color-primary-tint);
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.3);
+}
+
+// ── SLIDE TITLE ───────────────────────────────────────────────────────────────
+.slide-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.18;
+  color: var(--ion-color-light);
+  margin-bottom: 10px;
+
+  em {
+    font-style: normal;
+    color: var(--ion-color-primary); // teal accent for emphasis
+  }
+}
+
+// ── SLIDE DESCRIPTION ─────────────────────────────────────────────────────────
+.slide-desc {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--ion-color-light-shade); // slightly muted light
+  max-width: 310px;
+}
+
+// ── CUSTOM PAGINATION DOTS ────────────────────────────────────────────────────
+.custom-pagination {
+  flex-shrink: 0;
+  height: var(--dots-h);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(var(--ion-color-light-rgb), 0.2);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+
+  &.active {
+    width: 28px;
+    background: var(--ion-color-primary);
+  }
+}
+
+// ── CTA AREA ──────────────────────────────────────────────────────────────────
+.cta-area {
+  flex-shrink: 0;
+  padding: 12px 24px calc(env(safe-area-inset-bottom) + 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeUp 0.6s 0.15s ease both;
+}
+
+// Primary CTA — uses Ionic primary colour token
+.btn-signup {
+  --background: var(--ion-color-primary);
+  --background-hover: var(--ion-color-primary-shade);
+  --border-radius: var(--radius-pill);
+  --color: var(--ion-color-primary-contrast);
+  --box-shadow: 0 6px 24px rgba(var(--ion-color-primary-rgb), 0.4);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  height: 50px;
+}
+
+// Secondary CTA — ghost style
+.btn-login {
+  --background: rgba(var(--ion-color-light-rgb), 0.06);
+  --background-hover: rgba(var(--ion-color-light-rgb), 0.12);
+  --border-radius: var(--radius-pill);
+  --color: var(--ion-color-light);
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(var(--ion-color-light-rgb), 0.15);
+  --box-shadow: none;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  font-size: 0.9rem;
+  height: 50px;
+}
+
+// ── DIVIDER ───────────────────────────────────────────────────────────────────
+.divider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ion-color-medium);
+  font-size: 0.75rem;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(var(--ion-color-light-rgb), 0.08);
+  }
+}
+
+// ── ENTRANCE ANIMATIONS ───────────────────────────────────────────────────────
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

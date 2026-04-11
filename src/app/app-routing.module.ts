@@ -47,6 +47,17 @@ const routes: Routes = [
         './components/auth/pages/reset-password/reset-password.module'
       ).then(m => m.ResetPasswordPageModule),
   },
+  {
+    path: 'welcome',
+    loadChildren: () =>
+      import('./components/auth/pages/welcome/welcome.module').then(
+        m => m.WelcomePageModule
+      ),
+  },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];
 @NgModule({
   imports: [

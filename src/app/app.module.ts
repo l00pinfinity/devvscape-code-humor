@@ -42,6 +42,8 @@ import { HackerNewsEffects } from './core/store/effects/hacker-news.effects';
 import { hackerNewsReducer } from './core/store/reducers/hacker-news.reducer';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { provideHttpCache, withHttpCacheInterceptor } from '@ngneat/cashew';
+import { register } from 'swiper/element/bundle';
+register();
 
 @NgModule({
   declarations: [AppComponent],
