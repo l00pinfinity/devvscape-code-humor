@@ -10,6 +10,7 @@ import {
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Auth } from '@angular/fire/auth';
+import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import {
   ActionPerformed,
@@ -59,6 +60,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   constructor(
     private auth: Auth,
+    private firestore: Firestore,
     private platform: Platform,
     private store: Store,
     private imageService: ImageService,
@@ -366,8 +368,15 @@ export class HomePage implements OnInit, OnDestroy {
     });
 
     // On success, we should be able to receive notifications
-    PushNotifications.addListener('registration', (token: Token) => {
-      // Push registration successful
+    PushNotifications.addListener('registration', async (token: Token) => {
+      const user = this.auth.currentUser;
+      if (user) {
+        await setDoc(
+          doc(this.firestore, `users/${user.uid}`),
+          { fcmToken: token.value },
+          { merge: true }
+        );
+      }
     });
 
     // Some issue with our setup and push will not work
@@ -378,8 +387,17 @@ export class HomePage implements OnInit, OnDestroy {
     // Show us the notification payload if the app is open on our device
     PushNotifications.addListener(
       'pushNotificationReceived',
-      (notification: PushNotificationSchema) => {
-        // Push notification received
+      async (notification: PushNotificationSchema) => {
+        new Audio('assets/sounds/notification.mp3').play().catch(() => {});
+        const toast = await this.toastCtrl.create({
+          header: notification.title ?? '',
+          message: notification.body ?? '',
+          duration: 4000,
+          position: 'top',
+          color: 'dark',
+          buttons: [{ icon: 'close', role: 'cancel' }],
+        });
+        await toast.present();
       }
     );
 

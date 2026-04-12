@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true" class="ion-padding bg-primary">
+<ion-content [fullscreen]="true" class="bg-primary">
   <app-error-banner
     [errorMessage]="errorMessage"
     [showError]="showError"
@@ -9,204 +9,123 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-row>
-    <ion-col size="2">
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button defaultHref="/"></ion-back-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-col>
-    <ion-col size="6"></ion-col>
-    <ion-col size="4">
-      <button class="top-right-button" (click)="imageDropdown(image)">
-        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
-      </button>
-      <!-- <button class="top-right-button" (click)="downloadImage(image)">
-        <ion-icon name="cloud-download-outline"></ion-icon>
-      </button> -->
-    </ion-col>
-  </ion-row>
+  <!-- Top bar -->
+  <div class="detail-topbar">
+    <ion-back-button defaultHref="/"></ion-back-button>
+    <div class="spacer"></div>
+    <button class="icon-btn" (click)="imageDropdown(image)">
+      <ion-icon name="ellipsis-horizontal"></ion-icon>
+    </button>
+  </div>
 
-  <div class="ion-padding" *ngIf="!errorMessage">
-    <ion-card>
-      <ion-item lines="none">
-        <ion-avatar slot="start" (click)="openProfile(image?.postedBy)">
-          <img
-            [src]="generateAvatarUrl(image?.displayName || 'devvscape_user')"
-            [attr.alt]="
-              'COMPONENTS.SHARED.IMAGE_DETAILS.PROFILE_PICTURE' | transloco
-            "
-          />
-        </ion-avatar>
-        <ion-label>
-          <h2>{{ image?.displayName || 'devvscape_user' }}</h2>
-          <p>{{ image?.createdAt | dateAgo }}</p>
-        </ion-label>
-      </ion-item>
-
-      <div class="shimmer" *ngIf="!imageLoaded"></div>
-
-      <img
-        [src]="image?.imageUrl"
-        [alt]="image?.postText"
-        (load)="imageLoaded = true"
-        class="post-image"
-      />
-
-      <ion-card-header>
-        <ion-card-subtitle
-          *ngIf="image?.postText"
-          [innerHTML]="formatCardSubtitle(image)"
-        ></ion-card-subtitle>
-        <a
-          *ngIf="image?.postText.length > 200"
-          class="read-more"
-          (click)="toggleText()"
-          >{{
-            isTextTruncated
-              ? ('COMPONENTS.SHARED.IMAGE_DETAILS.READ_MORE' | transloco)
-              : ('COMPONENTS.SHARED.IMAGE_DETAILS.SHOW_LESS' | transloco)
-          }}</a
-        >
-      </ion-card-header>
-    </ion-card>
-
-    <!-- Comments Section -->
-    <div class="comments-section">
-      <ion-list lines="none">
-        <ion-item *ngFor="let comment of image?.comments" class="comment-item">
-          <ion-label>
-            <div class="comment-content">
-              <h4>
-                {{ comment?.displayName || 'devvscape_user' }} ~
-                <span class="comment-time">{{
-                  comment?.createdAt | dateAgo
-                }}</span>
-              </h4>
-              <p>{{ comment.text }}</p>
-            </div>
-            <div class="comment-actions">
-              <ion-button
-                fill="clear"
-                size="small"
-                class="comment-action-button"
-                (click)="likeComment(comment)"
-                [class.liked]="isCommentLiked(comment)"
-              >
-                <ion-icon
-                  [name]="isCommentLiked(comment) ? 'heart' : 'heart-outline'"
-                  slot="start"
-                ></ion-icon>
-                {{ comment.stars || 0 }}
-              </ion-button>
-            </div>
-
-            <!-- Replies Section -->
-            <div
-              class="replies-section"
-              *ngIf="comment.replies && comment.replies.length > 0"
-            >
-              <ion-item
-                *ngFor="let reply of comment.replies"
-                class="reply-item"
-              >
-                <ion-label>
-                  <div class="reply-content">
-                    <h4>
-                      {{ reply?.displayName || 'devvscape_user' }} ~
-                      <span class="comment-time">{{
-                        reply?.createdAt | dateAgo
-                      }}</span>
-                    </h4>
-                    <p>{{ reply.text }}</p>
-                  </div>
-                  <div class="comment-actions">
-                    <ion-button
-                      fill="clear"
-                      size="small"
-                      class="comment-action-button"
-                      (click)="likeComment(reply)"
-                      [class.liked]="isCommentLiked(reply)"
-                    >
-                      <ion-icon
-                        [name]="
-                          isCommentLiked(reply) ? 'heart' : 'heart-outline'
-                        "
-                        slot="start"
-                      ></ion-icon>
-                      {{ reply.stars || 0 }}
-                    </ion-button>
-                    <ion-button
-                      fill="clear"
-                      size="small"
-                      class="comment-action-button"
-                      (click)="startReply(reply)"
-                    >
-                      <ion-icon
-                        name="chatbubble-outline"
-                        slot="start"
-                      ></ion-icon>
-                      {{ 'COMPONENTS.SHARED.IMAGE_DETAILS.REPLY' | transloco }}
-                    </ion-button>
-                  </div>
-                </ion-label>
-              </ion-item>
-            </div>
-          </ion-label>
-        </ion-item>
-      </ion-list>
+  <div *ngIf="!errorMessage">
+    <!-- Author row -->
+    <div class="author-row">
+      <ion-avatar (click)="openProfile(image?.postedBy)">
+        <img
+          [src]="generateAvatarUrl(image?.displayName || 'devvscape_user')"
+          [attr.alt]="'COMPONENTS.SHARED.IMAGE_DETAILS.PROFILE_PICTURE' | transloco"
+        />
+      </ion-avatar>
+      <div class="author-meta">
+        <span class="author-name">{{ image?.displayName || 'devvscape_user' }}</span>
+        <span class="author-time">{{ image?.createdAt | dateAgo }}</span>
+      </div>
     </div>
 
-    <!-- Floating Comment Input -->
-    <div class="comment-input-container">
-      <ion-item class="comment-input">
-        <ion-avatar slot="start">
-          <img
-            [src]="generateAvatarUrl(currentUser?.displayName)"
-            [attr.alt]="
-              'COMPONENTS.SHARED.IMAGE_DETAILS.YOUR_AVATAR' | transloco
-            "
-          />
+    <!-- Caption -->
+    <div class="detail-caption" *ngIf="image?.postText">
+      <span [innerHTML]="formatCardSubtitle(image)"></span>
+      <a *ngIf="image?.postText.length > 200" class="read-more" (click)="toggleText()">
+        {{ isTextTruncated ? ('COMPONENTS.SHARED.IMAGE_DETAILS.READ_MORE' | transloco) : ('COMPONENTS.SHARED.IMAGE_DETAILS.SHOW_LESS' | transloco) }}
+      </a>
+    </div>
+
+    <!-- Image -->
+    <div class="shimmer" *ngIf="!imageLoaded"></div>
+    <img
+      [src]="image?.imageUrl"
+      [alt]="image?.postText"
+      (load)="imageLoaded = true"
+      class="detail-img"
+    />
+
+    <!-- Action bar -->
+    <div class="detail-actions">
+      <button class="action-btn" [class.liked]="isPostLiked()" (click)="likePost()">
+        <ion-icon [name]="isPostLiked() ? 'star' : 'star-outline'" class="star-icon"></ion-icon>
+        <span>{{ image?.stars || 0 }}</span>
+      </button>
+      <button class="action-btn">
+        <ion-icon name="chatbubble-outline"></ion-icon>
+        <span>{{ image?.comments?.length || 0 }}</span>
+      </button>
+      <button class="action-btn share-btn" (click)="sharePost()">
+        <ion-icon name="share-outline"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Comments -->
+    <div class="comments-wrap">
+      <div
+        *ngFor="let comment of image?.comments"
+        class="bubble-row"
+        [class.own]="comment.postedBy === currentUser?.uid"
+      >
+        <ion-avatar class="bubble-avatar" *ngIf="comment.postedBy !== currentUser?.uid">
+          <img [src]="generateAvatarUrl(comment?.displayName || 'user')" alt="avatar" />
         </ion-avatar>
-        <ion-input
-          [(ngModel)]="commentText"
-          [placeholder]="
-            replyingTo
-              ? ('COMPONENTS.SHARED.IMAGE_DETAILS.REPLY_TO'
-                | transloco : { name: replyingTo.displayName })
-              : ('COMPONENTS.SHARED.IMAGE_DETAILS.ADD_COMMENT' | transloco)
-          "
-          [maxlength]="maxLength"
-          (ionChange)="onCommentChange()"
-        ></ion-input>
-        <ion-button
-          *ngIf="replyingTo"
-          slot="end"
-          fill="clear"
-          (click)="cancelReply()"
-        >
-          {{ 'COMPONENTS.SHARED.IMAGE_DETAILS.CANCEL' | transloco }}
-        </ion-button>
-        <ion-button
-          *ngIf="image"
-          slot="end"
-          fill="clear"
-          [disabled]="!commentText.trim()"
-          (click)="imagePostComment(image)"
-        >
-          {{ 'COMPONENTS.SHARED.IMAGE_DETAILS.POST' | transloco }}
-        </ion-button>
-      </ion-item>
-      <div class="input-counter" *ngIf="commentText">
-        {{ commentText.length }}/{{ maxLength }}
+        <div class="bubble">
+          <span class="bubble-name">{{ comment?.displayName || 'devvscape_user' }}</span>
+          <p class="bubble-text">{{ comment.text }}</p>
+          <div class="bubble-footer">
+            <span class="bubble-time">{{ comment?.createdAt | dateAgo }}</span>
+            <button class="bubble-like" [class.liked]="isCommentLiked(comment)" (click)="likeComment(comment)">
+              <ion-icon [name]="isCommentLiked(comment) ? 'heart' : 'heart-outline'"></ion-icon>
+              {{ comment.stars || 0 }}
+            </button>
+            <button class="bubble-reply" (click)="startReply(comment)">
+              <ion-icon name="return-down-forward-outline"></ion-icon>
+            </button>
+          </div>
+
+          <!-- Replies -->
+          <div *ngIf="comment.replies?.length" class="replies-wrap">
+            <div *ngFor="let reply of comment.replies" class="reply-bubble">
+              <span class="bubble-name">{{ reply?.displayName || 'user' }}</span>
+              <p class="bubble-text">{{ reply.text }}</p>
+              <div class="bubble-footer">
+                <span class="bubble-time">{{ reply?.createdAt | dateAgo }}</span>
+                <button class="bubble-like" [class.liked]="isCommentLiked(reply)" (click)="likeComment(reply)">
+                  <ion-icon [name]="isCommentLiked(reply) ? 'heart' : 'heart-outline'"></ion-icon>
+                  {{ reply.stars || 0 }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <ion-item *ngIf="errorMessage" class="error-message">
-    <ion-label color="danger">
-      {{ errorMessage }}
-    </ion-label>
-  </ion-item>
+  <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+
+  <!-- Comment input -->
+  <div class="comment-input-bar">
+    <ion-avatar>
+      <img [src]="generateAvatarUrl(currentUser?.displayName)" alt="you" />
+    </ion-avatar>
+    <ion-input
+      class="comment-field"
+      [(ngModel)]="commentText"
+      [placeholder]="replyingTo ? 'Reply to ' + replyingTo.displayName : ('COMPONENTS.SHARED.IMAGE_DETAILS.ADD_COMMENT' | transloco)"
+      [maxlength]="maxLength"
+    ></ion-input>
+    <button *ngIf="replyingTo" class="cancel-reply-btn" (click)="cancelReply()">
+      <ion-icon name="close-circle"></ion-icon>
+    </button>
+    <button class="send-btn" [disabled]="!commentText.trim()" (click)="imagePostComment(image)">
+      <ion-icon name="send"></ion-icon>
+    </button>
+  </div>
 </ion-content>

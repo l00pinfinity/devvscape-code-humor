@@ -41,7 +41,10 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="content-with-header ion-padding bg-primary">
+<ion-content
+  [fullscreen]="true"
+  class="content-with-header ion-padding bg-primary"
+>
   <app-error-banner
     [errorMessage]="errorMessage"
     [showError]="showError"
@@ -97,9 +100,10 @@
         >
           <swiper-slide
             class="news-slide"
-            *ngFor="let story of newStories$ | async"
+            *ngFor="let story of newStories$ | async; let i = index"
           >
-            <ion-card (click)="openUrl(story.url)">
+            <ion-card (click)="openUrl(story.url)" class="animate-scale-in">
+              <div class="news-badge" *ngIf="i < 3">Trending</div>
               <ion-card-header>
                 <ion-card-title>{{ story.title }}</ion-card-title>
               </ion-card-header>
@@ -124,7 +128,7 @@
         </swiper-container>
       </ion-item-group>
 
-      <!-- <ion-item-group class="shadow rounded">
+      <ion-item-group class="shadow rounded">
         <ion-item lines="none">
           <ion-label (click)="navigateToEvents()" style="color: #2b7a78"
             >{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.EVENTS' | transloco
@@ -137,7 +141,7 @@
             style="color: #2b7a78"
           ></ion-icon>
         </ion-item>
-      </ion-item-group> -->
+      </ion-item-group>
 
       <div class="ad-banner" id="home-banner-ad"></div>
     </div>

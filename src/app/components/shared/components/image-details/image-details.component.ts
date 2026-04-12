@@ -550,4 +550,31 @@ export class ImageDetailsComponent implements OnInit {
   isCommentLiked(comment: Comment): boolean {
     return this.currentUser && comment.likedBy.includes(this.currentUser.uid);
   }
+
+  isPostLiked(): boolean {
+    return this.currentUser && this.image?.likedBy?.includes(this.currentUser.uid);
+  }
+
+  async likePost() {
+    if (!this.currentUser || !this.image) return;
+    try {
+      await this.imageService.likeImage(this.image.id, this.currentUser.uid);
+      const idx = this.image.likedBy.indexOf(this.currentUser.uid);
+      if (idx === -1) {
+        this.image.likedBy.push(this.currentUser.uid);
+        this.image.stars = (this.image.stars || 0) + 1;
+      } else {
+        this.image.likedBy.splice(idx, 1);
+        this.image.stars = (this.image.stars || 0) - 1;
+      }
+    } catch (error) {
+      await this.presentErrorToast('Error liking post');
+    }
+  }
+
+  async sharePost() {
+    if (navigator.share) {
+      await navigator.share({ title: this.image?.displayName, text: this.image?.postText, url: window.location.href });
+    }
+  }
 }

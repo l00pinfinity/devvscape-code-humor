@@ -220,6 +220,12 @@ export class ImageComponent implements OnInit, OnDestroy {
     }
   }
 
+  async sharePost(image: Image) {
+    if (navigator.share) {
+      await navigator.share({ title: image.displayName, text: image.postText, url: window.location.href });
+    }
+  }
+
   private async presentErrorToast(message: string): Promise<void> {
     this.errorMessage = message;
     this.showError = true;

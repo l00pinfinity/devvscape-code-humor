@@ -25,7 +25,7 @@ import { AdMobService } from 'src/app/core/services/ad-mob.service';
 })
 export class SettingsPage implements OnInit {
   currentVersion!: string;
-  appVersion = '2.0.3';
+  appVersion = '2.0.4';
   languages = ['en', 'es', 'fr', 'de', 'sw', 'pt'];
   selectedLanguage = 'en';
   private loadingSubject = new Subject<boolean>();
@@ -50,6 +50,9 @@ export class SettingsPage implements OnInit {
   };
   errorMessage: string = '';
   showError: boolean = false;
+  darkMode: boolean = false;
+  pushEnabled: boolean = true;
+  soundEnabled: boolean = true;
 
   constructor(
     private authService: AuthService,
@@ -69,6 +72,7 @@ export class SettingsPage implements OnInit {
     this.presentingElement = document.querySelector('.ion-page');
     this.loadSelectedLanguage();
     this.fetchCurrentVersion();
+    this.loadThemeAndPrefs();
   }
 
   ionViewWillEnter() {
@@ -147,6 +151,43 @@ export class SettingsPage implements OnInit {
     const selectedLang = lang.value || 'en';
     this.selectedLanguage = selectedLang;
     this.translocoService.setActiveLang(selectedLang);
+  }
+
+  async loadThemeAndPrefs() {
+    const dark = await Preferences.get({ key: 'darkMode' });
+    this.darkMode = dark.value === 'true';
+    document.body.classList.toggle('dark', this.darkMode);
+
+    const push = await Preferences.get({ key: 'pushEnabled' });
+    this.pushEnabled = push.value !== 'false';
+
+    const sound = await Preferences.get({ key: 'soundEnabled' });
+    this.soundEnabled = sound.value !== 'false';
+  }
+
+  async savePushPref() {
+    await Preferences.set({
+      key: 'pushEnabled',
+      value: String(this.pushEnabled),
+    });
+  }
+
+  async saveSoundPref() {
+    await Preferences.set({
+      key: 'soundEnabled',
+      value: String(this.soundEnabled),
+    });
+  }
+
+  async clearCache() {
+    await Preferences.remove({ key: 'gameSettings' });
+    const toast = await this.toastCtrl.create({
+      message: 'Cache cleared',
+      duration: 2000,
+      position: 'bottom',
+      color: 'success',
+    });
+    await toast.present();
   }
 
   disableAccount() {}

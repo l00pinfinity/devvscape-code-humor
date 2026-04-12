@@ -5,37 +5,140 @@ ion-content {
 .section-header {
   font-weight: bold;
   margin-left: 20px;
-  margin-bottom: 30px;
-}
-
-ion-footer {
-  margin: auto;
   padding: 10px;
+}
+
+.settings-group {
+  margin-bottom: 24px;
+  padding: 10px;
+}
+
+.group-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 4px 8px;
+}
+
+.settings-card {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--ion-color-light-shade);
+  }
+
+  &:active {
+    background: var(--ion-color-light-shade);
+  }
+
+  &.no-action {
+    cursor: default;
+  }
+
+  &.danger-row:active {
+    background: rgba(var(--ion-color-danger-rgb), 0.08);
+  }
+}
+
+.row-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 1.1rem;
+
+  &.lang-icon {
+    background: #5856d6;
+  }
+  &.theme-icon {
+    background: #ff9500;
+  }
+  &.notif-icon {
+    background: #ff3b30;
+  }
+  &.sound-icon {
+    background: #34c759;
+  }
+  &.share-icon {
+    background: #007aff;
+  }
+  &.doc-icon {
+    background: #5ac8fa;
+  }
+  &.lock-icon {
+    background: #636366;
+  }
+  &.cache-icon {
+    background: #ff6b35;
+  }
+  &.ver-icon {
+    background: #2b7a78;
+  }
+  &.dev-icon {
+    background: #30b0c7;
+  }
+  &.issue-icon {
+    background: #af52de;
+  }
+  &.danger-icon {
+    background: #ff3b30;
+  }
+}
+
+.row-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .row-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .row-sub {
+    font-size: 0.78rem;
+    color: var(--ion-color-medium);
+    margin-top: 1px;
+  }
+}
+
+.row-chevron {
+  color: var(--ion-color-medium);
+  font-size: 1rem;
+}
+
+.row-value {
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}
+
+.danger-text {
+  color: var(--ion-color-danger);
+}
+
+.footer-tag {
+  display: block;
   text-align: center;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: -1;
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  padding: 8px;
 }
 
-ion-text {
-  font-size: 12px;
-  font-weight: bold;
-}
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-li {
-  display: inline;
-  margin: 1em;
-}
-
-ion-icon {
-  width: 30px;
-  height: 30px;
+.block {
+  padding: 16px;
 }

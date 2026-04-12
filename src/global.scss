@@ -38,3 +38,41 @@
 .ion-float-start:dir(rtl) {
   float: right;
 }
+
+/* ── v2.0.4 Global Animations ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.35s ease both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.25s ease both;
+}
+
+/* Staggered list children */
+ion-list > *:nth-child(1)  { animation: fadeInUp 0.3s 0.05s ease both; }
+ion-list > *:nth-child(2)  { animation: fadeInUp 0.3s 0.10s ease both; }
+ion-list > *:nth-child(3)  { animation: fadeInUp 0.3s 0.15s ease both; }
+ion-list > *:nth-child(4)  { animation: fadeInUp 0.3s 0.20s ease both; }
+ion-list > *:nth-child(5)  { animation: fadeInUp 0.3s 0.25s ease both; }
+ion-list > *:nth-child(n+6){ animation: fadeInUp 0.3s 0.30s ease both; }
+
+/* Page enter transition */
+ion-router-outlet > * {
+  animation: fadeInUp 0.3s ease both;
+}
+
+/* Segment indicator smooth slide */
+ion-segment {
+  --indicator-transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+

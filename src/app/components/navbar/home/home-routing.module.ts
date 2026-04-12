@@ -30,6 +30,13 @@ const routes: Routes = [
         m => m.GameDetailsPageModule
       ),
   },
+  {
+    path: 'leaderboard',
+    loadChildren: () =>
+      import('./components/leaderboard/leaderboard.module').then(
+        m => m.LeaderboardPageModule
+      ),
+  },
 ];
 
 @NgModule({

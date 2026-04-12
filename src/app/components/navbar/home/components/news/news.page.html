@@ -1,5 +1,5 @@
-<ion-content [fullscreen]="true" class="ion-padding bg-primary">
-  <ion-row>
+<ion-content [fullscreen]="true" class="bg-primary">
+  <ion-row class="ion-padding-horizontal ion-padding-top">
     <ion-col size="2">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -7,94 +7,106 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-col>
-    <ion-col size="6">
+    <ion-col size="10">
       <h2 class="section-header">
         {{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.NEWS' | transloco }}
       </h2>
     </ion-col>
-    <!-- <ion-col size="4">
-      <button class="top-right-button">
-        <ion-icon name="list-outline"></ion-icon>
-      </button>
-    </ion-col> -->
   </ion-row>
 
-  <ion-list>
-    <ion-list-header class="shadow" lines="full">
-      <ion-label style="color: #2b7a78"
-        >{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.NEWSTORIES' | transloco
-        }}</ion-label
-      >
-      <ion-spinner
-        name="lines-sharp"
-        *ngIf="!(newStories$ | async)?.length"
-      ></ion-spinner>
-    </ion-list-header>
-    <ion-item *ngFor="let story of newStories$ | async">
-      <ion-label (click)="openUrl(story.url)">
-        <h2 class="news-title">{{ story.title }}</h2>
-        <p>
-          {{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.BY' | transloco }} {{ story.by
-          }}
-        </p>
-        <ion-button fill="clear" [href]="story.url" target="_blank"
-          >{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.READMORE' | transloco
-          }}</ion-button
-        >
+  <ion-segment [(ngModel)]="activeTab" class="news-segment ion-padding-horizontal">
+    <ion-segment-button value="new">
+      <ion-label>
+        <ion-icon name="sparkles-outline"></ion-icon>
+        New
       </ion-label>
-    </ion-item>
-
-    <br />
-
-    <ion-list-header class="shadow" lines="full">
-      <ion-label style="color: #2b7a78"
-        >{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.BESTSTORIES' | transloco
-        }}</ion-label
-      >
-      <ion-spinner
-        name="lines-sharp"
-        *ngIf="!(bestStories$ | async)?.length"
-      ></ion-spinner>
-    </ion-list-header>
-    <ion-item *ngFor="let story of bestStories$ | async">
-      <ion-label (click)="openUrl(story.url)">
-        <h2 class="news-title">{{ story.title }}</h2>
-        <p>
-          {{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.BY' | transloco }} {{ story.by
-          }}
-        </p>
-        <ion-button fill="clear" [href]="story.url" target="_blank"
-          >{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.READMORE' | transloco
-          }}</ion-button
-        >
+    </ion-segment-button>
+    <ion-segment-button value="best">
+      <ion-label>
+        <ion-icon name="star-outline"></ion-icon>
+        Best
       </ion-label>
-    </ion-item>
-
-    <br />
-
-    <ion-list-header class="shadow" lines="full">
-      <ion-label style="color: #2b7a78"
-        >{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.TOPSTORIES' | transloco
-        }}</ion-label
-      >
-      <ion-spinner
-        name="lines-sharp"
-        *ngIf="!(topStories$ | async)?.length"
-      ></ion-spinner>
-    </ion-list-header>
-    <ion-item *ngFor="let story of topStories$ | async">
-      <ion-label (click)="openUrl(story.url)">
-        <h2 class="news-title">{{ story.title }}</h2>
-        <p>
-          {{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.BY' | transloco }} {{ story.by
-          }}
-        </p>
-        <ion-button fill="clear" [href]="story.url" target="_blank"
-          >{{ 'COMPONENTS.NAVBAR.HOME.TABS.EXPLORE.READMORE' | transloco
-          }}</ion-button
-        >
+    </ion-segment-button>
+    <ion-segment-button value="top">
+      <ion-label>
+        <ion-icon name="trending-up-outline"></ion-icon>
+        Top
       </ion-label>
-    </ion-item>
-    <br /><br /><br />
-  </ion-list>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- New Stories -->
+  <div *ngIf="activeTab === 'new'" class="story-list ion-padding">
+    <div *ngIf="!(newStories$ | async)?.length" class="spinner-wrap">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+    <ion-card *ngFor="let story of newStories$ | async; let i = index" class="story-card" (click)="openUrl(story.url)">
+      <ion-card-content>
+        <div class="story-index">{{ i + 1 }}</div>
+        <div class="story-body">
+          <h2 class="story-title">{{ story.title }}</h2>
+          <div class="story-meta">
+            <span class="meta-left">
+              <ion-icon name="person-outline"></ion-icon>
+              {{ story.by }}
+            </span>
+            <span class="meta-right">
+              <ion-icon name="arrow-redo-outline"></ion-icon>
+              {{ story.score }} pts
+            </span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Best Stories -->
+  <div *ngIf="activeTab === 'best'" class="story-list ion-padding">
+    <div *ngIf="!(bestStories$ | async)?.length" class="spinner-wrap">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+    <ion-card *ngFor="let story of bestStories$ | async; let i = index" class="story-card" (click)="openUrl(story.url)">
+      <ion-card-content>
+        <div class="story-index">{{ i + 1 }}</div>
+        <div class="story-body">
+          <h2 class="story-title">{{ story.title }}</h2>
+          <div class="story-meta">
+            <span class="meta-left">
+              <ion-icon name="person-outline"></ion-icon>
+              {{ story.by }}
+            </span>
+            <span class="meta-right">
+              <ion-icon name="arrow-redo-outline"></ion-icon>
+              {{ story.score }} pts
+            </span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Top Stories -->
+  <div *ngIf="activeTab === 'top'" class="story-list ion-padding">
+    <div *ngIf="!(topStories$ | async)?.length" class="spinner-wrap">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+    <ion-card *ngFor="let story of topStories$ | async; let i = index" class="story-card" (click)="openUrl(story.url)">
+      <ion-card-content>
+        <div class="story-index">{{ i + 1 }}</div>
+        <div class="story-body">
+          <h2 class="story-title">{{ story.title }}</h2>
+          <div class="story-meta">
+            <span class="meta-left">
+              <ion-icon name="person-outline"></ion-icon>
+              {{ story.by }}
+            </span>
+            <span class="meta-right">
+              <ion-icon name="arrow-redo-outline"></ion-icon>
+              {{ story.score }} pts
+            </span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

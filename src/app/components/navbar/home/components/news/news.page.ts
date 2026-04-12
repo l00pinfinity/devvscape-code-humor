@@ -24,6 +24,7 @@ export class NewsPage implements OnInit {
   bestStories$ = this.store.pipe(select(selectBestStories));
   newStories$ = this.store.pipe(select(selectNewStories));
   error$ = this.store.pipe(select(selectHackerNewsError));
+  activeTab: 'new' | 'best' | 'top' = 'new';
 
   constructor(
     private store: Store,

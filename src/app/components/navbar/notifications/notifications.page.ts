@@ -138,4 +138,17 @@ export class NotificationsPage implements OnInit {
       console.error('No authenticated user found');
     }
   }
+
+  notifIcon(type: string): string {
+    const map: Record<string, string> = {
+      like: 'heart',
+      comment: 'chatbubble',
+      reply: 'return-down-forward',
+      login: 'log-in',
+      security: 'shield-checkmark',
+      promotional: 'gift',
+      newUser: 'person-add',
+    };
+    return map[type] ?? 'notifications';
+  }
 }

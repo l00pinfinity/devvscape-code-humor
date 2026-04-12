@@ -1,56 +1,102 @@
-ion-content {
-  --padding-top: 40px;
-}
-
 .section-header {
   font-weight: bold;
-  margin-left: 20px;
-  margin-bottom: 30px;
+  margin-left: 8px;
+  margin-bottom: 0;
 }
 
-.top-right-button {
-  background-color: transparent;
-  border: none;
-  outline: none;
-  font-size: 25px;
-  font-family: 'Spotify';
-  font-weight: bold;
-  float: right;
-  margin-right: 10px;
-  margin-bottom: 30px;
-  margin-top: 18px;
-}
+.news-segment {
+  --background: transparent;
+  margin-bottom: 4px;
 
-.shadow {
-  margin-bottom: 24px;
-  overflow: hidden;
-}
+  ion-segment-button {
+    --color: var(--ion-color-medium);
+    --color-checked: var(--ion-color-primary);
+    --indicator-color: var(--ion-color-primary);
+    font-size: 0.75rem;
 
-ion-list-header {
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --min-height: 48px;
-
-  ion-label {
-    font-size: 1.5rem;
-    font-weight: 900;
-    cursor: pointer;
-  }
-
-  ion-icon {
-    font-size: 1.5rem;
-    cursor: pointer;
+    ion-icon {
+      font-size: 1rem;
+      margin-bottom: 2px;
+    }
   }
 }
 
-.news-title {
-  font-size: 1.125rem;
+.spinner-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.story-list {
+  padding-bottom: 80px;
+}
+
+.story-card {
+  --background: var(--ion-card-background, var(--ion-item-background));
+  border-radius: 12px;
+  margin: 0 0 12px;
+  box-shadow: 0 2px 8px rgba(var(--ion-color-secondary-rgb), 0.12);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  ion-card-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+  }
+}
+
+.story-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.story-index {
+  min-width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(var(--ion-color-primary-rgb), 0.15);
+  color: var(--ion-color-primary);
   font-weight: 700;
-  line-height: 1.5;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.story-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 0 8px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 6px;
+}
+
+.story-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--ion-color-medium);
+
+  .meta-left,
+  .meta-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    ion-icon {
+      font-size: 0.85rem;
+    }
+  }
 }

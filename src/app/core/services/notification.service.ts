@@ -10,6 +10,7 @@ import {
 import {
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -122,5 +123,10 @@ export class NotificationService {
     } catch (error) {
       throw new Error('Unable to fetch unread notification count');
     }
+  }
+
+  async getUserFCMToken(userId: string): Promise<string | null> {
+    const snap = await getDoc(doc(this.firestore, `users/${userId}`));
+    return snap.exists() ? (snap.data()['fcmToken'] ?? null) : null;
   }
 }

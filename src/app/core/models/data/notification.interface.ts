@@ -3,7 +3,7 @@ export interface Notification {
   title: string;
   body: string;
   isRead: boolean;
-  type: 'like' | 'comment' | 'login' | 'promotional' | 'newUser';
+  type: 'like' | 'comment' | 'reply' | 'login' | 'promotional' | 'newUser' | 'security';
   imageId?: string;
   userId?: string;
   createdAt: Date;

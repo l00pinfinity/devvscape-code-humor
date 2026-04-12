@@ -24,4 +24,8 @@ export interface UserProfile {
   gamesParticipated?: number;
   followers?: number;
   following?: number;
+  points?: number;
+  gamesPlayed?: number;
+  gamesWon?: number;
+  fcmToken?: string;
 }

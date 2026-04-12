@@ -17,27 +17,26 @@
   </ion-refresher>
 
   <ng-container *ngIf="notifications.length > 0; else noNotifications">
-    <ion-list>
+    <ion-list lines="none">
       <ion-item-sliding *ngFor="let notification of notifications">
         <ion-item
+          [class.unread]="!notification.isRead"
           [class.read]="notification.isRead"
           (click)="notificationAction(notification)"
+          class="notif-item"
         >
-          <ion-icon
-            [name]="notification.isRead ? 'checkmark-done-circle' : 'ellipse-outline'"
-            [color]="notification.isRead ? 'success' : 'primary'"
-          ></ion-icon>
+          <div class="notif-icon-wrap" [ngClass]="notification.type" slot="start">
+            <ion-icon [name]="notifIcon(notification.type)"></ion-icon>
+          </div>
           <ion-label>
             <h3><b>{{ notification.title }}</b></h3>
             <p class="notification-body">{{ notification.body }}</p>
             <p class="timestamp">{{ notification.createdAt | dateAgo }}</p>
           </ion-label>
+          <div *ngIf="!notification.isRead" class="unread-dot" slot="end"></div>
         </ion-item>
         <ion-item-options side="end">
-          <ion-item-option
-            color="danger"
-            (click)="deleteNotification(notification)"
-          >
+          <ion-item-option color="danger" (click)="deleteNotification(notification)">
             <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
           </ion-item-option>
         </ion-item-options>
@@ -47,7 +46,8 @@
 
   <ng-template #noNotifications>
     <div class="no-notifications">
-      {{ 'COMPONENTS.NAVBAR.NOTIFICATIONS.NO-NOTIFICATIONS' | transloco }}
+      <ion-icon name="notifications-off-outline" class="empty-icon"></ion-icon>
+      <p>{{ 'COMPONENTS.NAVBAR.NOTIFICATIONS.NO-NOTIFICATIONS' | transloco }}</p>
     </div>
   </ng-template>
 
