@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home/games"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Leaderboard</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="period" (ionChange)="onPeriodChange()">
+      <ion-segment-button value="daily">Daily</ion-segment-button>
+      <ion-segment-button value="weekly">Weekly</ion-segment-button>
+      <ion-segment-button value="monthly">Monthly</ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding bg-primary">
+  <div *ngIf="loading" class="loading-wrap">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!loading" lines="none">
+    <ion-item
+      *ngFor="let entry of entries; let i = index"
+      [class.current-user]="entry.uid === currentUid"
+      class="entry-item"
+    >
+      <div class="rank" slot="start">{{ rankBadge(i) }}</div>
+      <ion-avatar slot="start">
+        <img [src]="generateAvatarUrl(entry.displayName)" [alt]="entry.displayName" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ entry.displayName }}</h2>
+        <p>{{ entry.gamesPlayed }} {{ entry.gamesPlayed === 1 ? 'game' : 'games' }} played</p>
+      </ion-label>
+      <div slot="end" class="score-col">
+        <ion-badge color="primary">{{ entry.points }} pts</ion-badge>
+        <p class="avg">avg {{ entry.gamesPlayed ? (entry.points / entry.gamesPlayed | number:'1.0-1') : 0 }}/game</p>
+      </div>
+    </ion-item>
+
+    <div *ngIf="entries.length === 0" class="empty">
+      No scores yet. Be the first to play!
+    </div>
+  </ion-list>
+</ion-content>

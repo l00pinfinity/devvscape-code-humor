@@ -1,0 +1,56 @@
+.loading-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.entry-item {
+  --padding-start: 8px;
+  --inner-padding-end: 8px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+
+  &.current-user {
+    --background: rgba(var(--ion-color-primary-rgb), 0.12);
+    border: 1px solid var(--ion-color-primary);
+  }
+}
+
+.rank {
+  font-size: 1.4rem;
+  width: 36px;
+  text-align: center;
+  font-weight: 700;
+}
+
+ion-avatar {
+  width: 40px;
+  height: 40px;
+  margin-right: 8px;
+}
+
+.score-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+ion-badge {
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 20px;
+}
+
+.avg {
+  font-size: 0.7rem;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ion-color-medium);
+}
