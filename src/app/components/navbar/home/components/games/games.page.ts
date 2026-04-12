@@ -155,6 +155,10 @@ export class GamesPage implements OnInit {
     });
   }
 
+  navigateToLeaderboard() {
+    this.navCtrl.navigateForward('/tabs/home/leaderboard');
+  }
+
   async confirm() {
     await this.savePreferences(this.defaultSettings);
     this.modal.dismiss();
