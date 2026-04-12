@@ -22,9 +22,16 @@ ion-content {
 }
 
 .feedback {
-  color: var(--ion-color-primary);
   font-weight: bold;
   margin-top: 8px;
+
+  &.correct {
+    color: var(--ion-color-success);
+  }
+
+  &:not(.correct) {
+    color: var(--ion-color-danger);
+  }
 }
 
 // Error banner styles
@@ -44,4 +51,16 @@ ion-content {
 .error-icon {
   font-size: 24px;
   margin-right: 10px;
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  padding-right: 8px;
+  line-height: 56px;
+}
+
+ion-list {
+  padding-bottom: 80px; // space for FAB
 }

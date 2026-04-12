@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { AdMobService } from 'src/app/core/services/ad-mob.service';
+import { LeaderboardService } from 'src/app/core/services/leaderboard.service';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-game-details',
@@ -12,6 +14,7 @@ import { AdMobService } from 'src/app/core/services/ad-mob.service';
 })
 export class GameDetailsPage implements OnInit, OnDestroy {
   questions: any[] = [];
+  shuffledAnswers: { [key: number]: string[] } = {};
   category!: number;
   amount!: number;
   difficulty!: string;
@@ -22,6 +25,9 @@ export class GameDetailsPage implements OnInit, OnDestroy {
   answeredQuestions: { [key: string]: boolean } = {};
   errorMessage: string = '';
   showError: boolean = false;
+  allAnswered = false;
+  submitted = false;
+  private resultsAlert: HTMLIonAlertElement | null = null;
 
   private routeSub: Subscription = new Subscription();
   private backButtonSubscription: any;
@@ -32,7 +38,9 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     private adMobService: AdMobService,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
-    private platform: Platform
+    private platform: Platform,
+    private leaderboardService: LeaderboardService,
+    private auth: Auth
   ) {}
 
   ngOnInit() {
@@ -43,64 +51,21 @@ export class GameDetailsPage implements OnInit, OnDestroy {
       this.type = params['type'];
       this.fetchQuestions();
     });
-    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async (processNextHandler) => {
-      if (this.hasUnsavedChanges()) {
-        const alert = await this.alertCtrl.create({
-          header: 'Unsaved Answers',
-          message: 'You have unsaved answers. Are you sure you want to exit?',
-          backdropDismiss: false,
-          buttons: [
-            {
-              text: 'Cancel',
-              role: 'cancel',
-              handler: () => {
-                // Do nothing, keep user on page
-              }
-            },
-            {
-              text: 'Exit',
-              role: 'destructive',
-              handler: () => {
-                window.history.back();
-              },
-            },
-          ],
-        });
-        await alert.present();
-      } else {
-        // Only allow back if confirmed
-        const alert = await this.alertCtrl.create({
-          header: 'Exit Game',
-          message: 'Are you sure you want to exit?',
-          backdropDismiss: false,
-          buttons: [
-            {
-              text: 'Cancel',
-              role: 'cancel',
-              handler: () => {
-                // Do nothing
-              }
-            },
-            {
-              text: 'Exit',
-              role: 'destructive',
-              handler: () => {
-                window.history.back();
-              },
-            },
-          ],
-        });
-        await alert.present();
-      }
-    });
   }
 
   ionViewWillEnter() {
     this.clearState();
     this.adMobService.hideBannerAd('home-banner-ad');
+    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
+      await this.confirmExit();
+    });
   }
 
   ionViewWillLeave() {
+    if (this.backButtonSubscription) {
+      this.backButtonSubscription.unsubscribe();
+      this.backButtonSubscription = null;
+    }
     this.adMobService.showBannerAd(
       'home-banner-ad',
       'ca-app-pub-6424707922606590/3709250809'
@@ -108,33 +73,29 @@ export class GameDetailsPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.routeSub) {
-      this.routeSub.unsubscribe();
-    }
-    if (this.backButtonSubscription) {
-      this.backButtonSubscription.unsubscribe();
-    }
+    this.routeSub.unsubscribe();
   }
 
   async fetchQuestions() {
-    const loading = await this.loadingCtrl.create({
-      message: 'Loading questions...',
-    });
+    const loading = await this.loadingCtrl.create({ message: 'Loading questions...' });
     await loading.present();
 
     let url = `https://opentdb.com/api.php?amount=${this.amount}&category=${this.category}`;
-
-    if (this.difficulty !== 'any') {
-      url += `&difficulty=${this.difficulty}`;
-    }
-
-    if (this.type !== 'any') {
-      url += `&type=${this.type}`;
-    }
+    if (this.difficulty !== 'any') url += `&difficulty=${this.difficulty}`;
+    if (this.type !== 'any') url += `&type=${this.type}`;
 
     try {
       const response: any = await this.http.get(url).toPromise();
       this.questions = response.results;
+      this.shuffledAnswers = {};
+      this.questions.forEach((q, i) => {
+        const answers = [...q.incorrect_answers, q.correct_answer];
+        for (let j = answers.length - 1; j > 0; j--) {
+          const k = Math.floor(Math.random() * (j + 1));
+          [answers[j], answers[k]] = [answers[k], answers[j]];
+        }
+        this.shuffledAnswers[i] = answers;
+      });
       this.errorMessage = '';
       this.showError = false;
     } catch (error: any) {
@@ -146,9 +107,7 @@ export class GameDetailsPage implements OnInit, OnDestroy {
   }
 
   async selectAnswer(questionIndex: number, answer: string) {
-    if (this.answeredQuestions[questionIndex]) {
-      return;
-    }
+    if (this.answeredQuestions[questionIndex]) return;
 
     this.userAnswers[questionIndex] = answer;
     this.answeredQuestions[questionIndex] = true;
@@ -159,6 +118,91 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     } else {
       this.feedbacks[questionIndex] = 'Incorrect!';
     }
+
+    this.allAnswered = Object.keys(this.answeredQuestions).length === this.questions.length;
+  }
+
+  async showResults() {
+    const points = this.correctAnswers * this.difficultyMultiplier();
+    const pct = Math.round((this.correctAnswers / this.questions.length) * 100);
+    const emoji = pct === 100 ? '🏆' : pct >= 70 ? '🎉' : pct >= 40 ? '👍' : '😅';
+
+    const alert = await this.alertCtrl.create({
+      header: `${emoji} Results`,
+      subHeader: `${this.correctAnswers}/${this.questions.length} correct — ${pct}%`,
+      message: `+${points} points  (${this.difficulty} × ${this.difficultyMultiplier()}x)`,
+      backdropDismiss: false,
+      buttons: [
+        { text: 'Discard', role: 'cancel' },
+        {
+          text: 'Submit to Leaderboard',
+          handler: () => {
+            // return false to keep alert open while async work runs
+            this.submitScore(points);
+            return false;
+          },
+        },
+      ],
+    });
+    await alert.present();
+    this.resultsAlert = alert;
+  }
+
+  async submitScore(points: number) {
+    const user = this.auth.currentUser;
+    if (this.resultsAlert) await this.resultsAlert.dismiss();
+
+    if (!user) {
+      const a = await this.alertCtrl.create({
+        header: 'Not signed in',
+        message: 'Sign in to save your score to the leaderboard.',
+        buttons: ['OK'],
+      });
+      await a.present();
+      return;
+    }
+
+    const loading = await this.loadingCtrl.create({ message: 'Saving score...' });
+    await loading.present();
+    try {
+      await this.leaderboardService.addPoints(
+        user.uid,
+        user.displayName || 'devvscape_user',
+        points
+      );
+      this.submitted = true;
+    } finally {
+      await loading.dismiss();
+    }
+
+    const done = await this.alertCtrl.create({
+      header: '✅ Score Saved!',
+      message: `+${points} points added to the leaderboard.`,
+      buttons: [
+        { text: 'View Leaderboard', handler: () => window.history.back() },
+        { text: 'Done', role: 'cancel' },
+      ],
+    });
+    await done.present();
+  }
+
+  async confirmExit(event?: Event) {
+    if (event) { event.preventDefault(); event.stopPropagation(); }
+    if (!this.hasUnsavedChanges()) { window.history.back(); return; }
+    const alert = await this.alertCtrl.create({
+      header: 'Exit Game',
+      message: 'Your progress will be lost. Exit anyway?',
+      backdropDismiss: false,
+      buttons: [
+        { text: 'Stay', role: 'cancel' },
+        { text: 'Exit', role: 'destructive', handler: () => window.history.back() },
+      ],
+    });
+    await alert.present();
+  }
+
+  private difficultyMultiplier(): number {
+    return this.difficulty === 'hard' ? 3 : this.difficulty === 'medium' ? 2 : 1;
   }
 
   private clearState() {
@@ -166,14 +210,18 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     this.correctAnswers = 0;
     this.feedbacks = {};
     this.answeredQuestions = {};
+    this.shuffledAnswers = {};
+    this.allAnswered = false;
+    this.submitted = false;
+    this.resultsAlert = null;
   }
 
   private hasUnsavedChanges(): boolean {
-    return Object.keys(this.userAnswers).length > 0;
+    return Object.keys(this.userAnswers).length > 0 && !this.submitted;
   }
 
-  async presentErrorAlert(error: any) {
-    // No longer used, error is shown in the UI
+  get answeredCount(): number {
+    return Object.keys(this.answeredQuestions).length;
   }
 
   dismissError() {

@@ -4,11 +4,12 @@
     <span>{{ errorMessage }}</span>
     <ion-button size="small" fill="clear" color="danger" (click)="dismissError()">Dismiss</ion-button>
   </div>
+
   <ion-row>
     <ion-col size="2">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button defaultHref="/tabs/home/games"></ion-back-button>
+          <ion-back-button defaultHref="/tabs/home/games" (click)="confirmExit($event)"></ion-back-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-col>
@@ -17,10 +18,8 @@
         {{ 'COMPONENTS.NAVBAR.SETTINGS.QUIZ' | transloco }}
       </h2>
     </ion-col>
-    <ion-col size="4">
-      <!-- <button class="top-right-button">
-        <ion-icon name="game-controller-outline"></ion-icon>
-      </button> -->
+    <ion-col size="4" class="ion-text-right ion-padding-top">
+      <span class="progress-label">{{ answeredCount }}/{{ questions.length }}</span>
     </ion-col>
   </ion-row>
 
@@ -29,7 +28,7 @@
       <ion-label>
         <h2 [innerHTML]="question.question"></h2>
         <ion-radio-group (ionChange)="selectAnswer(i, $event.detail.value)">
-          <ion-item *ngFor="let answer of question.incorrect_answers">
+          <ion-item *ngFor="let answer of shuffledAnswers[i]">
             <ion-radio
               slot="start"
               [value]="answer"
@@ -37,17 +36,17 @@
             ></ion-radio>
             <ion-label [innerHTML]="answer"></ion-label>
           </ion-item>
-          <ion-item>
-            <ion-radio
-              slot="start"
-              [value]="question.correct_answer"
-              [disabled]="answeredQuestions[i]"
-            ></ion-radio>
-            <ion-label [innerHTML]="question.correct_answer"></ion-label>
-          </ion-item>
         </ion-radio-group>
-        <div *ngIf="feedbacks[i]" class="feedback">{{ feedbacks[i] }}</div>
+        <div *ngIf="feedbacks[i]" class="feedback" [class.correct]="feedbacks[i] === 'Correct!'">
+          {{ feedbacks[i] }}
+        </div>
       </ion-label>
     </ion-item>
   </ion-list>
 </ion-content>
+
+<ion-fab *ngIf="allAnswered && !submitted" vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button color="success" (click)="showResults()">
+    <ion-icon name="trophy-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
